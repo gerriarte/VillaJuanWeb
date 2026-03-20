@@ -15,7 +15,7 @@ const Eventos = () => {
         'Catering personalizado',
         'Logística completa'
       ],
-      icon: '🏢'
+      image: '/images/eventos/corporativos.png'
     },
     {
       title: 'Celebraciones Sociales',
@@ -27,19 +27,15 @@ const Eventos = () => {
         'Fotografía en paisajes únicos',
         'Coordinación integral del evento'
       ],
-      icon: '💒'
+      image: '/images/eventos/sociales.png'
     }
   ]
 
   return (
-    <section id="eventos" className="py-20 bg-primary relative overflow-hidden">
-      {/* High-Tech Dot-Grid Overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(#5E9E16_1px,transparent_1px)] bg-[size:24px_24px] opacity-5 mix-blend-multiply z-0" />
-      
-      {/* Micro-Decal / HUD Coordinates */}
-      <div className="absolute top-12 left-8 font-mono text-[10px] tracking-widest text-text/30 select-none pointer-events-none z-10 hidden md:block">
-        GRID_SYS: <span className="text-secondary font-bold">#MATRIX_ACTIVE</span> | NODE_COUNT: 12
-      </div>
+    <section id="eventos" className="py-20 bg-surface_container_low relative overflow-hidden">
+      {/* Editorial Dot-Grid Overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(#256D00_1px,transparent_1px)] bg-[size:24px_24px] opacity-5 z-0" />
+
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div
@@ -49,13 +45,16 @@ const Eventos = () => {
           viewport={{ once: true }}
           className="text-center mb-16 relative"
         >
-          <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 text-[12vw] font-display font-bold text-accent/5 select-none pointer-events-none uppercase tracking-widest z-0">
+          <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 text-[12vw] font-display font-bold text-primary/5 select-none pointer-events-none uppercase tracking-widest z-0">
             Momentos
           </div>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-text mb-6 relative z-10">
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-on_surface mb-4 relative z-10">
             Celebraciones con Propósito
           </h2>
-          <p className="font-body text-lg text-text/80 max-w-3xl mx-auto leading-relaxed-custom relative z-10">
+          <div className="flex justify-center mb-6 relative z-10">
+            <img src="/VillaJuanLogo.png" className="h-12 w-12 object-contain rounded-full bg-surface_container_low p-1.5 shadow-sm border border-primary/20" alt="Villa Juan" />
+          </div>
+          <p className="font-body text-lg text-on_surface/80 max-w-3xl mx-auto leading-relaxed-custom relative z-10">
             En la Ecogranja Villa Juan no solo alquilamos un espacio; diseñamos escenarios naturales 
             para fortalecer equipos y celebrar la vida. Contamos con amplias zonas verdes y espacios 
             cubiertos ideales para momentos únicos.
@@ -71,39 +70,43 @@ const Eventos = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
               viewport={{ once: true }}
-              className={`glass-organic rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 cursor-pointer group relative overflow-hidden transform ${
-                index % 2 === 0 ? 'md:-translate-y-4 md:rotate-1' : 'md:translate-y-4 md:-rotate-1'
-              }`}
+              className="glass-organic rounded-lg p-6 hover:shadow-ambient hover:-translate-y-1 transition-all duration-500 cursor-pointer group relative overflow-hidden flex flex-col h-full"
             >
-              <div className="absolute -top-10 -right-10 text-[10rem] font-display font-bold text-accent/5 select-none pointer-events-none z-0">
-                0{index + 1}
+              <div className="relative z-10 w-full aspect-video rounded-lg overflow-hidden mb-6 bg-surface_container_low">
+                <img 
+                  src={eventType.image}
+                  alt={eventType.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'; // fallback
+                  }}
+                />
               </div>
-              <div className="relative z-10 flex items-center mb-6">
-                <span className="text-4xl mr-4 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">{eventType.icon}</span>
-                <h3 className="font-display text-2xl font-bold text-text">
+
+              <div className="relative z-10 flex items-center mb-4">
+                <h3 className="font-display text-2xl font-bold text-on_surface">
                   {eventType.title}
                 </h3>
               </div>
 
-              <p className="font-body text-text/80 mb-6 leading-relaxed-custom relative z-10">
+              <p className="font-body text-on_surface/80 mb-6 leading-relaxed-custom relative z-10">
                 {eventType.description}
               </p>
 
-              <ul className="space-y-3 relative z-10">
+              <div className="flex flex-wrap gap-2 relative z-10 mt-auto">
                 {eventType.features.map((feature, featureIndex) => (
-                  <motion.li
+                  <motion.span
                     key={featureIndex}
-                    initial={{ x: -20, opacity: 0 }}
-                    whileInView={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: featureIndex * 0.1 }}
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    whileInView={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.4, delay: featureIndex * 0.05 }}
                     viewport={{ once: true }}
-                    className="flex items-center text-text/90 font-body"
+                    className="bg-primary/5 text-primary text-xs font-body px-3 py-1.5 rounded-full border border-primary/20 tracking-wide shadow-sm"
                   >
-                    <span className="w-2 h-2 bg-accent rounded-full mr-3 flex-shrink-0" />
                     {feature}
-                  </motion.li>
+                  </motion.span>
                 ))}
-              </ul>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -116,16 +119,30 @@ const Eventos = () => {
           viewport={{ once: true }}
           className="mb-12"
         >
-          <h3 className="font-heading text-2xl font-semibold text-text mb-6 text-center">
+          <h3 className="font-body text-2xl font-semibold text-on_surface mb-6 text-center">
             Nuestros Espacios
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((item) => (
+            {[
+              { id: 1, title: 'Jardines de la Granja', image: '/images/espacios/jardines.png', span: 'text-primary/60' },
+              { id: 2, title: 'Salón Rústico Principal', image: '/images/espacios/salon.png', span: 'text-primary/60' },
+              { id: 3, title: 'Zona de Barril y Fogata', image: '/images/espacios/fogata.png', span: 'text-primary/60' }
+            ].map((item) => (
               <div
-                key={item}
-                className="aspect-video bg-gradient-to-br from-accent/20 to-atmosphere-trote/10 organic-fluid glass-organic flex items-center justify-center hover:scale-105 transition-all duration-500 cursor-pointer shadow-lg hover:shadow-xl"
+                key={item.id}
+                className="aspect-video bg-surface_container_lowest rounded-lg shadow-ambient overflow-hidden hover:scale-105 transition-all duration-500 cursor-pointer group relative"
               >
-                <span className="text-accent/60 font-heading text-sm">Espacio {item}</span>
+                <img 
+                  src={item.image} 
+                  alt={item.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1518005020810-69288f3beaf4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'; // fallback
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                  <span className="text-white font-body font-medium text-sm">{item.title}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -145,7 +162,7 @@ const Eventos = () => {
             rel="noopener noreferrer"
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center space-x-3 bg-accent hover:bg-text text-primary px-8 py-4 rounded-organic-lg font-heading font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="inline-flex items-center space-x-3 btn-satin px-8 py-4 text-lg"
           >
             <span>🎉</span>
             <span>Cotizar mi evento ahora</span>

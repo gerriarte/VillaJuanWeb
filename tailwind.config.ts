@@ -9,30 +9,30 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Base Neutra (Interfaz General)
-        primary: '#F9F4F0', // Hueso/Arena suave - Fondo primario
-        text: '#2D2926', // Carboncillo orgánico - Texto principal
-        accent: '#5E9E16', // Verde Orgánico - Color Principal
-        secondary: '#FFA600', // Ámbar Tech - Color Secundario
-        
-        // Paleta de Experiencia (Atmósferas de Fondo)
-        atmosphere: {
-          trote: '#2E4739', // Verde - Bosque, serenidad, crecimiento
-          trocha: '#8B3A32', // Rojo - Arcilla, fuego del barril, energía
-          'paso-fino': '#D4A373', // Amarillo - Atardecer, trigo, exclusividad
-        }
+        primary: '#256D00', // Deep Moss
+        primary_container: '#54A82F',
+        secondary: '#8D4F00', // Burnished Clay
+        secondary_container: '#FE9824',
+        tertiary: '#934B19', // Aged Wood
+        surface: '#FEF7FF',
+        on_surface: '#1D1A22',
+        surface_container_lowest: '#FFFFFF',
+        surface_container_low: '#F8F2FB',
+        surface_container: '#F2ECF5',
+        surface_container_high: '#ECDFEF',
+        surface_container_highest: '#E6D7E9',
       },
       fontFamily: {
-        'display': ['var(--font-fraunces)', 'serif'], // Títulos H1, H2
-        'heading': ['var(--font-montserrat)', 'sans-serif'], // Subtítulos y botones
-        'body': ['var(--font-inter)', 'sans-serif'], // Cuerpo de texto
+        'display': ['var(--font-noto-serif)', 'serif'], // Títulos
+        'body': ['var(--font-manrope)', 'sans-serif'], // Cuerpo
       },
       borderRadius: {
-        'organic': '16px',
-        'organic-lg': '32px',
+        'md': '0.75rem',
+        'lg': '1rem',
+        'full': '9999px',
       },
       boxShadow: {
-        'organic': '0 10px 40px -10px rgba(99, 72, 50, 0.15)',
+        'ambient': '0px 12px 32px rgba(29, 26, 34, 0.06)',
       },
       lineHeight: {
         'relaxed-custom': '1.6',

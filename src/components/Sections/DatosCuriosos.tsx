@@ -7,44 +7,39 @@ const stats = [
     value: '1.000+',
     label: 'Eventos Corporativos',
     icon: '🤝',
-    bgColor: 'from-atmosphere-trote/20'
+    bgColor: 'from-primary_container/10'
   },
   {
     value: '5.000+',
     label: 'Familias Sonrientes',
     icon: '😊',
-    bgColor: 'from-accent/20'
+    bgColor: 'from-secondary_container/10'
   },
   {
     value: '100+',
     label: 'Animales a conocer',
     icon: '🐴',
-    bgColor: 'from-secondary/20'
+    bgColor: 'from-tertiary/10'
   },
   {
     value: '1',
     label: 'Objetivo: Verte Feliz',
     icon: '❤️',
-    bgColor: 'from-atmosphere-trocha/20'
+    bgColor: 'from-secondary/20'
   },
   {
     value: '3',
     label: 'Certificaciones en Turismo y Equino',
     icon: '📜',
-    bgColor: 'from-atmosphere-paso-fino/20'
+    bgColor: 'from-primary/10'
   }
 ]
 
 const DatosCuriosos = () => {
   return (
-    <section className="py-12 bg-gradient-to-br from-primary via-white/50 to-primary relative overflow-hidden">
-      {/* High-Tech Dot-Grid Overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(#5E9E16_1px,transparent_1px)] bg-[size:16px_16px] opacity-5 mix-blend-multiply z-0" />
-      
-      {/* Micro-Decal / HUD Coordinates */}
-      <div className="absolute top-4 right-8 font-mono text-[9px] tracking-widest text-text/30 select-none pointer-events-none z-10 hidden md:block">
-        SYS: <span className="text-accent font-bold">#STATS_COUNTER</span> | POOL: 5_NODES
-      </div>
+    <section className="py-16 bg-surface relative overflow-hidden">
+      {/* Editorial Dot-Grid Overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(#256D00_1px,transparent_1px)] bg-[size:16px_16px] opacity-5 z-0" />
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 
@@ -52,9 +47,9 @@ const DatosCuriosos = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-10"
+          className="text-center mb-12"
         >
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-text mb-2">
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-on_surface mb-2">
             Villa Datos Curiosos
           </h2>
           <div className="w-12 h-1 bg-secondary mx-auto rounded-full" />
@@ -68,7 +63,7 @@ const DatosCuriosos = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className={`glass-organic rounded-2xl p-5 text-center flex flex-col items-center justify-center cursor-pointer hover:shadow-xl transition-all duration-500 group relative overflow-hidden transform ${
+              className={`glass-organic rounded-lg p-5 text-center flex flex-col items-center justify-center cursor-pointer hover:shadow-ambient transition-all duration-500 group relative overflow-hidden transform ${
                 index % 2 === 0 ? 'md:-translate-y-2' : 'md:translate-y-2'
               }`}
             >
@@ -80,18 +75,14 @@ const DatosCuriosos = () => {
                   {stat.icon}
                 </span>
                 
-                <h3 className="font-display text-2xl md:text-3xl font-bold text-accent mb-1 font-mono tracking-tight">
+                <h3 className="font-display text-2xl md:text-3xl font-bold text-primary mb-1 tracking-tight">
                   {stat.value}
                 </h3>
                 
-                <p className="font-heading text-[11px] font-semibold text-text/80 uppercase tracking-wider leading-tight max-w-[120px]">
+                <p className="font-body text-[11px] font-semibold text-on_surface/80 uppercase tracking-wider leading-tight max-w-[120px]">
                   {stat.label}
                 </p>
               </div>
-
-              {/* High-Tech Edge Ticks */}
-              <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-text/20 group-hover:border-secondary transition-colors" />
-              <div className="absolute bottom-2 left-2 w-1.5 h-1.5 border-b border-l border-text/20 group-hover:border-secondary transition-colors" />
             </motion.div>
           ))}
         </div>

@@ -1,8 +1,19 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useState, useRef } from 'react'
+import Link from 'next/link'
 
 const Blog = () => {
+  const sliderRef = useRef<HTMLDivElement>(null)
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (sliderRef.current) {
+      const { scrollLeft, clientWidth } = sliderRef.current
+      const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth
+      sliderRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' })
+    }
+  }
   // Placeholder blog articles based on content.md
   const blogArticles = [
     { id: 1, title: 'Los Beneficios del Coaching Equino para Ejecutivos', category: 'Coaching', date: '2026-03-15', views: 342 },
@@ -24,15 +35,23 @@ const Blog = () => {
 
   const categories = ['Todos', 'Coaching', 'Gastronomía', 'Educación', 'Eventos', 'Sostenibilidad', 'Turismo', 'Bienestar', 'Cultura']
 
+  const categoryImages: { [key: string]: string } = {
+    Coaching: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=500&q=80',
+    Gastronomía: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=80',
+    Educación: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=500&q=80',
+    Eventos: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=500&q=80',
+    Sostenibilidad: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=500&q=80',
+    Turismo: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=500&q=80',
+    Bienestar: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=500&q=80',
+    Cultura: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&w=500&q=80',
+    Default: 'https://images.unsplash.com/photo-1534073136377-2260640fa889?auto=format&fit=crop&w=500&q=80'
+  }
+
   return (
-    <section className="py-20 bg-gradient-to-br from-primary to-atmosphere-paso-fino/10 relative overflow-hidden">
-      {/* High-Tech Dot-Grid Overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(#5E9E16_1px,transparent_1px)] bg-[size:24px_24px] opacity-5 mix-blend-multiply z-0" />
-      
-      {/* Micro-Decal / HUD Coordinates */}
-      <div className="absolute top-12 left-8 font-mono text-[10px] tracking-widest text-text/30 select-none pointer-events-none z-10 hidden md:block">
-        BLOG_FEED: <span className="text-secondary font-bold">#CHRONICLES</span> | POSTS: 15
-      </div>
+    <section className="py-20 bg-surface_container_low relative overflow-hidden">
+      {/* Editorial Dot-Grid Overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(#256D00_1px,transparent_1px)] bg-[size:24px_24px] opacity-5 z-0" />
+
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div
@@ -42,10 +61,10 @@ const Blog = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-text mb-6">
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-on_surface mb-6">
             Crónicas de la Tierra
           </h2>
-          <p className="font-body text-lg text-text/80 max-w-2xl mx-auto leading-relaxed-custom">
+          <p className="font-body text-lg text-on_surface/80 max-w-2xl mx-auto leading-relaxed-custom">
             Tips, beneficios del coaching y secretos de la vida en la granja. 
             Actualidad Villa Juan para mantenerte conectado con la naturaleza y el crecimiento personal.
           </p>
@@ -68,10 +87,10 @@ const Blog = () => {
               viewport={{ once: true }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`px-4 py-2 rounded-organic font-heading font-medium transition-all duration-300 ${
+              className={`px-4 py-2 rounded-full font-body font-medium transition-all duration-300 ${
                 index === 0 
-                  ? 'bg-accent text-primary' 
-                  : 'glass-organic bg-white/20 text-text hover:bg-accent hover:text-primary border-none shadow-sm'
+                  ? 'bg-primary text-white' 
+                  : 'bg-surface_container_lowest text-on_surface hover:bg-primary/10 border-none shadow-sm'
               }`}
             >
               {category}
@@ -79,77 +98,100 @@ const Blog = () => {
           ))}
         </motion.div>
 
-        {/* Blog Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogArticles.map((article, index) => (
-            <motion.article
-              key={article.id}
-              initial={{ y: 50, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="glass-organic rounded-2xl overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer group flex flex-col h-full relative"
-            >
-              {/* Background Number */}
-              <div className="absolute -top-10 -right-12 text-[12rem] font-display font-bold text-accent/5 select-none pointer-events-none z-0">
-                {article.id}
-              </div>
+        {/* Blog Slider Container */}
+        <div className="relative group">
+          {/* Navigation Buttons */}
+          <button 
+            onClick={() => scroll('left')}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-20 bg-surface_container_lowest p-3 rounded-full shadow-ambient opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 hover:bg-primary/10 text-primary hidden md:block"
+          >
+            ←
+          </button>
+          
+          <button 
+            onClick={() => scroll('right')}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-20 bg-surface_container_lowest p-3 rounded-full shadow-ambient opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 hover:bg-primary/10 text-primary hidden md:block"
+          >
+            →
+          </button>
 
-              <div className="relative z-10 flex flex-col h-full">
-              {/* Article Image Placeholder */}
-              <div className="p-4">
-                <div className="aspect-video bg-gradient-to-br from-accent/30 to-atmosphere-trote/10 organic-fluid flex items-center justify-center group-hover:scale-[1.03] transition-transform duration-500">
-                  <span className="text-4xl opacity-60 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">📖</span>
-                </div>
-              </div>
+          <div 
+            ref={sliderRef} 
+            className="flex overflow-x-auto snap-x snap-mandatory gap-6 no-scrollbar pb-8 px-4 -mx-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          >
+            {blogArticles.map((article, index) => (
+              <Link 
+                key={article.id} 
+                href={`/cronicas/${article.id}`} 
+                className="snap-center shrink-0 w-[85vw] md:w-[45vw] lg:w-[30vw] focus:outline-none"
+              >
+                <motion.article
+                  initial={{ y: 30, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.6, delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                  className="w-full bg-surface_container_lowest rounded-lg overflow-hidden shadow-ambient hover:shadow-ambient-lg hover:-translate-y-1 transition-all duration-500 cursor-pointer group/card flex flex-col relative h-full"
+                >
+                <div className="relative z-10 flex flex-col h-full">
+                  {/* Article Image Placeholder */}
+                  <div className="p-4">
+                    <div className="aspect-video bg-surface_container_low rounded-lg overflow-hidden flex items-center justify-center group-hover/card:scale-[1.03] transition-transform duration-500 relative">
+                      <img 
+                        src={categoryImages[article.category as keyof typeof categoryImages] || categoryImages.Default}
+                        alt={article.title}
+                        className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  </div>
 
-              {/* Article Content */}
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="bg-accent/20 text-accent px-3 py-1 rounded-full text-sm font-body">
-                    {article.category}
-                  </span>
-                  <span className="text-text/60 text-sm font-body">
-                    {article.date.split('-').slice(1).reverse().join('/')}
-                  </span>
-                </div>
+                  {/* Article Content */}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-body">
+                        {article.category}
+                      </span>
+                      <span className="text-on_surface/60 text-xs font-body">
+                        {article.date.split('-').slice(1).reverse().join('/')}
+                      </span>
+                    </div>
 
-                <h3 className="font-heading text-lg font-semibold text-text mb-3 group-hover:text-accent transition-colors duration-300 line-clamp-2">
-                  {article.title}
-                </h3>
+                    <h3 className="font-body text-lg font-semibold text-on_surface mb-3 group-hover/card:text-primary transition-colors duration-300 line-clamp-2">
+                      {article.title}
+                    </h3>
 
-                <p className="font-body text-text/70 text-sm mb-4 line-clamp-3">
-                  Descubre insights únicos sobre {article.category.toLowerCase()}, 
-                  experiencias auténticas y consejos prácticos desde Villa Juan.
-                </p>
+                    <p className="font-body text-on_surface/70 text-sm mb-4 line-clamp-2">
+                      Descubre insights únicos sobre {article.category.toLowerCase()} desde Villa Juan.
+                    </p>
 
-                <div className="flex items-center justify-between">
-                  <span className="font-body text-accent text-sm font-medium group-hover:underline">
-                    Leer más →
-                  </span>
-                  <div className="flex items-center space-x-1 text-text/50">
-                    <span className="text-sm">👁️</span>
-                    <span className="text-sm font-body">{article.views}</span>
+                    <div className="flex items-center justify-between mt-auto pt-2">
+                      <span className="font-body text-primary text-sm font-medium group-hover/card:underline">
+                        Leer más →
+                      </span>
+                      <div className="flex items-center space-x-1 text-on_surface/50">
+                        <span className="text-xs">👁️</span>
+                        <span className="text-xs font-body">{article.views}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              </div>
-            </motion.article>
-          ))}
+              </motion.article>
+              </Link>
+            ))}
+          </div>
         </div>
 
-        {/* Load More Button */}
+        {/* Load More Button -> convertido a Acción de Slider opcional */}
         <motion.div
           initial={{ y: 30, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mt-12"
+          className="text-center mt-8"
         >
           <motion.button
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-accent hover:bg-text text-primary px-8 py-4 rounded-organic-lg font-heading font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="btn-satin px-8 py-4 text-base"
           >
             Ver más artículos
           </motion.button>

@@ -1,23 +1,17 @@
 import type { Metadata } from 'next'
-import { Fraunces, Montserrat, Inter } from 'next/font/google'
+import { Noto_Serif, Manrope } from 'next/font/google'
 import '@/styles/globals.css'
 
-const fraunces = Fraunces({
+const notoSerif = Noto_Serif({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-fraunces',
+  variable: '--font-noto-serif',
 })
 
-const montserrat = Montserrat({
+const manrope = Manrope({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-montserrat',
-})
-
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-manrope',
 })
 
 export const metadata: Metadata = {
@@ -87,10 +81,10 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#F9F4F0" />
+        <meta name="theme-color" content="#fef7ff" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </head>
-      <body className={`${inter.variable} ${montserrat.variable} ${fraunces.variable} antialiased`}>
+      <body className={`${notoSerif.variable} ${manrope.variable} antialiased bg-surface text-on_surface font-body`}>
         {children}
       </body>
     </html>

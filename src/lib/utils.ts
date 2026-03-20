@@ -39,10 +39,10 @@ export const getScrollProgress = (element: HTMLElement) => {
 
 // Atmosphere color mapping
 export const atmosphereColors = {
-  default: '#F9F4F0',
-  trote: '#2E4739',
-  trocha: '#8B3A32',
-  'paso-fino': '#D4A373',
+  default: '#FEF7FF', // Surface
+  trote: '#256D00', // Primary (Deep Moss)
+  trocha: '#8D4F00', // Secondary (Burnished Clay)
+  'paso-fino': '#934B19', // Tertiary (Aged Wood)
 } as const
 
 export type AtmosphereType = keyof typeof atmosphereColors

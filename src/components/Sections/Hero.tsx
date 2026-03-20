@@ -6,19 +6,19 @@ import { generateWhatsAppLink, whatsappMessages } from '@/lib/utils'
 
 const slides = [
   {
-    url: 'https://images.unsplash.com/photo-1553281543-2688ec79c6aa?auto=format&fit=crop&w=1920&q=80',
+    url: '/images/hero/paisaje.png',
     alt: 'Paisaje de Villa Juan | Cabalgatas y Naturaleza'
   },
   {
-    url: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1920&q=80',
+    url: '/images/hero/caballos.png',
     alt: 'Caballos en Villa Juan'
   },
   {
-    url: 'https://images.unsplash.com/photo-1544145945-f904253db0ad?auto=format&fit=crop&w=1920&q=80',
+    url: '/images/hero/barril.png',
     alt: 'Gastronomía al Barril'
   },
   {
-    url: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1920&q=80',
+    url: '/images/hero/Villa-juan-1.jpg',
     alt: 'Eventos al aire libre'
   }
 ]
@@ -68,9 +68,9 @@ const Hero = () => {
             className="font-display text-5xl md:text-7xl font-bold text-white mb-6 leading-tight relative z-10"
           >
             Desconéctate de la rutina y{' '}
-            <span className="text-accent relative inline-block">
+            <span className="text-primary_container relative inline-block">
               reconectá
-              <svg className="absolute -bottom-2 left-0 w-full h-3 text-accent/40" viewBox="0 0 100 10" preserveAspectRatio="none">
+              <svg className="absolute -bottom-2 left-0 w-full h-3 text-primary_container/40" viewBox="0 0 100 10" preserveAspectRatio="none">
                 <path d="M0,5 Q50,10 100,5" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round"/>
               </svg>
             </span> con lo que realmente importa
@@ -83,8 +83,7 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="font-body text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed-custom relative z-10"
           >
-            Un espacio donde el aire de Tenjo se mezcla con el aroma del barril y la sabiduría de los caballos. 
-            Más que una visita, es una pausa necesaria.
+            Eco Granja Villa Juan es una experiencia Familiar que involucra múltiples actividades de interacción para grupos en diferentes ocasiones. Comenzando por la naturaleza, la conexión e interacción con los animales, nuestra pasión por los caballos, ambientes campestres, la gran experiencia del barril peruano y los que haceres de la granja.
           </motion.p>
 
           {/* CTA Button */}
@@ -98,9 +97,9 @@ const Hero = () => {
               href={generateWhatsAppLink(whatsappMessages.general)}
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.05, y: -4, shadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)" }}
+              whileHover={{ scale: 1.05, y: -4 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center space-x-3 bg-accent hover:bg-text text-primary px-8 py-4 rounded-organic-lg font-heading font-semibold text-lg transition-all duration-300 shadow-xl hover:shadow-2xl"
+              className="inline-flex items-center space-x-3 btn-satin text-lg px-8 py-4"
             >
               <span>🌿</span>
               <span>Descubre Villa Juan</span>
@@ -123,20 +122,20 @@ const Hero = () => {
               <motion.a
                 key={pillar.href}
                 href={pillar.href}
-                whileHover={{ scale: 1.08, y: -12, rotate: index % 2 === 0 ? 2 : -2 }}
+                whileHover={{ scale: 1.05, y: -8 }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ type: "spring", stiffness: 400, damping: 15, delay: 1 + index * 0.1 }}
-                className={`organic-fluid glass-organic p-6 text-center hover:bg-white/30 hover:shadow-2xl transition-all duration-500 group flex flex-col items-center justify-center cursor-pointer ${pillar.className}`}
+                className={`glass-organic rounded-lg p-6 text-center hover:bg-surface/60 ambient-shadow transition-all duration-500 group flex flex-col items-center justify-center cursor-pointer ${pillar.className}`}
               >
-                <div className="text-4xl mb-3 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+                <div className="text-4xl mb-3 group-hover:scale-110 transition-all duration-500">
                   {pillar.icon}
                 </div>
-                <h3 className="font-heading font-semibold text-text mb-1 text-sm md:text-base leading-tight">
+                <h3 className="font-body font-semibold text-on_surface mb-1 text-sm md:text-base leading-tight">
                   {pillar.title}
                 </h3>
-                <p className="text-xs text-accent font-body opacity-80 group-hover:opacity-100 transition-opacity">
+                <p className="text-xs text-primary font-body opacity-80 group-hover:opacity-100 transition-opacity">
                   {pillar.subtitle}
                 </p>
               </motion.a>
