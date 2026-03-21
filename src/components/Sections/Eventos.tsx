@@ -32,7 +32,7 @@ const Eventos = () => {
   ]
 
   return (
-    <section id="eventos" className="py-20 bg-surface_container_low relative overflow-hidden">
+    <section id="eventos" className="py-20 bg-transparent relative overflow-hidden">
       {/* Editorial Dot-Grid Overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(#256D00_1px,transparent_1px)] bg-[size:24px_24px] opacity-5 z-0" />
 
@@ -62,7 +62,7 @@ const Eventos = () => {
         </motion.div>
 
         {/* Event Types Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12 px-4">
           {eventTypes.map((eventType, index) => (
             <motion.div
               key={eventType.title}
@@ -70,13 +70,15 @@ const Eventos = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
               viewport={{ once: true }}
-              className="glass-organic rounded-lg p-6 hover:shadow-ambient hover:-translate-y-1 transition-all duration-500 cursor-pointer group relative overflow-hidden flex flex-col h-full"
+              className={`glass-organic rounded-2xl p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer group relative overflow-hidden flex flex-col h-full border-4 border-[#00C2E0]/20 ${
+                index % 2 === 0 ? '-rotate-1 hover:rotate-0' : 'rotate-1 hover:rotate-0'
+              }`}
             >
-              <div className="relative z-10 w-full aspect-video rounded-lg overflow-hidden mb-6 bg-surface_container_low">
+              <div className="relative z-10 w-full aspect-video rounded-xl overflow-hidden mb-6 bg-surface_container_low shadow-md">
                 <img 
                   src={eventType.image}
                   alt={eventType.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   onError={(e) => {
                     e.currentTarget.src = 'https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'; // fallback
                   }}
@@ -84,7 +86,7 @@ const Eventos = () => {
               </div>
 
               <div className="relative z-10 flex items-center mb-4">
-                <h3 className="font-display text-2xl font-bold text-on_surface">
+                <h3 className="font-display text-2xl font-black text-on_surface uppercase tracking-tight group-hover:text-[#00C2E0] transition-colors duration-300">
                   {eventType.title}
                 </h3>
               </div>
@@ -101,7 +103,7 @@ const Eventos = () => {
                     whileInView={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.4, delay: featureIndex * 0.05 }}
                     viewport={{ once: true }}
-                    className="bg-primary/5 text-primary text-xs font-body px-3 py-1.5 rounded-full border border-primary/20 tracking-wide shadow-sm"
+                    className="bg-surface_container_low text-primary text-xs font-body font-bold px-3 py-1.5 rounded-full border-2 border-primary/20 tracking-wide shadow-sm group-hover:bg-[#FFF200]/10 transition-all duration-300"
                   >
                     {feature}
                   </motion.span>

@@ -37,7 +37,7 @@ const stats = [
 
 const DatosCuriosos = () => {
   return (
-    <section className="py-16 bg-surface relative overflow-hidden">
+    <section className="py-16 bg-transparent relative overflow-hidden">
       {/* Editorial Dot-Grid Overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(#256D00_1px,transparent_1px)] bg-[size:16px_16px] opacity-5 z-0" />
 

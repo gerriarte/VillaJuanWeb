@@ -29,7 +29,7 @@ const Restaurante = () => {
   ]
 
   return (
-    <section id="restaurante" className="py-20 bg-surface relative overflow-hidden">
+    <section id="restaurante" className="py-20 bg-transparent relative overflow-hidden">
       {/* Editorial Dot-Grid Overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(#8D4F00_1px,transparent_1px)] bg-[size:24px_24px] opacity-5 z-0" />
 
@@ -92,20 +92,22 @@ const Restaurante = () => {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <div className="bg-surface_container_lowest rounded-lg shadow-ambient flex flex-col items-center justify-start p-4 hover:shadow-ambient-lg hover:-translate-y-1 transition-all duration-500 group relative h-full">
+                <div className={`bg-surface_container_lowest rounded-xl shadow-lg flex flex-col items-center justify-start p-4 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative h-full border-2 border-primary/10 ${
+                  index % 2 === 0 ? 'rotate-1 hover:rotate-0' : '-rotate-1 hover:rotate-0'
+                }`}>
                   <div className="relative z-10 flex flex-col items-center w-full">
                     {/* Image Container */}
-                    <div className="w-full aspect-[4/3] rounded-lg overflow-hidden mb-4 relative bg-surface_container_low">
+                    <div className="w-full aspect-[4/3] rounded-lg overflow-hidden mb-4 relative bg-surface_container_low shadow-sm">
                       <img 
                         src={step.image} 
                         alt={step.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         onError={(e) => {
                           e.currentTarget.src = 'https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'; // fallback
                         }}
                       />
                     </div>
-                    <h4 className="font-body font-semibold text-on_surface mb-1">{step.title}</h4>
+                    <h4 className="font-display font-black text-on_surface mb-1 uppercase tracking-tight group-hover:text-[#00C2E0] transition-colors">{step.title}</h4>
                     <p className="font-body text-sm text-on_surface/80">{step.description}</p>
                   </div>
                 </div>

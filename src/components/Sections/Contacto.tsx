@@ -5,7 +5,7 @@ import { generateWhatsAppLink, whatsappMessages } from '@/lib/utils'
 
 const Contacto = () => {
   return (
-    <section id="contacto" className="py-20 bg-surface relative overflow-hidden">
+    <section id="contacto" className="py-20 bg-transparent relative overflow-hidden">
       {/* Editorial Dot-Grid Overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(#256D00_1px,transparent_1px)] bg-[size:24px_24px] opacity-5 z-0" />
 

@@ -45,7 +45,7 @@ const SalidasPedagogicas = () => {
   ]
 
   return (
-    <section id="salidas" className="py-20 bg-surface_container_low relative overflow-hidden">
+    <section id="salidas" className="py-20 bg-transparent relative overflow-hidden">
       {/* Editorial Dot-Grid Overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(#256D00_1px,transparent_1px)] bg-[size:24px_24px] opacity-5 z-0" />
 
@@ -74,7 +74,7 @@ const SalidasPedagogicas = () => {
         </motion.div>
 
         {/* Activities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16 px-4">
           {activities.map((activity, index) => (
             <motion.div
               key={activity.title}
@@ -82,13 +82,15 @@ const SalidasPedagogicas = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="glass-organic rounded-lg p-6 hover:shadow-ambient hover:-translate-y-1 transition-all duration-500 group cursor-pointer relative overflow-hidden flex flex-col h-full"
+              className={`glass-organic rounded-2xl p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer relative overflow-hidden flex flex-col h-full border-4 border-primary/20 ${
+                index % 2 === 0 ? '-rotate-1 hover:rotate-0' : 'rotate-1 hover:rotate-0'
+              }`}
             >
-              <div className="relative z-10 w-full aspect-video rounded-lg overflow-hidden mb-5 bg-surface_container_low">
+              <div className="relative z-10 w-full aspect-video rounded-xl overflow-hidden mb-5 bg-surface_container_low shadow-md">
                 <img 
                   src={activity.image}
                   alt={activity.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   onError={(e) => {
                     e.currentTarget.src = 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'; // fallback
                   }}
@@ -96,15 +98,15 @@ const SalidasPedagogicas = () => {
               </div>
 
               <div className="relative z-10 flex-1 flex flex-col">
-                <h3 className="font-body text-xl font-semibold text-on_surface mb-2">
+                <h3 className="font-display font-black text-xl text-on_surface mb-2 uppercase tracking-tight group-hover:text-[#00C2E0] transition-colors">
                   {activity.title}
                 </h3>
                 
-                <div className="flex flex-wrap gap-2 mb-3">
-                  <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-body">
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-body font-bold">
                     ⏱️ {activity.duration}
                   </span>
-                  <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-body">
+                  <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-body font-bold">
                     👥 {activity.ages}
                   </span>
                 </div>
