@@ -1,0 +1,379 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroCarousel from '../components/sections/HeroCarousel.astro';
+import { visit } from '../lib/site';
+import horseImg from '../assets/images/home/bienvenida_horse.svg';
+import globoImg from '../assets/images/home/bienvenida_globo.svg';
+import expBanner from '../assets/images/home/ecogranja_experiencia_transformadora.svg';
+import ramaImg from '../assets/images/home/rama_oferta_tight.webp';
+import celebracionesOferta from '../assets/images/home/celebraciones_oferta.svg';
+import empresasOferta from '../assets/images/home/empresas_oferta.svg';
+import restauranteOferta from '../assets/images/home/restaurante_oferta.svg';
+import blogOferta from '../assets/images/home/blog_ofertas.svg';
+import barrilOff from '../assets/images/home/barril_off.svg';
+import barrilOn from '../assets/images/home/barrill_on.svg';
+import menuJeep from '../assets/images/home/menu_jeep.svg';
+import sombrero from '../assets/images/home/sobrero.svg';
+import tituloVillaDatos from '../assets/images/home/Titulo-Villa-Datos.svg';
+import horseDatos from '../assets/images/home/horse_datos.svg';
+
+// Composición sobre la rama: Empresas ENCIMA; Pasadías, Celebraciones y Blog DEBAJO.
+// `pos` = posición absoluta (desktop). Las clases se escriben literales para que Tailwind las genere.
+const ofertaEmpresas = { img: empresasOferta, href: '/empresas', label: 'Empresas', w: 459, h: 535 };
+const ofertasAbajo = [
+  { img: restauranteOferta, href: '/villa-planes', label: 'Pasadías', w: 569, h: 525, pos: 'left-[18%] top-[48%]' },
+  { img: celebracionesOferta, href: '/celebraciones', label: 'Celebraciones', w: 524, h: 581, pos: 'left-[40%] top-[52%]' },
+  { img: blogOferta, href: '/blog', label: 'Blog', w: 449, h: 577, pos: 'left-[62%] top-[48%]' },
+];
+const ofertasMobile = [ofertaEmpresas, ...ofertasAbajo];
+
+const stats = [
+  { n: 1000, label: 'Eventos corporativos' },
+  { n: 5000, label: 'Árboles sembrados' },
+  { n: 100, label: 'Animales por conocer' },
+  { n: 20000, label: 'Niños felices' },
+  { n: 5000, label: 'Familias sonrientes' },
+];
+// Formato con separador de miles "." (manual, sin depender del ICU del build).
+const fmt = (n: number): string => '+' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+---
+
+<Base heroHeader>
+  <!-- HERO — carrusel de 4 slides detrás del header (que flota con degradé verde→transparente). -->
+  <HeroCarousel />
+
+  <!-- EXPERIENCIAS TRANSFORMADORAS (bienvenida): banner + título + caballo + globo. -->
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <img
+      src={expBanner.src}
+      alt="Ecogranja · Experiencia transformadora"
+      width="719"
+      height="84"
+      class="mx-auto mb-4 h-auto w-full max-w-md"
+    />
+    <h2 class="title-outline text-center font-display text-4xl sm:text-5xl">
+      Experiencias transformadoras en conexión con la naturaleza
+    </h2>
+
+    <div class="mt-10 grid items-center gap-6 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:gap-2">
+      <img
+        src={horseImg.src}
+        alt="Don Juan, la mascota de la Ecogranja Villa Juan"
+        width="522"
+        height="501"
+        loading="lazy"
+        class="mx-auto w-48 sm:w-64 md:w-full md:max-w-sm md:translate-x-[20%]"
+      />
+
+      <!-- Globo de diálogo (imagen de fondo estirada) + texto blanco centrado dentro. -->
+      <div
+        class="flex items-center justify-center px-8 py-8 sm:px-12 sm:py-10"
+        style={`background-image:url('${globoImg.src}');background-size:100% 100%;background-repeat:no-repeat;`}
+      >
+        <p class="w-[70%] text-center font-['Segoe_UI',system-ui,sans-serif] text-sm leading-relaxed text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.5)] sm:text-base">
+          Te invitamos a conocer la Ecogranja Villa Juan, un lugar increíble para salir de la rutina
+          y reconectar con lo natural. Comparte con nuestros animales, aprende sobre el mundo equino y
+          disfruta de los quehaceres reales del campo. Y no te puedes perder el sabor único de nuestro
+          barril peruano. ¡Vente con tu familia a vivir un día de campo inolvidable!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPLORA LO QUE OFRECEMOS — ofertas sobre una rama que sangra a la izquierda. -->
+  <section class="overflow-hidden pb-16">
+    <h2 class="mx-auto max-w-6xl px-4 text-center title-outline font-display text-4xl sm:text-5xl">
+      Explora lo que ofrecemos
+    </h2>
+
+    <!-- Desktop: Empresas ENCIMA de la rama; Pasadías, Celebraciones y Blog DEBAJO. -->
+    <div class="relative mt-4 hidden h-[560px] w-full md:block lg:h-[720px]">
+      <img
+        src={ramaImg.src}
+        alt=""
+        aria-hidden="true"
+        width="1429"
+        height="445"
+        class="pointer-events-none absolute top-1/2 left-0 w-[80%] -translate-y-1/2"
+      />
+      <a
+        href={ofertaEmpresas.href}
+        aria-label={ofertaEmpresas.label}
+        class="absolute top-[1%] left-[36%] z-10 w-64 transition-transform duration-300 hover:-translate-y-2 lg:w-80"
+      >
+        <img
+          src={ofertaEmpresas.img.src}
+          alt={ofertaEmpresas.label}
+          width={ofertaEmpresas.w}
+          height={ofertaEmpresas.h}
+          loading="lazy"
+          class="w-full drop-shadow-xl"
+        />
+      </a>
+      {
+        ofertasAbajo.map((o) => (
+          <a
+            href={o.href}
+            aria-label={o.label}
+            class:list={[
+              'absolute z-10 w-64 transition-transform duration-300 hover:-translate-y-2 lg:w-80',
+              o.pos,
+            ]}
+          >
+            <img src={o.img.src} alt={o.label} width={o.w} height={o.h} loading="lazy" class="w-full drop-shadow-xl" />
+          </a>
+        ))
+      }
+    </div>
+
+    <!-- Mobile: grid simple de las 4 ofertas. -->
+    <ul class="mx-auto mt-8 grid max-w-md grid-cols-2 gap-6 px-4 md:hidden">
+      {
+        ofertasMobile.map((o) => (
+          <li>
+            <a href={o.href} aria-label={o.label} class="block transition-transform hover:-translate-y-1">
+              <img src={o.img.src} alt={o.label} width={o.w} height={o.h} loading="lazy" class="mx-auto w-40 drop-shadow-xl" />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- BANDA negro → rojo → verde detrás de Sabor de fuego, Celebraciones y Villa Datos.
+       Los extremos transparentes revelan el fondo verde continuo del sitio (blend). -->
+  <div
+    class="relative"
+    style="background-image:linear-gradient(180deg, transparent 0%, #0d0605 14%, #0d0605 30%, #5c0f06 48%, #a31d0b 68%, #a31d0b 90%, transparent 100%);"
+  >
+    <!-- SABOR DE FUEGO (barril) — centrado; el barril se "enciende" con el scroll. -->
+    <section class="mx-auto max-w-3xl px-4 pt-16 pb-16 text-center text-white">
+      <div class="relative mx-auto mb-6 w-52 sm:w-64">
+        <img
+          src={barrilOff.src}
+          alt="Barril de asado al carbón"
+          width="507"
+          height="546"
+          loading="lazy"
+          class="w-full"
+        />
+        <img
+          src={barrilOn.src}
+          alt=""
+          aria-hidden="true"
+          width="507"
+          height="546"
+          loading="lazy"
+          class="barril-on absolute inset-0 w-full"
+        />
+      </div>
+      <h2 class="title-outline font-display text-4xl sm:text-5xl">Sabor de fuego</h2>
+      <p class="mx-auto mt-4 max-w-2xl font-bold leading-relaxed text-white/90">
+        La técnica es nuestra firma. Seleccionamos cortes de alta calidad con maduración controlada
+        para intensificar cada matiz. Cocinamos al barril mediante calor indirecto con carbón vegetal;
+        un proceso de horas que garantiza una jugosidad imposible de lograr en una parrilla
+        convencional.
+      </p>
+      <a
+        href="/gastronomia"
+        aria-label="Ver el menú"
+        class="mt-6 inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+      >
+        <img
+          src={menuJeep.src}
+          alt="Ver el menú"
+          width="694"
+          height="397"
+          loading="lazy"
+          class="mx-auto w-56 drop-shadow-xl sm:w-64"
+        />
+      </a>
+    </section>
+
+    <!-- CELEBRACIONES CON PROPÓSITO -->
+    <section class="mx-auto max-w-4xl px-4 py-16 text-center">
+      <h2 class="title-outline font-display text-4xl sm:text-5xl">Celebraciones con propósito</h2>
+      <p class="mt-4 text-lg font-bold leading-relaxed text-white/90">
+        En la Ecogranja Villa Juan no solo alquilamos un espacio; diseñamos escenarios naturales para
+        fortalecer equipos y celebrar la vida. Contamos con amplias zonas verdes y espacios cubiertos
+        ideales para momentos únicos.
+      </p>
+      <img
+        src={sombrero.src}
+        alt=""
+        aria-hidden="true"
+        width="1040"
+        height="585"
+        loading="lazy"
+        class="mx-auto mt-8 w-[32rem] max-w-full drop-shadow-xl sm:w-[40rem]"
+      />
+      <a
+        href="/celebraciones"
+        class="mt-4 inline-flex items-center justify-center rounded-full bg-brand-strong px-12 py-6 font-display text-3xl text-white ring-1 ring-white/30 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:text-4xl"
+      >
+        Conocer eventos
+      </a>
+    </section>
+
+    <!-- VILLA DATOS -->
+    <section class="mx-auto max-w-6xl px-4 pt-16 pb-28 text-center text-white">
+      <h2>
+        <img
+          src={tituloVillaDatos.src}
+          alt="Villa Datos curiosos"
+          width="539"
+          height="462"
+          loading="lazy"
+          class="mx-auto w-56 drop-shadow-lg sm:w-64"
+        />
+      </h2>
+      <img
+        src={horseDatos.src}
+        alt=""
+        aria-hidden="true"
+        width="1190"
+        height="578"
+        loading="lazy"
+        class="mx-auto mt-2 w-full max-w-3xl"
+      />
+      <dl id="villa-datos" class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
+        {
+          stats.map((s, i) => (
+            <div
+              class="stat-circle mx-auto flex aspect-square w-full max-w-[13rem] flex-col items-center justify-center rounded-full bg-[#E3542A] p-6 text-center text-white shadow-xl ring-4 ring-white/15"
+              style={`transition-delay:${i * 90}ms`}
+            >
+              <dt class="font-display text-sm leading-[0.95] [text-shadow:0_1px_2px_rgba(0,0,0,0.25)] sm:text-base">
+                {s.label}
+              </dt>
+              <dd
+                class="mt-2 text-2xl font-bold [text-shadow:0_1px_2px_rgba(0,0,0,0.25)] lg:text-3xl"
+                data-count={s.n}
+              >
+                {fmt(s.n)}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+  </div>
+
+  <!-- MUSEO DEL CABALLO — próximamente (panel verde flotando). -->
+  <section class="mx-auto max-w-5xl px-4 py-8">
+    <div class="scene-green rounded-[2.5rem] p-8 text-center text-ink md:p-12">
+      <p class="font-display text-lg text-ink/70">¡Una nueva aventura está por galopar!</p>
+      <h2 class="mt-2 title-outline font-display text-4xl sm:text-5xl">Museo del Caballo</h2>
+      <p class="mt-4 text-lg leading-relaxed text-ink/80">
+        Explora el vínculo histórico entre humanos y equinos en un espacio diseñado para todas las
+        edades. Aprende sobre su biología, comportamiento e impacto ambiental. La mejor salida
+        pedagógica y experiencia de aprendizaje interactivo. Muy pronto, la magia de los caballos
+        estará a tu alcance.
+      </p>
+      <a
+        href="#notificarme"
+        class="mt-6 inline-flex items-center justify-center rounded-full bg-cta-strong px-6 py-3 font-display text-lg text-white transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"
+      >
+        Notificarme la apertura
+      </a>
+      <!-- TODO: "Notificarme" abre un popup que capta Nombre, WhatsApp y Correo al mail de Villa Juan. -->
+    </div>
+  </section>
+
+  <!-- UBICACIÓN / CÓMO LLEGAR -->
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <h2 class="title-outline font-display text-4xl sm:text-5xl">¡A un pequeño galope de la ciudad!</h2>
+    <p class="mt-4 max-w-2xl text-ink/80">
+      Estamos en Tenjo, Cundinamarca. Tan cerca de Bogotá que no alcanzas a cansarte, pero lo
+      suficientemente lejos para cambiar el ruido por el aire fresco.
+    </p>
+    <div class="mt-8 grid gap-6 sm:grid-cols-3">
+      <div class="rounded-3xl bg-surface p-6 shadow-sm ring-1 ring-black/5">
+        <h3 class="font-bold text-ink">Horario</h3>
+        <p class="mt-2 text-sm text-ink/80">{visit.hoursLabel}</p>
+        <p class="text-sm text-ink/80">{visit.hours}</p>
+      </div>
+      <div class="rounded-3xl bg-surface p-6 shadow-sm ring-1 ring-black/5">
+        <h3 class="font-bold text-ink">Ubicación</h3>
+        <p class="mt-2 text-sm text-ink/80">{visit.address}</p>
+        <p class="text-sm text-ink/80">{visit.city} · {visit.note}</p>
+      </div>
+      <div class="rounded-3xl bg-surface p-6 shadow-sm ring-1 ring-black/5">
+        <h3 class="font-bold text-ink">Cómo llegar</h3>
+        <p class="mt-2 text-sm text-ink/80">Búscanos en Waze o Google Maps como Ecogranja Villa Juan.</p>
+        <a
+          href={visit.maps}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-2 inline-block text-sm font-medium text-cta hover:text-cta-strong"
+        >
+          Abrir en Google Maps →
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Enciende el barril ("on") gradualmente según el scroll. Respeta reduce-motion.
+  const on = document.querySelector<HTMLElement>('.barril-on');
+  if (on && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const sec = (on.closest('section') as HTMLElement) ?? (on.parentElement as HTMLElement);
+    on.style.opacity = '0';
+    const update = () => {
+      const r = sec.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // La ignición ARRANCA cuando la sección se ve completa (bottom llega al viewport)
+      // y termina cuando la sección llega arriba. Así el cambio ocurre a la vista.
+      const fullTop = Math.max(1, vh - r.height); // top de la sección al quedar completa
+      const p = Math.min(1, Math.max(0, (fullTop - r.top) / fullTop));
+      on.style.opacity = String(p);
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+</script>
+
+<script>
+  // Villa Datos: entrada animada de los círculos + conteo de los números al entrar en vista.
+  const dl = document.getElementById('villa-datos');
+  if (dl) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fmt = (n: number) => '+' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const circles = Array.from(dl.querySelectorAll<HTMLElement>('.stat-circle'));
+    const counters = Array.from(dl.querySelectorAll<HTMLElement>('[data-count]'));
+    dl.setAttribute('data-anim', '');
+
+    const runCount = (el: HTMLElement) => {
+      const target = Number(el.dataset.count || '0');
+      if (reduce) {
+        el.textContent = fmt(target);
+        return;
+      }
+      const dur = 1400;
+      const t0 = performance.now();
+      const step = (t: number) => {
+        const p = Math.min(1, (t - t0) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = fmt(Math.round(target * eased));
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
+    const io = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            circles.forEach((c) => c.classList.add('is-in'));
+            counters.forEach(runCount);
+            obs.disconnect();
+          }
+        });
+      },
+      { threshold: 0.3 },
+    );
+    io.observe(dl);
+  }
+</script>

@@ -1,0 +1,35 @@
+---
+/**
+ * PageIntro — encabezado de página de vertical (hero simple + CTA de cotización).
+ * scene-green con texto OSCURO (ink): el lima falla AA con blanco (invariante #2).
+ */
+import { contact } from '../../lib/site';
+
+interface Props {
+  title: string;
+  intro: string;
+  /** Palabra/keyword secundaria (p.ej. "Pasadías" en Villa Planes) para SEO/contexto. */
+  kicker?: string;
+}
+
+const { title, intro, kicker } = Astro.props;
+---
+
+<section class="scene-green">
+  <div class="mx-auto max-w-6xl px-4 py-16 text-ink sm:py-24">
+    {kicker && <p class="font-display text-lg text-ink/70">{kicker}</p>}
+    <h1 class="title-outline mt-2 max-w-3xl font-display text-4xl leading-tight sm:text-5xl">
+      {title}
+    </h1>
+    <p class="mt-5 max-w-xl text-lg text-ink/80">{intro}</p>
+    <div class="mt-8">
+      <!-- TODO: destino real = formulario de cotización por vertical / WhatsApp. -->
+      <a
+        href={contact.whatsapp}
+        class="inline-flex items-center justify-center rounded-full bg-cta-strong px-7 py-3 font-display text-lg text-white transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"
+      >
+        Cotizar
+      </a>
+    </div>
+  </div>
+</section>

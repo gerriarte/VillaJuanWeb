@@ -1,0 +1,64 @@
+---
+/**
+ * InfoCard — card vertical para grids (actividades, talleres, pasos, beneficios).
+ * Imagen opcional (astro:assets); si no hay, placeholder accesible. Estilo solo vía tokens.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { img } from '../../lib/images';
+
+interface Props {
+  title: string;
+  body: string;
+  image?: ImageMetadata;
+  /** Nombre del archivo en src/assets/images (drop-and-go). Se resuelve con img(). */
+  imageName?: string;
+  imageAlt?: string;
+  /** Nombre del asset de diseño pendiente (rastro en el HTML + fallback de imageName). */
+  imageTodo?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+const { title, body, image, imageName, imageAlt = '', imageTodo, ctaLabel, ctaHref } = Astro.props;
+
+const resolved = image ?? img(imageName ?? imageTodo ?? '');
+---
+
+<article class="flex h-full flex-col overflow-hidden rounded-3xl bg-surface shadow-sm ring-1 ring-black/5">
+  {
+    resolved ? (
+      <Image
+        src={resolved}
+        alt={imageAlt}
+        widths={[320, 480, 640]}
+        sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
+        loading="lazy"
+        decoding="async"
+        class="aspect-[4/3] w-full object-cover"
+      />
+    ) : (
+      <div
+        class="aspect-[4/3] w-full bg-line"
+        role="img"
+        aria-label={imageAlt || title}
+        data-img-todo={imageTodo}
+      />
+    )
+  }
+
+  <div class="flex flex-1 flex-col gap-3 p-5">
+    <h3 class="text-xl font-bold text-cta">{title}</h3>
+    <p class="text-sm leading-relaxed text-ink/80">{body}</p>
+    {
+      ctaLabel && ctaHref && (
+        <a
+          href={ctaHref}
+          class="mt-auto inline-flex w-fit items-center justify-center rounded-full bg-cta-strong px-5 py-2.5 font-display text-base text-white transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"
+        >
+          {ctaLabel}
+        </a>
+      )
+    }
+  </div>
+</article>

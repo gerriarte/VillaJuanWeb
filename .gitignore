@@ -1,0 +1,36 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/
+
+# Fuentes de diseño pesadas — NO se versionan (mockups + Figma).
+# El .ttf (src/assets/fonts) y los PNG de assets SÍ se versionan.
+*.jpg
+*.jpeg
+*.fig
+mock_web/
+design/VillaJuan.fig
+
+# Volcados de assets fuente en public/ (dumps de Drive) — no van al repo
+public/Hero/
+public/HOME-*/

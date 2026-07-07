@@ -1,0 +1,34 @@
+# Ajustes a incorporar en Gate 2 (sobre el plan ya definido)
+
+## Tokens (Tailwind v4 → @theme, NO tailwind.config.mjs)
+- Extraé los hex del .fig y PROPONÉ una paleta canónica en src/styles/tokens.css.
+- Separá en dos grupos, no los mezcles:
+  - MARCA (pocos, canónicos): primario, CTA, oscuro, neutrales, acento.
+  - ESCENA (fondos full-bleed por sección: verde→oscuro→naranja).
+- Descartá ruido: el borde #707070 repetido es relleno de MTM, NO es token.
+- Nombres semánticos (brand-primary, cta, surface), no literales (orange-1).
+- Objetivo: 4-6 colores de marca máximo. Si proponés 12, estás copiando ruido.
+- Yo valido tu propuesta antes de que la apliques a componentes.
+
+## Fuente Sunrise
+- Vive SOLO en display/headings/acentos. NUNCA en body (mata legibilidad + CWV).
+- Verificá primero si la Fonts API de Astro 7 soporta .ttf local self-hosted.
+  Si sí → usala. Si no → @font-face manual con font-display: swap.
+
+## Higiene
+- Mové JPGs + .fig + .ttf a /design. Gitignoreá JPGs y .fig. El .ttf NO se gitignora.
+- Seteá `site` en astro.config (lo pide el sitemap).
+- CLAUDE.md = única fuente de verdad. Reemplazá el symlink a AGENTS.md.
+  Incluí: invariantes + bloque de animación (client:media, matchMedia,
+  prefers-reduced-motion) + notas de verificación Astro 7 (Fonts API, View
+  Transitions, astro:assets).
+
+## Rutas y nav
+- Nav tiene inconsistencia en el .fig: header "Villa Planes" vs footer "Pasadías".
+  Proponé UNA y unificá. Justificá tu elección.
+- CTAs con href placeholder marcado // TODO: destino real = formulario de
+  cotización por vertical / WhatsApp, NO páginas internas.
+
+## Recordatorio de scope
+- NADA de Directus ni GSAP en este gate. Solo esqueleto + tokens + layout base.
+- PARÁ y reportá para validación.

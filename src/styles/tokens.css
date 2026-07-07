@@ -1,0 +1,57 @@
+/**
+ * tokens.css — Tokens de diseño de Villa Juan (ÚNICA fuente de estilo, invariante #7).
+ *
+ * Wireado desde global.css (`@import "./tokens.css";`). Todo componente usa estos
+ * tokens (text-cta, bg-cta-strong, font-display…), nunca hex sueltos.
+ *
+ * Método: hex EXTRAÍDOS del .fig y DESTILADOS a canónicos (no copiados).
+ * Ruido descartado: el borde #707070 repetido = relleno de plantilla MTM, NO es token.
+ */
+
+@theme {
+  /* ══ MARCA · primario (verde ecogranja) ══ */
+  --color-brand: #0cbd35;        /* verde identidad — canónico de #0cbd35 / #08bf33 */
+  --color-brand-strong: #00811e; /* verde oscuro — hover, bordes, texto sobre claro */
+
+  /* ══ MARCA · CTA (naranja de acción) ══ */
+  --color-cta: #e1542a;          /* naranja único — fusiona título #e3542a + botón #e15329 */
+  --color-cta-strong: #c0360d;   /* naranja oscuro — blanco AA (5.5:1), hover, fin de gradiente */
+
+  /* ══ MARCA · acento ══ */
+  --color-accent: #99c43d;       /* lima fresco — uso puntual (detalles/naturaleza) */
+
+  /* ══ NEUTRALES ══ */
+  --color-ink: #1a1a1a;          /* texto principal — evita el #000 puro */
+  --color-surface: #ffffff;      /* cards / superficies elevadas */
+  --color-bg: #f5f3ef;           /* fondo de página — off-white cálido (propuesto) */
+  --color-line: #e7e3dc;         /* hairlines — reemplaza el #707070 descartado */
+
+  /* ══ TIPOGRAFÍA ══ */
+  /* Sunrise SOLO en display/headings/acentos. Body = stack de sistema (0 descarga → CWV). */
+  /* var(--font-sunrise) lo inyecta <Font> (Fonts API) con métricas de fallback (anti-CLS). */
+  --font-display: var(--font-sunrise), "Sunrise Villa Juan", system-ui, sans-serif;
+  --font-body: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/**
+ * ══ ESCENA · fondos full-bleed por sección (secuencia verde → oscuro → naranja) ══
+ * No son colores planos, son gradientes → van como CSS vars, NO como @theme colors.
+ * Uso previsto: <section class="scene-green"> … </section>
+ */
+:root {
+  --scene-green:  linear-gradient(180deg, #99c43d 0%, #0cbd35 100%);
+  --scene-dark:   linear-gradient(180deg, #2a140c 0%, #0d0404 100%);
+  --scene-orange: linear-gradient(180deg, #e3542a 0%, #c0360d 100%);
+}
+
+.scene-green  { background-image: var(--scene-green);  }
+.scene-dark   { background-image: var(--scene-dark);   }
+.scene-orange { background-image: var(--scene-orange); }
+
+/**
+ * CONTRASTE (invariante #2) — reglas para texto sobre escenas:
+ *   · scene-green arranca en lima #99c43d → blanco FALLA AA.
+ *     Regla: texto sobre scene-green usa var(--color-ink) (oscuro), o scrim si va blanco.
+ *   · scene-orange arranca en #e3542a → blanco solo en texto GRANDE; cuerpo usa ink/scrim.
+ *   · scene-dark → blanco OK.
+ */

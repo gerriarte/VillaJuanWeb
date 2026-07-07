@@ -1,0 +1,68 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import InfoCard from '../components/sections/InfoCard.astro';
+import { wa } from '../lib/site';
+
+// imageName → archivo en src/assets/images/colegios/ (drop-and-go).
+const talleres = [
+  {
+    title: 'Granjeritos por un Día',
+    body: 'Una aventura para que los más pequeños descubran los secretos de la naturaleza y el respeto ambiental. Con retos, observación de fauna y expediciones, los niños despiertan su curiosidad y se convierten en guardianes del ecosistema.',
+    imageName: 'Granjeritos_por_un_dia',
+  },
+  {
+    title: 'Exploradores por un Día',
+    body: 'Expediciones por la granja donde niños y jóvenes exploran, observan y aprenden. La experiencia perfecta para fomentar el liderazgo, el trabajo en equipo y el amor por la vida rural en un entorno seguro y emocionante.',
+    imageName: 'Exploradores_por_un_dia',
+  },
+  {
+    title: 'Agricultor por un Día',
+    body: 'Vive la experiencia de cultivar la tierra y descubre el origen de tus alimentos. Los estudiantes siembran, cosechan y conocen los ciclos naturales de nuestra huerta orgánica bajo el sol de Tenjo.',
+    imageName: 'Agricultor_por_un_dia',
+  },
+  {
+    title: 'Ecologistas por un Día',
+    body: 'Los estudiantes se convierten en guardianes del medio ambiente: reciclaje, conservación, biodiversidad y prácticas sostenibles que pueden aplicar en su vida cotidiana. Una generación comprometida con el planeta.',
+    imageName: 'Ecologista_por_un_dia',
+  },
+];
+---
+
+<Base
+  title="Colegios · Salidas pedagógicas en Villa Juan | Tenjo"
+  description="Salidas pedagógicas para colegios en Ecogranja Villa Juan: talleres donde los estudiantes aprenden haciendo, explorando y conectándose con la naturaleza en Tenjo."
+>
+  <PageIntro
+    title="Salidas pedagógicas para colegios"
+    intro="Transformamos el aprendizaje en una experiencia inolvidable. Los estudiantes aprenden haciendo, explorando y conectándose con la naturaleza a través de talleres que complementan los procesos educativos de manera práctica, divertida y significativa."
+  />
+
+  <section class="mx-auto max-w-4xl px-4 py-12 text-center">
+    <p class="text-lg leading-relaxed text-ink/80">
+      Nuestros programas permiten que niños y jóvenes desarrollen habilidades ambientales,
+      científicas, sociales y emocionales mientras viven una jornada llena de descubrimientos en un
+      entorno seguro y rodeado de naturaleza.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 pb-16">
+    <h2 class="sr-only">Talleres pedagógicos</h2>
+    <div class="grid gap-6 sm:grid-cols-2">
+      {talleres.map((t) => <InfoCard title={t.title} body={t.body} imageName={t.imageName} imageAlt={t.title} />)}
+    </div>
+  </section>
+
+  <section class="scene-green">
+    <div class="mx-auto max-w-4xl px-4 py-16 text-center text-ink">
+      <h2 class="font-display text-3xl sm:text-4xl">Planea la salida de tu colegio</h2>
+      <p class="mt-4 text-ink/80">Diseñamos la jornada a la medida de tu institución.</p>
+      <a
+        href={wa('Quiero planear una salida pedagógica para mi colegio en Villa Juan')}
+        class="mt-6 inline-flex items-center justify-center rounded-full bg-cta-strong px-6 py-3 font-display text-lg text-white transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"
+      >
+        Solicitar información
+      </a>
+    </div>
+  </section>
+</Base>

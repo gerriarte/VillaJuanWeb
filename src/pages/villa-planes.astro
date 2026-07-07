@@ -1,0 +1,89 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import InfoCard from '../components/sections/InfoCard.astro';
+import { wa } from '../lib/site';
+
+const planes = [
+  {
+    title: 'Paso Fino',
+    body: 'El plan para disfrutar del campo a un ritmo tranquilo, ideal para toda la familia.',
+    imageTodo: 'Villa_Plan_Paso_Fino.pdf',
+  },
+  {
+    title: 'Trocha y Galope',
+    body: 'Aventura intermedia con más recorrido y adrenalina entre los senderos de la granja.',
+    imageTodo: 'Villa_Plan_Trocha_y_Galope.pdf',
+  },
+  {
+    title: 'Trote y Galope',
+    body: 'La experiencia más completa para quienes buscan retos y un día lleno de actividades.',
+    imageTodo: 'Villa_Plan_Trote_y_Galope.pdf',
+  },
+];
+
+const incluye = [
+  'Desayuno de la granja',
+  'Espacio exclusivo',
+  'Recorrido por la granja',
+  'Taller de ordeño',
+  'Almuerzo a la carta',
+  'GranjaFest',
+  'Feria de juegos tradicionales',
+  'Show Villa Juan',
+  'Paseo a caballo o en cuatrimoto',
+];
+---
+
+<Base
+  title="Villa Planes · Pasadías y ecoturismo en Tenjo | Ecogranja Villa Juan"
+  description="Villa Planes: pasadías de ecoturismo en la Sabana de Bogotá. Paso Fino, Trocha y Galope o Trote y Galope, con desayuno de la granja, recorridos y show Villa Juan."
+>
+  <PageIntro
+    title="Villa Planes"
+    kicker="Pasadías en Tenjo"
+    intro="¿Buscas escapar de la rutina y respirar aire puro sin pasar horas en el tráfico? A pocos minutos del norte de Bogotá te espera un espacio único rodeado de naturaleza, aventura y tranquilidad."
+  />
+
+  <section class="mx-auto max-w-4xl px-4 py-12 text-center">
+    <p class="text-lg leading-relaxed text-ink/80">
+      Nuestros Villa Planes están pensados para quienes buscan el mejor ecoturismo en la Sabana de
+      Bogotá. Una escapada de fin de semana en familia, un plan romántico en pareja o un día de
+      retos con amigos: tenemos una experiencia a tu medida.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 pb-16">
+    <h2 class="title-outline font-display text-4xl sm:text-5xl">Elige tu plan</h2>
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        planes.map((p) => (
+          <InfoCard
+            title={p.title}
+            body={p.body}
+            imageTodo={p.imageTodo}
+            imageAlt={`Villa Plan ${p.title}`}
+            ctaLabel="Consultar"
+            ctaHref={wa(`Quiero información del Villa Plan ${p.title}`)}
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="scene-green">
+    <div class="mx-auto max-w-6xl px-4 py-16 text-ink">
+      <h2 class="font-display text-3xl sm:text-4xl">¿Qué incluye tu pasadía?</h2>
+      <ul class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          incluye.map((item) => (
+            <li class="flex items-center gap-3 rounded-2xl bg-surface/80 px-4 py-3 text-ink">
+              <span aria-hidden="true" class="font-display text-cta">✓</span>
+              <span class="text-sm font-medium">{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>

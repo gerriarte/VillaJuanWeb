@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/sections/PageIntro.astro';
+
+const categorias = [
+  'Maestría al Barril',
+  'Bienestar y Naturaleza',
+  'Mundo Equino',
+  'Eventos',
+  'Cultura',
+];
+---
+
+<Base
+  title="Blog · Historias de la Granja | Villa Juan"
+  description="Historias de la Granja: cocina al barril, bienestar en la naturaleza, mundo equino y todo para que tu próxima visita a Ecogranja Villa Juan sea inolvidable."
+>
+  <PageIntro
+    title="Historias de la Granja"
+    kicker="Naturaleza, tradición y bienestar"
+    intro="Un espacio para los amantes de la vida de campo. Compartimos los secretos de nuestra cocina al barril, consejos para conectar con la naturaleza, curiosidades del mundo equino y todo lo que necesitas para que tu próxima visita sea inolvidable."
+  />
+
+  <section class="mx-auto max-w-6xl px-4 py-12">
+    <h2 class="title-outline font-display text-3xl sm:text-4xl">Categorías</h2>
+    <ul class="mt-6 flex flex-wrap gap-3">
+      {
+        categorias.map((c) => (
+          <li class="rounded-full bg-surface px-4 py-2 text-sm font-medium text-ink/80 ring-1 ring-black/5">
+            {c}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 pb-20">
+    <p class="text-ink/60">
+      🚧 Muy pronto publicaremos nuestros primeros artículos.
+    </p>
+    <!-- TODO(post-scaffold): listar posts desde Directus / content collections (frame o2SKv).
+         Artículos previstos: "Beneficios del coaching equino para ejecutivos",
+         "Secretos de la cocción al barril", "Taller de caballos para equipos". -->
+  </section>
+</Base>

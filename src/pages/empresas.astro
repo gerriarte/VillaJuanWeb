@@ -1,0 +1,153 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import InfoCard from '../components/sections/InfoCard.astro';
+import { wa } from '../lib/site';
+
+// imageName → archivo en src/assets/images/empresas/ (drop-and-go).
+const corporativas = [
+  {
+    title: 'Día de la Familia Empresarial',
+    body: 'Fortalece el salario emocional de tus colaboradores con una jornada campestre única: actividades de integración, dinámicas para todas las edades, contacto con los animales de la granja y espacios de esparcimiento.',
+    imageName: 'dia_de_la_familia',
+  },
+  {
+    title: 'Fiestas de Fin de Año',
+    body: 'Despide el año con una celebración memorable: banquetes campestres, zonas para eventos musicales, integración de equipos y un ambiente natural exclusivo para celebrar los logros de tu empresa.',
+    imageName: 'Fiestas_de_fin',
+  },
+  {
+    title: 'Fiestas de Halloween',
+    body: 'Una jornada diferente y divertida para los hijos de los colaboradores o para el equipo: concursos de disfraces, decoración temática, senderos recreativos y actividades en un entorno seguro y al aire libre.',
+    imageName: 'Fiestas_de_Halloween',
+  },
+  {
+    title: 'Festival de Cometas',
+    body: 'Aprovecha las mejores temporadas de viento para una dinámica de team building de alto impacto: trabajo en equipo, creatividad y sana competencia en un amplio espacio verde.',
+    imageName: 'Festival_de_cometas',
+  },
+];
+
+const experiencias = [
+  {
+    title: 'Bicipaseos Villa Juan',
+    body: 'Recorre senderos diseñados para disfrutar de la brisa y el paisaje de la granja. Ideal para fomentar la actividad física y el compañerismo mientras exploramos cada rincón.',
+    imageName: 'Bicipaseos_Villa_Juan',
+  },
+  {
+    title: 'Caminatas de Observación',
+    body: 'Más que caminar, se trata de ver. Acompañados de guías, los participantes recorren nuestras zonas de reserva para identificar flora y fauna local, fomentando la curiosidad y el respeto por el ecosistema.',
+    imageName: 'Caminatas_de_observacion',
+  },
+  {
+    title: 'Talleres de Siembra y Huerta',
+    body: 'Una experiencia de "manos en la tierra": aprende los ciclos de la vida vegetal, la importancia de la seguridad alimentaria y llévate la satisfacción de haber plantado vida.',
+    imageName: 'Talleres_de_siembra',
+  },
+];
+
+const beneficios = [
+  { title: 'Liderazgo y confianza', body: 'Actividades diseñadas para identificar y potenciar líderes.' },
+  { title: 'Productividad', body: 'Reducción del estrés laboral mediante el contacto con la naturaleza.' },
+  { title: 'Sentido de pertenencia', body: 'Dinámicas que alinean los objetivos del colaborador con los de la empresa.' },
+];
+
+const servicios = [
+  'Almuerzos corporativos con nuestro sello al barril',
+  'Jornadas de integración',
+  'Conferencias en espacios abiertos',
+  'Shows en vivo',
+];
+---
+
+<Base
+  title="Empresas · Eventos corporativos y team building | Villa Juan"
+  description="Eventos empresariales en Ecogranja Villa Juan: días de la familia, fiestas de fin de año, team building y coaching asistido con caballos en 38.000 m² de naturaleza."
+>
+  <PageIntro
+    title="Empresas"
+    intro="Transformamos las celebraciones corporativas en experiencias inolvidables rodeadas de naturaleza. El escenario ideal para salir de la rutina urbana y conectar a tus equipos con logística integral y experiencias a la medida."
+  />
+
+  <!-- CELEBRACIONES CORPORATIVAS -->
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <h2 class="title-outline font-display text-4xl sm:text-5xl">Celebraciones corporativas</h2>
+    <div class="mt-8 grid gap-6 sm:grid-cols-2">
+      {corporativas.map((c) => <InfoCard title={c.title} body={c.body} imageName={c.imageName} imageAlt={c.title} />)}
+    </div>
+  </section>
+
+  <!-- EXPERIENCIAS VILLA JUAN -->
+  <section class="scene-green">
+    <div class="mx-auto max-w-6xl px-4 py-16 text-ink">
+      <h2 class="font-display text-3xl sm:text-4xl">Experiencias Villa Juan</h2>
+      <p class="mt-3 max-w-2xl text-ink/80">
+        Las salidas no son solo recorridos; son oportunidades para el descubrimiento. El paisaje es
+        el protagonista y la experiencia, el maestro.
+      </p>
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {experiencias.map((e) => <InfoCard title={e.title} body={e.body} imageName={e.imageName} imageAlt={e.title} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENTOS INSTITUCIONALES + BENEFICIOS -->
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <h2 class="title-outline font-display text-4xl sm:text-5xl">
+      Donde la estrategia y la naturaleza se encuentran
+    </h2>
+    <p class="mt-4 max-w-3xl text-ink/80">
+      Contamos con una infraestructura única de 38.000 m² organizada por zonas de experiencia, lo
+      que nos permite recibir desde grupos de 10 personas hasta convenciones de más de 2.000
+      asistentes. Te acompañamos desde la planeación hasta la ejecución, con una logística impecable
+      y resultados que perduran en la cultura de tu organización.
+    </p>
+
+    <h3 class="mt-10 text-xl font-bold text-ink">Beneficios</h3>
+    <div class="mt-4 grid gap-6 sm:grid-cols-3">
+      {
+        beneficios.map((b) => (
+          <div class="rounded-3xl bg-surface p-6 shadow-sm ring-1 ring-black/5">
+            <p class="font-bold text-cta">{b.title}</p>
+            <p class="mt-2 text-sm text-ink/80">{b.body}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <h3 class="mt-10 text-xl font-bold text-ink">Servicios</h3>
+    <ul class="mt-4 flex flex-wrap gap-3">
+      {
+        servicios.map((s) => (
+          <li class="rounded-full bg-surface px-4 py-2 text-sm text-ink/80 ring-1 ring-black/5">
+            {s}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- COACHING CON CABALLOS -->
+  <section class="scene-dark text-white">
+    <div class="mx-auto max-w-4xl px-4 py-16">
+      <p class="font-display text-lg text-white/80">Liderazgo instintivo</p>
+      <h2 class="mt-2 font-display text-3xl sm:text-4xl">Coaching asistido con caballos</h2>
+      <p class="mt-4 leading-relaxed text-white/85">
+        Una experiencia corporativa de alto impacto donde la naturaleza brinda el mejor feedback.
+        Los caballos son expertos en lenguaje no verbal y no responden a jerarquías: actúan como un
+        espejo instintivo de la inteligencia emocional y la comunicación real del grupo.
+      </p>
+      <p class="mt-4 leading-relaxed text-white/85">
+        A través de dinámicas estratégicas pie a tierra, directivos y colaboradores desarrollan un
+        liderazgo auténtico basado en la confianza, aprendiendo a gestionar el estrés, resolver
+        conflictos y trabajar en sinergia: mayor asertividad y productividad para tu empresa.
+      </p>
+      <a
+        href={wa('Quiero cotizar un evento corporativo en Villa Juan')}
+        class="mt-6 inline-flex items-center justify-center rounded-full bg-cta-strong px-6 py-3 font-display text-lg text-white transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      >
+        Cotizar evento corporativo
+      </a>
+    </div>
+  </section>
+</Base>

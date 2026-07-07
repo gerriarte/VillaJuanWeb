@@ -1,0 +1,43 @@
+---
+import '../styles/global.css';
+import { Font } from 'astro:assets';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import SiteBackground from '../components/layout/SiteBackground.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** true = header transparente flotando sobre un hero full-bleed (home). */
+  heroHeader?: boolean;
+}
+
+const {
+  title = 'Ecogranja Villa Juan · Experiencias y eventos en Tenjo',
+  description = 'Ecogranja de experiencias y eventos en Tenjo, Cundinamarca. Celebraciones, empresas, colegios, villa planes y gastronomía rodeados de naturaleza.',
+  heroHeader = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <Font cssVariable="--font-sunrise" preload />
+    <!-- TODO(post-scaffold): <ClientRouter /> para View Transitions. Recordar re-init de
+         ScrollTrigger en astro:page-load cuando entre GSAP. -->
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <SiteBackground />
+    <Header overlay={heroHeader} />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,210 @@
+---
+/**
+ * HeroCarousel — 4 slides del home (imagen full-bleed + título + copy + CTA).
+ * Slider por TRANSFORM (translateX), NO scroll-snap: así la rueda del mouse hace
+ * scroll normal de la página (el scroll-snap horizontal atrapaba el wheel vertical).
+ * Sin JS: se ve el slide 1 (fallback estático). El <script> agrega autoplay + flechas +
+ * dots + swipe táctil y respeta prefers-reduced-motion (invariante #4: JS mínimo, PE).
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { wa } from '../../lib/site';
+import s1 from '../../assets/images/home/hero_home01.jpg';
+import s2 from '../../assets/images/home/hero_home_restaurante.jpg';
+import s3 from '../../assets/images/home/hero_home_coaching.jpg';
+import s4 from '../../assets/images/home/hero_home_empresariales.jpg';
+import tituloHero1 from '../../assets/images/home/Titulo_hero1.svg';
+
+interface Slide {
+  img: ImageMetadata;
+  alt: string;
+  title: string;
+  /** Si se define, el título se muestra como imagen (con `title` como alt). */
+  titleImage?: ImageMetadata;
+  subtitle?: string;
+  text: string;
+  cta: { label: string; href: string };
+}
+
+const slides: Slide[] = [
+  {
+    img: s1,
+    alt: 'Familia disfrutando un día de campo en la Ecogranja Villa Juan',
+    title: 'Ecogranja Villa Juan · Tu escape natural en la Sabana de Bogotá',
+    titleImage: tituloHero1,
+    text: 'Un espacio campestre único donde la naturaleza, la diversión y los negocios se encuentran. El lugar perfecto para conectar con lo que realmente importa.',
+    cta: { label: 'Planear mi visita', href: wa('Quiero planear mi visita Villa Juan') },
+  },
+  {
+    img: s2,
+    alt: 'Restaurante campestre de Villa Juan',
+    title: 'Restaurante Campestre',
+    text: 'La mejor gastronomía local en un entorno natural único. Fusionamos ingredientes orgánicos de la granja con platos tradicionales perfectos para compartir.',
+    cta: { label: 'Ver menú', href: '/gastronomia' },
+  },
+  {
+    img: s3,
+    alt: 'Sesión de coaching asistido con caballos',
+    title: 'Coaching con Caballos',
+    text: 'Impulsa el liderazgo empresarial con sesiones de coaching asistido con caballos cerca de Bogotá. Una experiencia transformadora para conectar equipos.',
+    cta: { label: 'Descubrir coaching', href: '/empresas' },
+  },
+  {
+    img: s4,
+    alt: 'Evento empresarial al aire libre en la ecogranja',
+    title: 'Eventos Empresariales',
+    text: 'El escenario ideal para el Día de la Familia, fiestas de fin de año y team building. Un espacio campestre exclusivo con logística integral.',
+    cta: { label: 'Cotizar evento corporativo', href: wa('Quiero cotizar un evento corporativo en Villa Juan') },
+  },
+];
+---
+
+<section class="relative overflow-hidden" aria-roledescription="carrusel" aria-label="Destacados Villa Juan">
+  <div id="hero-track" class="flex motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out">
+    {
+      slides.map((s, i) => {
+        const Heading = i === 0 ? 'h1' : 'h2';
+        return (
+          <article
+            class="relative min-h-screen w-full shrink-0"
+            aria-roledescription="slide"
+            aria-label={`${i + 1} de ${slides.length}`}
+          >
+            <Image
+              src={s.img}
+              alt={s.alt}
+              widths={[768, 1280, 1920, 2560]}
+              sizes="100vw"
+              format="webp"
+              quality={70}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : undefined}
+              class="absolute inset-0 h-full w-full object-cover"
+            />
+            <div class="absolute inset-0 bg-black/40" />
+            <div class="relative mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center px-4 py-28 text-center text-white">
+              <Heading
+                class:list={[
+                  'leading-tight',
+                  !s.titleImage && 'title-outline font-display text-3xl sm:text-[36pt]',
+                ]}
+              >
+                {
+                  s.titleImage ? (
+                    <img
+                      src={s.titleImage.src}
+                      alt={s.title}
+                      width="1057"
+                      height="224"
+                      class="mx-auto h-auto w-full max-w-xl [filter:drop-shadow(0_2px_10px_rgba(0,0,0,0.35))]"
+                    />
+                  ) : (
+                    s.title
+                  )
+                }
+              </Heading>
+              {s.subtitle && (
+                <p class="mt-2 font-display text-2xl text-white/95 [text-shadow:0_1px_6px_rgba(0,0,0,0.6)] sm:text-3xl">
+                  {s.subtitle}
+                </p>
+              )}
+              <p class="mt-5 max-w-2xl text-lg text-white/90 [text-shadow:0_1px_6px_rgba(0,0,0,0.65)]">
+                {s.text}
+              </p>
+              <div class="mt-8">
+                <a
+                  href={s.cta.href}
+                  class="inline-flex items-center justify-center rounded-full bg-cta-strong px-7 py-3 font-display text-lg text-white transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  {s.cta.label}
+                </a>
+              </div>
+            </div>
+          </article>
+        );
+      })
+    }
+  </div>
+
+  <!-- Flechas (mejora progresiva: las activa el script) -->
+  <button
+    type="button"
+    data-hero-prev
+    aria-label="Slide anterior"
+    class="absolute top-1/2 left-3 z-20 hidden -translate-y-1/2 rounded-full bg-black/35 p-2 text-white backdrop-blur-sm transition hover:bg-black/55 data-[on]:block sm:left-5"
+  >
+    <span aria-hidden="true" class="block h-6 w-6 text-2xl leading-none">‹</span>
+  </button>
+  <button
+    type="button"
+    data-hero-next
+    aria-label="Slide siguiente"
+    class="absolute top-1/2 right-3 z-20 hidden -translate-y-1/2 rounded-full bg-black/35 p-2 text-white backdrop-blur-sm transition hover:bg-black/55 data-[on]:block sm:right-5"
+  >
+    <span aria-hidden="true" class="block h-6 w-6 text-2xl leading-none">›</span>
+  </button>
+
+  <!-- Dots (botones; el script los activa) -->
+  <div class="absolute inset-x-0 bottom-6 z-20 flex justify-center gap-3">
+    {
+      slides.map((_, i) => (
+        <button
+          type="button"
+          data-hero-dot
+          aria-label={`Ir al slide ${i + 1}`}
+          class="h-3 w-3 rounded-full bg-white/50 ring-1 ring-black/20 transition hover:bg-white aria-[current=true]:w-6 aria-[current=true]:bg-white"
+        />
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  const track = document.getElementById('hero-track');
+  if (track) {
+    const n = track.children.length;
+    const dots = Array.from(document.querySelectorAll<HTMLElement>('[data-hero-dot]'));
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let idx = 0;
+
+    const render = () => {
+      track.style.transform = `translateX(-${idx * 100}%)`;
+      dots.forEach((d, j) => d.setAttribute('aria-current', j === idx ? 'true' : 'false'));
+    };
+    const goTo = (i: number) => {
+      idx = (i + n) % n;
+      render();
+    };
+
+    dots.forEach((d, i) => d.addEventListener('click', () => { goTo(i); restart(); }));
+    const prev = document.querySelector<HTMLElement>('[data-hero-prev]');
+    const next = document.querySelector<HTMLElement>('[data-hero-next]');
+    [prev, next].forEach((b) => b?.setAttribute('data-on', ''));
+    prev?.addEventListener('click', () => { goTo(idx - 1); restart(); });
+    next?.addEventListener('click', () => { goTo(idx + 1); restart(); });
+
+    // Swipe táctil
+    let x0: number | null = null;
+    track.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+    track.addEventListener('pointerup', (e) => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0;
+      if (Math.abs(dx) > 40) { goTo(idx + (dx < 0 ? 1 : -1)); restart(); }
+      x0 = null;
+    });
+
+    // Autoplay (pausa en hover/focus; nada si reduce-motion)
+    let timer: number | undefined;
+    const stop = () => { if (timer) window.clearInterval(timer); };
+    const start = () => { if (reduce) return; stop(); timer = window.setInterval(() => goTo(idx + 1), 6000); };
+    const restart = () => { stop(); start(); };
+    const sec = track.closest('section')!;
+    sec.addEventListener('pointerenter', stop);
+    sec.addEventListener('pointerleave', start);
+    sec.addEventListener('focusin', stop);
+    sec.addEventListener('focusout', start);
+
+    render();
+    start();
+  }
+</script>

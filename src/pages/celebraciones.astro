@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import ServiceCard from '../components/sections/ServiceCard.astro';
+import { wa } from '../lib/site';
+
+// imageName → archivo en src/assets/images/celebraciones/ (drop-and-go). '' = aún sin asset.
+const celebraciones = [
+  {
+    title: 'Cumpleaños',
+    body: 'Vive una experiencia única rodeada de naturaleza y diversión. Aprovecha nuestras promociones: torta para todo el grupo y decoración gratis, o el pasadía gratuito para el cumpleañero. Para grupos de 10 personas en adelante.',
+    imageAlt: 'Celebración de cumpleaños en la ecogranja',
+    imageName: 'Cumpleaños_Villa_Juan',
+  },
+  {
+    title: 'XV Años y Grados',
+    body: 'El lugar perfecto para una celebración vibrante y llena de estilo. Espacios abiertos para fotos increíbles y zonas de fiesta seguras y amplias.',
+    imageAlt: 'Celebración de XV años al aire libre',
+    imageName: 'XV_Anos_y_Grados',
+  },
+  {
+    title: 'Bodas Campestres',
+    body: 'Un "Sí, acepto" rodeado de atardeceres mágicos y el encanto del campo. Escenarios inolvidables y una logística impecable para el día más importante de tu vida.',
+    imageAlt: 'Boda campestre en Villa Juan',
+    imageName: 'Bodas_Campestres',
+  },
+  {
+    title: 'Reencuentros Familiares',
+    body: 'Celebramos la unión. Disfruta de un día de campo con actividades para todas las edades, desde los más pequeños hasta los abuelos.',
+    imageAlt: 'Reencuentro familiar en el campo',
+    imageName: 'Reencuentros_Familiares',
+  },
+  {
+    title: 'Primeras Comuniones y Bautizos',
+    body: 'Ambientes tranquilos y acogedores para compartir la fe y la alegría en familia, con menús que encantan a todos.',
+    imageAlt: 'Primera comunión en la ecogranja',
+    imageName: 'Primeras_comuniones',
+  },
+];
+---
+
+<Base
+  title="Celebraciones · XV, bodas y cumpleaños al aire libre | Villa Juan"
+  description="Celebraciones en Ecogranja Villa Juan: XV años, bodas campestres, cumpleaños, primeras comuniones y reencuentros familiares rodeados de naturaleza."
+>
+  <PageIntro
+    title="Tus mejores momentos merecen un escenario natural"
+    intro="En la Ecogranja Villa Juan no solo alquilamos un espacio; diseñamos escenarios naturales para fortalecer equipos y celebrar la vida. Amplias zonas verdes y espacios cubiertos para momentos únicos."
+  />
+
+  <section class="mx-auto max-w-4xl px-4 py-12 text-center">
+    <p class="text-lg leading-relaxed text-ink/80">
+      Nuestra infraestructura destaca por su belleza y su funcionalidad: amplias zonas de
+      parqueadero privado, seguridad permanente y un equipo de colaboradores expertos que acompañan
+      tu evento de principio a fin. Tu única responsabilidad es celebrar; nosotros nos encargamos de
+      que todo salga perfecto.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 pb-20">
+    <h2 class="sr-only">Nuestras celebraciones</h2>
+    <div class="flex flex-col gap-8">
+      {
+        celebraciones.map((c, i) => (
+          <ServiceCard
+            title={c.title}
+            body={c.body}
+            imageName={c.imageName}
+            imageAlt={c.imageAlt}
+            reverse={i % 2 === 1}
+            ctaLabel="Reservar"
+            ctaHref={wa(`Quiero reservar: ${c.title} en Villa Juan`)}
+          />
+        ))
+      }
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,73 @@
+---
+/**
+ * SiteBackground — fondo continuo del sitio (una sola capa, detrás de todo).
+ * Capas (atrás → adelante):
+ *   1. Degradé horizontal #99C43D → #0CBD35 (fondo base de todas las páginas).
+ *   2. Fondo_repetitivo.png (PNG transparente, bordes verde acuarela) tileado repeat-y.
+ *   3. Hojas dispersas por toda la página, tamaños/rotaciones variados (orgánico).
+ * Es `absolute inset-0` sobre <body> (position: relative) → cubre todo el alto del
+ * documento y SCROLLEA con el contenido (no fixed). aria-hidden + pointer-events-none.
+ * Optimizado con astro:assets → WebP (invariante #5). Cero JS.
+ */
+import { getImage } from 'astro:assets';
+import fondoImg from '../../assets/images/Fondo_repetitivo.png';
+import h1 from '../../assets/images/Hoja_1.png';
+import h2 from '../../assets/images/Hoja_2.png';
+import h3 from '../../assets/images/Hoja_3.png';
+import h4 from '../../assets/images/Hoja_4.png';
+import h5 from '../../assets/images/Hoja_5.png';
+import h6 from '../../assets/images/Hoja_6.png';
+import h7 from '../../assets/images/Hoja_7.png';
+import h8 from '../../assets/images/Hoja_8.png';
+import h9 from '../../assets/images/Hoja_9.png';
+import h10 from '../../assets/images/Hoja_10.png';
+
+const fondo = await getImage({ src: fondoImg, format: 'webp', width: 1440, quality: 52 });
+const hojas = await Promise.all(
+  [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10].map((s) =>
+    getImage({ src: s, format: 'webp', width: 240, quality: 66 }),
+  ),
+);
+
+// Dispersión de hojas por todo el alto (top %), lados alternados, tamaños/rotaciones/opacidad variados.
+type Leaf = { h: number; top: number; side: 'left' | 'right'; off: number; w: number; rot: number; op: number };
+const leaves: Leaf[] = [
+  { h: 0, top: 3, side: 'left', off: -2, w: 9, rot: 14, op: 0.85 },
+  { h: 3, top: 7, side: 'right', off: -1, w: 7, rot: -12, op: 0.75 },
+  { h: 5, top: 13, side: 'left', off: 8, w: 4.5, rot: -8, op: 0.55 },
+  { h: 1, top: 18, side: 'right', off: -3, w: 8.5, rot: 20, op: 0.8 },
+  { h: 7, top: 25, side: 'left', off: -3, w: 8, rot: -18, op: 0.75 },
+  { h: 2, top: 33, side: 'right', off: 5, w: 5, rot: 10, op: 0.6 },
+  { h: 8, top: 40, side: 'left', off: -1, w: 7.5, rot: 8, op: 0.8 },
+  { h: 4, top: 48, side: 'right', off: -2, w: 9, rot: -14, op: 0.8 },
+  { h: 6, top: 55, side: 'left', off: 6, w: 4.5, rot: 16, op: 0.55 },
+  { h: 9, top: 63, side: 'right', off: -1, w: 8, rot: -6, op: 0.75 },
+  { h: 0, top: 70, side: 'left', off: -3, w: 8.5, rot: -20, op: 0.8 },
+  { h: 3, top: 78, side: 'right', off: 4, w: 5, rot: 12, op: 0.6 },
+  { h: 5, top: 85, side: 'left', off: -2, w: 7.5, rot: 18, op: 0.75 },
+  { h: 7, top: 92, side: 'right', off: -2, w: 8.5, rot: -10, op: 0.8 },
+  { h: 2, top: 97, side: 'left', off: 7, w: 4.5, rot: 6, op: 0.5 },
+];
+---
+
+<div
+  aria-hidden="true"
+  class="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+  style="background-image: linear-gradient(90deg, #99c43d 0%, #0cbd35 100%);"
+>
+  <div
+    class="absolute inset-0"
+    style={`background-image:url('${fondo.src}');background-repeat:repeat-y;background-size:100% auto;background-position:top center;`}
+  >
+  </div>
+  {
+    leaves.map((l) => (
+      <img
+        src={hojas[l.h].src}
+        alt=""
+        loading="lazy"
+        style={`position:absolute;top:${l.top}%;${l.side}:${l.off}%;width:${l.w}rem;transform:rotate(${l.rot}deg);opacity:${l.op};`}
+      />
+    ))
+  }
+</div>
