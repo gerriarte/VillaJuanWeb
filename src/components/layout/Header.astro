@@ -32,9 +32,64 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
         <img src={logo.src} alt="Ecogranja Villa Juan" width="174" height="96" class="h-11 w-auto" />
       </a>
 
-      <!-- TODO(post-scaffold): menú móvil (island con client:media) cuando la nav crezca. -->
-      <nav aria-label="Navegación principal">
-        <ul class="flex flex-wrap items-center gap-x-5 gap-y-1 font-display text-2xl text-[#FFF200] [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">
+      <nav aria-label="Navegación principal" class="flex items-center">
+        <!-- Menú móvil (<md): disclosure nativo <details>, cero JS. Se cierra solo al navegar (MPA). -->
+        <details class="mobile-nav relative md:hidden">
+          <summary
+            class="flex cursor-pointer list-none items-center rounded-lg p-1 text-[#FFF200] [text-shadow:0_1px_3px_rgba(0,0,0,0.4)] transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            aria-label="Abrir menú de navegación"
+          >
+            <svg class="i-menu h-9 w-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+              <line x1="3" y1="7" x2="21" y2="7" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="17" x2="21" y2="17" />
+            </svg>
+            <svg class="i-close h-9 w-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+              <line x1="5" y1="5" x2="19" y2="19" />
+              <line x1="19" y1="5" x2="5" y2="19" />
+            </svg>
+          </summary>
+
+          <ul class="absolute right-0 top-full z-50 mt-3 flex min-w-60 flex-col gap-1 rounded-2xl bg-brand-strong p-3 font-display text-2xl text-[#FFF200] shadow-xl ring-1 ring-black/10">
+            {
+              nav.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    aria-current={isActive(item.href) ? 'page' : undefined}
+                    class:list={[
+                      'block rounded-xl px-3 py-2 transition hover:bg-white/10',
+                      isActive(item.href) && 'underline underline-offset-4',
+                    ]}
+                  >
+                    {item.label}
+                  </a>
+                  {item.children && (
+                    <ul class="mt-1 mb-1 ml-3 flex flex-col gap-1 border-l border-white/25 pl-3 text-xl">
+                      {item.children.map((c) => (
+                        <li>
+                          <a
+                            href={c.href}
+                            aria-current={isActive(c.href) ? 'page' : undefined}
+                            class:list={[
+                              'block rounded-xl px-3 py-1.5 transition hover:bg-white/10',
+                              isActive(c.href) && 'underline underline-offset-4',
+                            ]}
+                          >
+                            {c.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))
+            }
+          </ul>
+        </details>
+
+        <!-- Menú desktop (≥md): barra horizontal con flyout hover. -->
+        <ul class="hidden items-center gap-x-5 gap-y-1 font-display text-2xl text-[#FFF200] [text-shadow:0_1px_3px_rgba(0,0,0,0.4)] md:flex">
           {
             nav.map((item) =>
               item.children ? (
@@ -89,3 +144,22 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
     </div>
   </div>
 </header>
+
+<style>
+  /* <details> como menú móvil: sin marcador nativo y swap de icono según estado. */
+  .mobile-nav > summary {
+    list-style: none;
+  }
+  .mobile-nav > summary::-webkit-details-marker {
+    display: none;
+  }
+  .mobile-nav > summary .i-close {
+    display: none;
+  }
+  .mobile-nav[open] > summary .i-menu {
+    display: none;
+  }
+  .mobile-nav[open] > summary .i-close {
+    display: block;
+  }
+</style>
