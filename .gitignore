@@ -35,5 +35,6 @@ design/VillaJuan.fig
 public/Hero/
 public/HOME-*/
 
-# SVG fuente pesado (raster embebido, 9.5MB) — se rasteriza a horse_cronicas.png (versionado)
-src/assets/images/home/horse_Cronicas.svg
+# Fuentes de diseño pesadas del home (SVG-wrappers con raster embebido, ~155MB).
+# Se rasterizan/optimizan a PNG/WebP versionados en src/assets/images/home/.
+design/home-sources/

@@ -1,153 +1,312 @@
 ---
 import Base from '../layouts/Base.astro';
-import PageIntro from '../components/sections/PageIntro.astro';
-import InfoCard from '../components/sections/InfoCard.astro';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import { wa } from '../lib/site';
+import heroImg from '../assets/images/empresas/hero.webp';
+import badgeCorp from '../assets/images/empresas/Corporativa_cotizar.png';
+import cotizarCoaching from '../assets/images/empresas/Coach_titulo.png';
+import ventana1 from '../assets/images/empresas/horse_ventana1.png';
+import ventana2 from '../assets/images/empresas/horse_ventana2.png';
+import ventana3 from '../assets/images/empresas/horse_ventana3.png';
+import icono01 from '../assets/images/empresas/icono01.png';
+import icono02 from '../assets/images/empresas/icono02.png';
+import icono03 from '../assets/images/empresas/icono03.png';
+import icono04 from '../assets/images/empresas/icono04.png';
+import icono05 from '../assets/images/empresas/icono05.png';
+import imgDiaFamilia from '../assets/images/empresas/dia_familia.webp';
+import imgFinAno from '../assets/images/empresas/fin_ano.webp';
+import imgHalloween from '../assets/images/empresas/halloween.webp';
+import imgCometas from '../assets/images/empresas/cometas.webp';
+import imgBici from '../assets/images/empresas/bicipaseos.webp';
+import imgCaminatas from '../assets/images/empresas/caminatas.webp';
+import imgTalleres from '../assets/images/empresas/talleres.webp';
+import imgFormacion from '../assets/images/empresas/formacion.webp';
+import imgSiembra from '../assets/images/empresas/siembra.webp';
+import gal1 from '../assets/images/empresas/gal1.webp';
+import gal2 from '../assets/images/empresas/gal2.webp';
+import gal3 from '../assets/images/empresas/gal3.webp';
+import cronica1 from '../assets/images/home/hero_home_empresariales.jpg';
+import cronica2 from '../assets/images/home/hero_home_coaching.jpg';
+import cronica3 from '../assets/images/home/hero_home_restaurante.jpg';
 
-// imageName → archivo en src/assets/images/empresas/ (drop-and-go).
-const corporativas = [
-  {
-    title: 'Día de la Familia Empresarial',
-    body: 'Fortalece el salario emocional de tus colaboradores con una jornada campestre única: actividades de integración, dinámicas para todas las edades, contacto con los animales de la granja y espacios de esparcimiento.',
-    imageName: 'dia_de_la_familia',
-  },
-  {
-    title: 'Fiestas de Fin de Año',
-    body: 'Despide el año con una celebración memorable: banquetes campestres, zonas para eventos musicales, integración de equipos y un ambiente natural exclusivo para celebrar los logros de tu empresa.',
-    imageName: 'Fiestas_de_fin',
-  },
-  {
-    title: 'Fiestas de Halloween',
-    body: 'Una jornada diferente y divertida para los hijos de los colaboradores o para el equipo: concursos de disfraces, decoración temática, senderos recreativos y actividades en un entorno seguro y al aire libre.',
-    imageName: 'Fiestas_de_Halloween',
-  },
-  {
-    title: 'Festival de Cometas',
-    body: 'Aprovecha las mejores temporadas de viento para una dinámica de team building de alto impacto: trabajo en equipo, creatividad y sana competencia en un amplio espacio verde.',
-    imageName: 'Festival_de_cometas',
-  },
+// Clases de títulos de sección reutilizadas.
+const titleGreen =
+  'text-center font-display text-4xl leading-tight text-white [paint-order:stroke_fill] [-webkit-text-stroke:2.5px_#0a7d24] [text-shadow:0_3px_8px_rgba(0,0,0,0.25)] sm:text-5xl';
+const titleOrange =
+  'text-center font-display text-4xl leading-tight text-[#FFF200] [text-shadow:0_2px_4px_rgba(0,0,0,0.35)] sm:text-5xl';
+
+type Card = { img: ImageMetadata; title: string; alt: string; body: string };
+
+const celebraciones: Card[] = [
+  { img: imgDiaFamilia, title: 'Día de la Familia Empresarial', alt: 'Colaboradores disfrutando un día de familia en Villa Juan', body: 'Fortalece el salario emocional de tus colaboradores con una jornada campestre única. Diseñamos actividades de integración dinámicas para todas las edades, dinámicas con animales de la granja y espacios de esparcimiento para que los equipos disfruten junto a sus seres queridos.' },
+  { img: imgFinAno, title: 'Fiestas de Fin de Año Corporativas', alt: 'Brindis de fin de año corporativo en Villa Juan', body: 'Despide el año laboral con una celebración memorable. Ofrecemos banquetes campestres, zonas para eventos musicales, integración de equipos y un ambiente natural exclusivo para celebrar los logros alcanzados por tu empresa.' },
+  { img: imgHalloween, title: 'Fiestas de Halloween Empresariales', alt: 'Decoración de Halloween en el campo de Villa Juan', body: 'Una jornada diferente y divertida adaptada para los hijos de los colaboradores o para el mismo equipo de trabajo. Organizamos concursos de disfraces, decoración temática, senderos recreativos y actividades especiales en un entorno seguro y al aire libre.' },
+  { img: imgCometas, title: 'Festival de Cometas Corporativo', alt: 'Cometas volando en el cielo de Villa Juan', body: 'Aprovecha las mejores temporadas de viento para una dinámica de team building de alto impacto. Una actividad perfecta para fomentar el trabajo en equipo, la creatividad en el diseño de cometas y la sana competencia en un amplio espacio verde sin interferencias.' },
 ];
 
-const experiencias = [
-  {
-    title: 'Bicipaseos Villa Juan',
-    body: 'Recorre senderos diseñados para disfrutar de la brisa y el paisaje de la granja. Ideal para fomentar la actividad física y el compañerismo mientras exploramos cada rincón.',
-    imageName: 'Bicipaseos_Villa_Juan',
-  },
-  {
-    title: 'Caminatas de Observación',
-    body: 'Más que caminar, se trata de ver. Acompañados de guías, los participantes recorren nuestras zonas de reserva para identificar flora y fauna local, fomentando la curiosidad y el respeto por el ecosistema.',
-    imageName: 'Caminatas_de_observacion',
-  },
-  {
-    title: 'Talleres de Siembra y Huerta',
-    body: 'Una experiencia de "manos en la tierra": aprende los ciclos de la vida vegetal, la importancia de la seguridad alimentaria y llévate la satisfacción de haber plantado vida.',
-    imageName: 'Talleres_de_siembra',
-  },
+const experiencias: Card[] = [
+  { img: imgBici, title: 'Bicipaseos Villa Juan', alt: 'Ciclistas recorriendo los senderos de Villa Juan', body: 'Recorre senderos diseñados para disfrutar de la brisa y el paisaje de la granja. Una actividad ideal para fomentar la actividad física y el compañerismo mientras exploramos cada rincón de nuestra infraestructura natural.' },
+  { img: imgFinAno, title: 'Despedidas Fin de Año', alt: 'Brindis de despedida de año en Villa Juan', body: 'Cierra el año junto a tu equipo en un entorno campestre exclusivo. Brindis, integración y espacios al aire libre para celebrar juntos los logros y despedir el año a lo grande.' },
+  { img: imgCaminatas, title: 'Caminatas de Observación', alt: 'Caminata de observación por la reserva de Villa Juan', body: 'Más que caminar, se trata de ver. Acompañados de guías, los participantes recorren nuestras zonas de reserva para identificar flora local y fauna, fomentando la curiosidad y el respeto por el ecosistema.' },
+  { img: imgTalleres, title: 'Talleres de Siembra y Huerta', alt: 'Manos sembrando en la huerta de Villa Juan', body: "Una experiencia de 'manos en la tierra'. Aprende los ciclos de la vida vegetal, la importancia de la seguridad alimentaria y llévate la satisfacción de haber plantado vida. Un retorno a nuestras raíces campesinas." },
 ];
 
 const beneficios = [
-  { title: 'Liderazgo y confianza', body: 'Actividades diseñadas para identificar y potenciar líderes.' },
-  { title: 'Productividad', body: 'Reducción del estrés laboral mediante el contacto con la naturaleza.' },
-  { title: 'Sentido de pertenencia', body: 'Dinámicas que alinean los objetivos del colaborador con los de la empresa.' },
+  { img: ventana1, title: 'Liderazgo y Confianza', body: 'Actividades diseñadas para identificar y potenciar líderes.' },
+  { img: ventana2, title: 'Productividad', body: 'Reducción del estrés laboral mediante el contacto directo con la naturaleza.' },
+  { img: ventana3, title: 'Sentido de Pertenencia', body: 'Dinámicas que alinean los objetivos del colaborador con los de la empresa.' },
 ];
 
-const servicios = [
-  'Almuerzos corporativos con nuestro sello al barril',
-  'Jornadas de integración',
-  'Conferencias en espacios abiertos',
-  'Shows en vivo',
+const bienestar = [
+  { img: imgFormacion, imgRight: true, title: 'Formación Asistida Con Caballos', alt: 'Formación asistida con caballos en Villa Juan', body: 'Una experiencia transformadora donde el caballo actúa como espejo de nuestras emociones. Ideal para quienes buscan fortalecer su liderazgo, mejorar la comunicación asertiva o simplemente vivir un momento de bienestar y reflexión personal.' },
+  { img: imgSiembra, imgRight: false, title: 'Jornada de Siembra', alt: 'Jornada de siembra y reforestación en Villa Juan', body: 'Deja una huella positiva en el planeta y conecta con la tierra en nuestras jornadas de reforestación guiada. Esta actividad te permite ser parte activa del equilibrio ecológico de Tenjo, aprendiendo sobre especies nativas mientras siembras vida con tus propias manos. Es el plan ideal para familias, empresas y grupos que buscan una experiencia con propósito, transformando el paisaje y contribuyendo a un futuro más verde y sostenible para todos.' },
+  { img: imgBici, imgRight: true, title: 'Bici-Paseos', alt: 'Bici-paseos por los paisajes de Tenjo', body: 'Recorre los paisajes de Tenjo sobre dos ruedas en una ruta diseñada para desconectarte y respirar aire puro. Es la actividad ideal para quienes buscan combinar deporte, aventura y naturaleza, explorando senderos rurales de forma dinámica y divertida en familia o con amigos. Atrévete a pedalear por caminos inolvidables mientras descubres la biodiversidad local y disfrutas del mejor turismo activo cerca de la ciudad.' },
+];
+
+const programas = [
+  { icon: icono01, label: 'Aprendizaje Experiencial in-Outdoor' },
+  { icon: icono02, label: 'La Matemática del Corazón' },
+  { icon: icono03, label: 'Mindfulness' },
+  { icon: icono04, label: 'Baño de Bosque (Shinrin Yoku)' },
+  { icon: icono05, label: 'Trabajo Individual Modelo Vivencial Conversacional' },
+];
+
+const galeria = [
+  { img: gal1, alt: 'Sesión de coaching con caballos en Villa Juan' },
+  { img: gal2, alt: 'Grupo en una dinámica de coaching asistido con caballos' },
+  { img: gal3, alt: 'Equipo trabajando con los caballos en Villa Juan' },
+];
+
+const cronicas = [
+  { img: cronica1, alt: 'Evento empresarial en Villa Juan', title: 'Team building que sí transforma equipos', href: '/blog' },
+  { img: cronica2, alt: 'Coaching con caballos en Villa Juan', title: 'Qué aprende un líder frente a un caballo', href: '/blog' },
+  { img: cronica3, alt: 'Almuerzo corporativo al barril en Villa Juan', title: 'El sabor al barril que une a tu empresa', href: '/blog' },
 ];
 ---
 
 <Base
-  title="Empresas · Eventos corporativos y team building | Villa Juan"
-  description="Eventos empresariales en Ecogranja Villa Juan: días de la familia, fiestas de fin de año, team building y coaching asistido con caballos en 38.000 m² de naturaleza."
+  heroHeader
+  title="Empresas · Eventos corporativos y coaching con caballos en Tenjo | Ecogranja Villa Juan"
+  description="Eventos corporativos, integración, bienestar y coaching asistido con caballos en 38.000 m² de naturaleza cerca de Bogotá. Desde 10 hasta 2.000 asistentes."
 >
-  <PageIntro
-    title="Empresas"
-    intro="Transformamos las celebraciones corporativas en experiencias inolvidables rodeadas de naturaleza. El escenario ideal para salir de la rutina urbana y conectar a tus equipos con logística integral y experiencias a la medida."
-  />
-
-  <!-- CELEBRACIONES CORPORATIVAS -->
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <h2 class="title-outline font-display text-4xl sm:text-5xl">Celebraciones corporativas</h2>
-    <div class="mt-8 grid gap-6 sm:grid-cols-2">
-      {corporativas.map((c) => <InfoCard title={c.title} body={c.body} imageName={c.imageName} imageAlt={c.title} />)}
-    </div>
+  <!-- HERO -->
+  <section class="relative">
+    <Image
+      src={heroImg}
+      alt="Vista aérea de un evento corporativo bajo carpa en la Ecogranja Villa Juan"
+      widths={[768, 1280, 1920]}
+      sizes="100vw"
+      format="webp"
+      quality={72}
+      loading="eager"
+      fetchpriority="high"
+      class="h-[52vh] min-h-[360px] w-full object-cover sm:h-[64vh]"
+    />
   </section>
 
-  <!-- EXPERIENCIAS VILLA JUAN -->
-  <section class="scene-green">
-    <div class="mx-auto max-w-6xl px-4 py-16 text-ink">
-      <h2 class="font-display text-3xl sm:text-4xl">Experiencias Villa Juan</h2>
-      <p class="mt-3 max-w-2xl text-ink/80">
-        Las salidas no son solo recorridos; son oportunidades para el descubrimiento. El paisaje es
-        el protagonista y la experiencia, el maestro.
-      </p>
-      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {experiencias.map((e) => <InfoCard title={e.title} body={e.body} imageName={e.imageName} imageAlt={e.title} />)}
+  <!-- CELEBRACIONES CORPORATIVAS -->
+  <section>
+    <div class="mx-auto max-w-6xl px-4 py-16">
+      <h1 class={titleGreen}>Celebraciones</h1>
+      <div class="mx-auto mt-6 max-w-4xl space-y-4 text-center text-lg leading-relaxed text-ink/90">
+        <p>
+          En Ecogranja Villa Juan transformamos las celebraciones corporativas en experiencias
+          inolvidables rodeadas de naturaleza y aire puro. Somos el escenario ideal para empresas que
+          buscan salir de la rutina urbana y conectar a sus equipos a través de actividades al aire
+          libre, integración y recreación.
+        </p>
+        <p>
+          Si estás planeando el próximo evento de tu organización, contamos con un espacio campestre
+          idóneo, logística integral y experiencias temáticas diseñadas a la medida de tus
+          necesidades.
+        </p>
+      </div>
+
+      <div class="mt-10 grid gap-6 sm:grid-cols-2">
+        {
+          celebraciones.map((c) => (
+            <article class="flex flex-col overflow-hidden rounded-3xl bg-surface p-4 text-center shadow-lg">
+              <Image src={c.img} alt={c.alt} widths={[320, 480, 640]} sizes="(min-width: 640px) 28rem, 90vw" format="webp" quality={72} loading="lazy" class="h-48 w-full rounded-2xl object-cover" />
+              <h2 class="mt-4 font-display text-2xl text-cta">{c.title}</h2>
+              <p class="mt-2 px-2 pb-1 text-sm leading-relaxed text-ink/70">{c.body}</p>
+            </article>
+          ))
+        }
       </div>
     </div>
   </section>
 
-  <!-- EVENTOS INSTITUCIONALES + BENEFICIOS -->
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <h2 class="title-outline font-display text-4xl sm:text-5xl">
-      Donde la estrategia y la naturaleza se encuentran
-    </h2>
-    <p class="mt-4 max-w-3xl text-ink/80">
-      Contamos con una infraestructura única de 38.000 m² organizada por zonas de experiencia, lo
-      que nos permite recibir desde grupos de 10 personas hasta convenciones de más de 2.000
-      asistentes. Te acompañamos desde la planeación hasta la ejecución, con una logística impecable
-      y resultados que perduran en la cultura de tu organización.
-    </p>
+  <!-- EXPERIENCIAS VILLA JUAN -->
+  <section>
+    <div class="mx-auto max-w-6xl px-4 pb-16">
+      <h2 class={titleGreen}>Experiencias Villa Juan</h2>
+      <p class="mx-auto mt-6 max-w-4xl text-center text-lg leading-relaxed text-ink/90">
+        En <strong class="text-cta-strong">Ecogranja Villa Juan</strong>, las salidas no son solo
+        recorridos; son oportunidades para el descubrimiento. Hemos diseñado una serie de actividades
+        dinámicas que se adaptan a las necesidades de empresas buscando
+        <strong class="text-cta-strong">liderazgo</strong>, colegios buscando
+        <strong class="text-cta-strong">educación ambiental</strong> y familias que desean una
+        <strong class="text-cta-strong">desconexión real</strong> de la rutina urbana. Aquí, el
+        paisaje es el protagonista y la experiencia es el maestro.
+      </p>
 
-    <h3 class="mt-10 text-xl font-bold text-ink">Beneficios</h3>
-    <div class="mt-4 grid gap-6 sm:grid-cols-3">
-      {
-        beneficios.map((b) => (
-          <div class="rounded-3xl bg-surface p-6 shadow-sm ring-1 ring-black/5">
-            <p class="font-bold text-cta">{b.title}</p>
-            <p class="mt-2 text-sm text-ink/80">{b.body}</p>
-          </div>
-        ))
-      }
+      <div class="mt-10 grid gap-6 sm:grid-cols-2">
+        {
+          experiencias.map((c) => (
+            <article class="flex flex-col overflow-hidden rounded-3xl bg-surface p-4 text-center shadow-lg">
+              <Image src={c.img} alt={c.alt} widths={[320, 480, 640]} sizes="(min-width: 640px) 28rem, 90vw" format="webp" quality={72} loading="lazy" class="h-48 w-full rounded-2xl object-cover" />
+              <h3 class="mt-4 font-display text-2xl text-cta">{c.title}</h3>
+              <p class="mt-2 px-2 pb-1 text-sm leading-relaxed text-ink/70">{c.body}</p>
+            </article>
+          ))
+        }
+      </div>
+
+      <!-- Badge Solicitar Propuesta Corporativa -->
+      <div class="mt-12 text-center">
+        <a href={wa('Quiero solicitar una propuesta corporativa')} target="_blank" rel="noopener noreferrer" aria-label="Solicitar propuesta corporativa" class="inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+          <img src={badgeCorp.src} alt="Solicitar propuesta corporativa" width={badgeCorp.width} height={badgeCorp.height} loading="lazy" class="mx-auto w-72 [filter:drop-shadow(0_8px_16px_rgba(0,0,0,0.25))] sm:w-96" />
+        </a>
+      </div>
     </div>
+  </section>
 
-    <h3 class="mt-10 text-xl font-bold text-ink">Servicios</h3>
-    <ul class="mt-4 flex flex-wrap gap-3">
-      {
-        servicios.map((s) => (
-          <li class="rounded-full bg-surface px-4 py-2 text-sm text-ink/80 ring-1 ring-black/5">
-            {s}
-          </li>
-        ))
-      }
-    </ul>
+  <!-- EL ESCENARIO / INFRAESTRUCTURA -->
+  <section>
+    <div class="mx-auto max-w-4xl px-4 pb-12 text-center">
+      <h2 class={titleGreen}>El Escenario donde la Estrategia y la Naturaleza se Encuentran</h2>
+      <p class="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-ink/90">
+        En <strong class="text-cta-strong">Ecogranja Villa Juan</strong>, elevamos el concepto de
+        eventos institucionales. Contamos con una infraestructura única de
+        <strong class="text-cta-strong">38.000 m²</strong> organizada por zonas de experiencia, lo
+        que nos permite recibir desde grupos de <strong class="text-cta-strong">10 personas</strong>
+        hasta grandes convenciones de más de
+        <strong class="text-cta-strong">2.000 asistentes.</strong> Nuestro compromiso es
+        acompañarlos desde la planeación hasta la ejecución, garantizando una logística impecable y
+        resultados que perduran en la cultura de su organización.
+      </p>
+    </div>
+  </section>
+
+  <!-- BENEFICIOS -->
+  <section>
+    <div class="mx-auto max-w-5xl px-4 pb-8">
+      <h2 class={titleGreen}>Beneficios</h2>
+      <div class="mt-8 grid gap-6 sm:grid-cols-3">
+        {
+          beneficios.map((b) => (
+            <div class="text-center">
+              <img src={b.img.src} alt={b.title} width={b.img.width} height={b.img.height} loading="lazy" class="mx-auto w-40 [filter:drop-shadow(0_6px_12px_rgba(0,0,0,0.3))]" />
+              <h3 class="mt-3 font-display text-2xl text-cta">{b.title}</h3>
+              <p class="mx-auto mt-2 max-w-xs text-ink/80">{b.body}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Servicios -->
+      <div class="mx-auto mt-10 max-w-3xl rounded-[2rem] bg-cta-strong px-6 py-6 text-center text-white shadow-lg [text-shadow:0_1px_2px_rgba(0,0,0,0.25)]">
+        <p class="font-display text-3xl text-[#FFF200]">Servicios</p>
+        <p class="mt-2 font-semibold leading-relaxed">
+          Almuerzos corporativos con nuestro sello al barril, jornadas de integración, conferencias en
+          espacios abiertos y shows…
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BIENESTAR FÍSICO Y MENTAL -->
+  <section>
+    <div class="mx-auto max-w-5xl px-4 py-12">
+      <h2 class={titleGreen}>Bienestar Físico y Mental</h2>
+      <div class="mt-10 space-y-8">
+        {
+          bienestar.map((c) => (
+            <article class="grid gap-5 rounded-[2rem] bg-surface p-4 shadow-xl sm:p-6 md:grid-cols-2 md:items-center md:gap-8">
+              <Image src={c.img} alt={c.alt} widths={[360, 560, 760]} sizes="(min-width: 768px) 24rem, 90vw" format="webp" quality={72} loading="lazy" class:list={['h-52 w-full rounded-[1.5rem] object-cover sm:h-64', c.imgRight && 'md:order-last']} />
+              <div class="px-1 text-center md:text-left">
+                <h3 class="font-display text-2xl text-cta sm:text-3xl">{c.title}</h3>
+                <p class="mt-3 text-sm leading-relaxed text-ink/75">{c.body}</p>
+                <a href={wa(`Quiero información de ${c.title}`)} target="_blank" rel="noopener noreferrer" class="mt-5 inline-flex items-center justify-center rounded-full bg-cta-strong px-8 py-2.5 font-display text-lg text-white shadow transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong">
+                  Saber más
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <!-- Programas de bienestar (iconos) -->
+      <div class="mt-10 rounded-[2rem] bg-cta-strong px-6 py-8 text-white shadow-lg">
+        <p class="text-center font-display text-3xl text-[#FFF200] [text-shadow:0_1px_2px_rgba(0,0,0,0.25)] sm:text-4xl">
+          Programas de Bienestar y Desarrollo Personal
+        </p>
+        <ul class="mx-auto mt-8 grid max-w-4xl grid-cols-2 gap-6 sm:grid-cols-5">
+          {
+            programas.map((p) => (
+              <li class="flex flex-col items-center text-center">
+                <img src={p.icon.src} alt="" aria-hidden="true" width={p.icon.width} height={p.icon.height} loading="lazy" class="h-16 w-16 object-contain" />
+                <span class="mt-2 font-display text-sm leading-tight [text-shadow:0_1px_2px_rgba(0,0,0,0.25)]">{p.label}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
   </section>
 
   <!-- COACHING CON CABALLOS -->
-  <section class="scene-dark text-white">
-    <div class="mx-auto max-w-4xl px-4 py-16">
-      <p class="font-display text-lg text-white/80">Liderazgo instintivo</p>
-      <h2 class="mt-2 font-display text-3xl sm:text-4xl">Coaching asistido con caballos</h2>
-      <p class="mt-4 leading-relaxed text-white/85">
-        Una experiencia corporativa de alto impacto donde la naturaleza brinda el mejor feedback.
-        Los caballos son expertos en lenguaje no verbal y no responden a jerarquías: actúan como un
-        espejo instintivo de la inteligencia emocional y la comunicación real del grupo.
-      </p>
-      <p class="mt-4 leading-relaxed text-white/85">
-        A través de dinámicas estratégicas pie a tierra, directivos y colaboradores desarrollan un
-        liderazgo auténtico basado en la confianza, aprendiendo a gestionar el estrés, resolver
-        conflictos y trabajar en sinergia: mayor asertividad y productividad para tu empresa.
-      </p>
-      <a
-        href={wa('Quiero cotizar un evento corporativo en Villa Juan')}
-        class="mt-6 inline-flex items-center justify-center rounded-full bg-cta-strong px-6 py-3 font-display text-lg text-white transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-      >
-        Cotizar evento corporativo
-      </a>
+  <section class="scene-orange text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.45)]">
+    <div class="mx-auto max-w-6xl px-4 py-16">
+      <h2 class={titleOrange}>Liderazgo Instintivo · Coaching Asistido con Caballos</h2>
+      <div class="mt-8 grid items-center gap-8 md:grid-cols-[1.2fr_1fr]">
+        <p class="leading-relaxed">
+          En Ecogranja Villa Juan transformamos el liderazgo y la cohesión de tu equipo a través del
+          Coaching Asistido con Caballos, una experiencia corporativa de alto impacto donde la
+          naturaleza brinda el mejor feedback. Ya que los caballos son expertos en lenguaje no verbal
+          y no responden a jerarquías corporativas, actúan como un espejo instintivo de la
+          inteligencia emocional y la comunicación real del grupo. A través de dinámicas estratégicas
+          pie a tierra, directivos y colaboradores desarrollan un liderazgo auténtico basado en la
+          confianza, aprendiendo a gestionar el estrés, resolver conflictos y trabajar en una sinergia
+          absoluta que se traduce directamente en mayor asertividad y productividad para tu empresa.
+        </p>
+        <a href={wa('Quiero cotizar el coaching asistido con caballos')} target="_blank" rel="noopener noreferrer" aria-label="Cotizar coaching" class="inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+          <img src={cotizarCoaching.src} alt="Cotizar coaching" width={cotizarCoaching.width} height={cotizarCoaching.height} loading="lazy" class="mx-auto w-64 [filter:drop-shadow(0_8px_16px_rgba(0,0,0,0.3))] sm:w-72" />
+        </a>
+      </div>
+
+      <!-- Galería de coaching -->
+      <h3 class="mt-14 text-center font-display text-3xl text-[#FFF200] [text-shadow:0_2px_4px_rgba(0,0,0,0.35)] sm:text-4xl">
+        Galería de Coaching
+      </h3>
+      <div class="mt-8 grid gap-4 sm:grid-cols-3">
+        {
+          galeria.map((g) => (
+            <Image src={g.img} alt={g.alt} widths={[320, 480, 640]} sizes="(min-width: 640px) 20rem, 90vw" format="webp" quality={74} loading="lazy" class="h-52 w-full rounded-2xl object-cover shadow-lg [text-shadow:none]" />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CRÓNICAS DEL GALOPE -->
+  <section>
+    <div class="mx-auto max-w-5xl px-4 py-16">
+      <h2 class="title-outline text-center font-display text-4xl sm:text-5xl">Crónicas del Galope</h2>
+      <div class="mt-10 grid gap-6 sm:grid-cols-3">
+        {
+          cronicas.map((p) => (
+            <article class="flex flex-col overflow-hidden rounded-3xl bg-surface p-3 text-center shadow-lg">
+              <Image src={p.img} alt={p.alt} widths={[320, 480, 640]} sizes="(min-width: 640px) 20rem, 90vw" format="webp" quality={72} loading="lazy" class="h-40 w-full rounded-2xl object-cover" />
+              <h3 class="mt-4 grow px-2 text-base font-bold text-cta-strong">{p.title}</h3>
+              <a href={p.href} class="mx-2 mt-4 mb-1 inline-flex items-center justify-center rounded-full bg-cta-strong px-6 py-2.5 font-display text-lg text-white transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong">
+                Leer más
+              </a>
+            </article>
+          ))
+        }
+      </div>
     </div>
   </section>
 </Base>

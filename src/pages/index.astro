@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import HeroCarousel from '../components/sections/HeroCarousel.astro';
-import { visit } from '../lib/site';
+import { visit, wa, social } from '../lib/site';
 import fuenteCaballos from '../assets/images/home/fuente_caballos.jpg';
 import horseCronicas from '../assets/images/home/horse_cronicas.png';
 import tituloCronicas from '../assets/images/home/Titulo_cronicas.png';
@@ -22,6 +22,12 @@ import menuJeep from '../assets/images/home/menu_jeep.svg';
 import sombrero from '../assets/images/home/sobrero.svg';
 import tituloVillaDatos from '../assets/images/home/Titulo-Villa-Datos.svg';
 import horseDatos from '../assets/images/home/horse_datos.svg';
+import selfieAnimales from '../assets/images/home/selfie_con_animales.png';
+import contactanos from '../assets/images/home/contactanos.png';
+import villaPlanesTitulo from '../assets/images/home/villa-planes-titulo.png';
+import galeria01 from '../assets/images/home/galeria01.png';
+import galeria02 from '../assets/images/home/galeria02.png';
+import galeria03 from '../assets/images/home/galeria03.png';
 
 // Composición sobre la rama: Empresas ENCIMA; Pasadías, Celebraciones y Blog DEBAJO.
 // `pos` = posición absoluta (desktop). Las clases se escriben literales para que Tailwind las genere.
@@ -62,6 +68,56 @@ const cronicas = [
     href: '/blog',
   },
 ];
+
+// Villa Planes en el home: botones-píldora con degradé por plan.
+// TODO(post-scaffold): cuando existan los PDFs (Villa_Plan_*.pdf), apuntar el href a la
+// descarga real con `download`. Por ahora la conversión va por WhatsApp (invariante de CTAs).
+const planesHome = [
+  { title: 'Paso Fino', grad: 'linear-gradient(90deg,#f2c14e 0%,#d99323 100%)' },
+  { title: 'Trocha y Galope', grad: 'linear-gradient(90deg,#e0431f 0%,#c0360d 100%)' },
+  { title: 'Trote y Galope', grad: 'linear-gradient(90deg,#4ba82b 0%,#00811e 100%)' },
+];
+
+// "¿Cómo llegar desde Bogotá?" — 3 opciones de transporte con chip informativo/CTA.
+const llegar: {
+  title: string;
+  body: string;
+  pill: string;
+  pillHref?: string;
+}[] = [
+  {
+    title: 'Carro',
+    body: 'Búscanos en Waze o Google Maps como Ecogranja Villa Juan.',
+    pill: '45 minutos aprox.',
+    pillHref: visit.maps,
+  },
+  {
+    title: 'Transporte público',
+    body: 'Portal 80 o Portal Norte → bus intermunicipal hasta el pueblo de Tenjo → taxi hasta Villa Juan.',
+    pill: '1 hora 15 min aprox.',
+  },
+  {
+    title: 'Transporte privado',
+    body: 'Organizamos transporte grupal para tu pasadía o evento, sin complicaciones.',
+    pill: 'Consultar disponibilidad',
+    pillHref: wa('Quiero información del transporte a Villa Juan'),
+  },
+];
+
+// Galería — carrusel "coverflow": las fotos rotan por 3 posiciones (centro al frente +
+// laterales detrás, como el mockup). Estilos base (también sirven de fallback sin JS).
+const galeria = [
+  { img: galeria02, alt: 'Una visitante saludando a un burro en Villa Juan, con la sabana de fondo' },
+  { img: galeria01, alt: 'La escultura del caballo de Villa Juan entre las zonas verdes de la ecogranja' },
+  { img: galeria03, alt: 'Un perro corriendo feliz por las zonas verdes de Villa Juan' },
+];
+const galPos = {
+  center: 'transform:translate(-50%,-50%) scale(1);z-index:30;opacity:1;filter:none;',
+  right: 'transform:translate(-6%,-50%) scale(0.82) rotateY(-18deg);z-index:20;opacity:0.78;filter:brightness(0.82);',
+  left: 'transform:translate(-94%,-50%) scale(0.82) rotateY(18deg);z-index:20;opacity:0.78;filter:brightness(0.82);',
+};
+// Orden inicial (SSR / sin JS): 0 = centro, 1 = derecha, 2 = izquierda.
+const galInit = [galPos.center, galPos.right, galPos.left];
 ---
 
 <Base heroHeader>
@@ -387,36 +443,220 @@ const cronicas = [
     </div>
   </section>
 
-  <!-- UBICACIÓN / CÓMO LLEGAR -->
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <h2 class="title-outline font-display text-4xl sm:text-5xl">¡A un pequeño galope de la ciudad!</h2>
-    <p class="mt-4 max-w-2xl text-ink/80">
+  <!-- ¡A UN PEQUEÑO GALOPE DE LA CIUDAD! — ubicación + Villa Planes + cómo llegar. -->
+  <section class="mx-auto max-w-6xl px-4 pt-16">
+    <h2 class="title-outline text-center font-display text-4xl sm:text-5xl">
+      ¡A un pequeño galope de la ciudad!
+    </h2>
+    <p class="mx-auto mt-4 max-w-2xl text-center text-ink/80">
       Estamos en Tenjo, Cundinamarca. Tan cerca de Bogotá que no alcanzas a cansarte, pero lo
       suficientemente lejos para cambiar el ruido por el aire fresco.
     </p>
-    <div class="mt-8 grid gap-6 sm:grid-cols-3">
-      <div class="rounded-3xl bg-surface p-6 shadow-sm ring-1 ring-black/5">
-        <h3 class="font-bold text-ink">Horario</h3>
-        <p class="mt-2 text-sm text-ink/80">{visit.hoursLabel}</p>
-        <p class="text-sm text-ink/80">{visit.hours}</p>
+
+    <!-- Horarios + Ubicación (izq) junto al selfie con los animales (der). -->
+    <div class="mt-10 grid items-center gap-8 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+      <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-1">
+        <div class="rounded-3xl bg-cta-strong p-6 text-center text-white shadow-lg sm:p-7">
+          <h3 class="font-display text-3xl text-[#FFF200] [text-shadow:0_1px_2px_rgba(0,0,0,0.35)] sm:text-4xl">
+            Horarios
+          </h3>
+          <p class="mt-3 text-xl font-semibold">{visit.hoursLabel}</p>
+          <p class="text-xl font-semibold">{visit.hours}</p>
+        </div>
+        <div class="rounded-3xl bg-cta-strong p-6 text-center text-white shadow-lg sm:p-7">
+          <h3 class="font-display text-3xl text-[#FFF200] [text-shadow:0_1px_2px_rgba(0,0,0,0.35)] sm:text-4xl">
+            Ubicación
+          </h3>
+          <p class="mt-3 text-lg font-semibold">{visit.address}</p>
+          <p class="text-lg font-semibold text-white/90">{visit.city}</p>
+          <a
+            href={visit.maps}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-3 inline-block text-base font-bold text-[#FFF200] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {visit.note} · Abrir en Maps →
+          </a>
+        </div>
       </div>
-      <div class="rounded-3xl bg-surface p-6 shadow-sm ring-1 ring-black/5">
-        <h3 class="font-bold text-ink">Ubicación</h3>
-        <p class="mt-2 text-sm text-ink/80">{visit.address}</p>
-        <p class="text-sm text-ink/80">{visit.city} · {visit.note}</p>
+
+      <Image
+        src={contactanos}
+        alt="Don Juan, la mascota de Villa Juan, invitándote a contactarnos"
+        widths={[320, 480, 620]}
+        sizes="(min-width: 768px) 42vw, 70vw"
+        format="webp"
+        quality={80}
+        loading="lazy"
+        class="mx-auto w-full max-w-xs [filter:drop-shadow(0_8px_16px_rgba(0,0,0,0.25))]"
+      />
+    </div>
+
+    <!-- Conoce los ¡Villa Planes! — selfie (izq) + botones de planes (der). -->
+    <div class="mt-16">
+      <img
+        src={villaPlanesTitulo.src}
+        alt="Conoce los ¡Villa Planes!"
+        width={villaPlanesTitulo.width}
+        height={villaPlanesTitulo.height}
+        loading="lazy"
+        class="mx-auto w-80 [filter:drop-shadow(0_4px_10px_rgba(0,0,0,0.25))] sm:w-[28rem]"
+      />
+
+      <div class="mt-8 grid items-end gap-8 md:grid-cols-[1.8fr_1fr]">
+        <Image
+          src={selfieAnimales}
+          alt="Don Juan tomándose una selfie con todos los animales de la Ecogranja Villa Juan"
+          widths={[480, 768, 1100, 1600]}
+          sizes="(min-width: 768px) 64vw, 100vw"
+          format="webp"
+          quality={72}
+          loading="lazy"
+          class="w-full md:order-first"
+        />
+
+        <div>
+          <p class="text-center text-[13px] font-bold text-white md:text-right">
+            Descarga el <span class="font-extrabold">.pdf</span> de tu Villa Plan favorito*
+          </p>
+          <ul class="mt-5 space-y-4">
+            {
+              planesHome.map((p) => (
+                <li>
+                  <a
+                    href={wa(`Quiero el Villa Plan ${p.title}`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Descargar el Villa Plan ${p.title}`}
+                    style={`background-image:${p.grad};`}
+                    class="flex items-center justify-center rounded-full px-6 py-5 text-center font-display text-3xl text-white shadow-lg ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:text-4xl [text-shadow:0_1px_3px_rgba(0,0,0,0.45)]"
+                  >
+                    {p.title}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
       </div>
-      <div class="rounded-3xl bg-surface p-6 shadow-sm ring-1 ring-black/5">
-        <h3 class="font-bold text-ink">Cómo llegar</h3>
-        <p class="mt-2 text-sm text-ink/80">Búscanos en Waze o Google Maps como Ecogranja Villa Juan.</p>
-        <a
-          href={visit.maps}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="mt-2 inline-block text-sm font-medium text-cta hover:text-cta-strong"
-        >
-          Abrir en Google Maps →
-        </a>
+    </div>
+  </section>
+
+  <!-- ¿CÓMO LLEGAR DESDE BOGOTÁ? — franja naranja con 3 opciones de transporte.
+       Sin margen superior: el selfie de arriba queda pegado a ras de esta franja. -->
+  <section class="bg-cta py-16">
+    <div class="mx-auto max-w-6xl px-4">
+      <h2 class="text-center font-display text-4xl text-[#FFF200] [text-shadow:0_2px_4px_rgba(0,0,0,0.35)] sm:text-5xl">
+        ¿Cómo llegar desde Bogotá?
+      </h2>
+      <div class="mt-10 grid gap-6 md:grid-cols-3">
+        {
+          llegar.map((t) => (
+            <div class="flex flex-col">
+              <div class="flex grow flex-col rounded-3xl bg-brand-strong p-6 text-white shadow-lg">
+                <h3 class="text-center text-xl font-bold sm:text-2xl">{t.title}</h3>
+                <p class="mt-4 grow text-center text-sm leading-relaxed text-white/90">{t.body}</p>
+              </div>
+              {t.pillHref ? (
+                <a
+                  href={t.pillHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="mt-5 flex w-full items-center justify-center rounded-full bg-[#FFF200] px-6 py-3.5 text-center font-display text-2xl text-cta-strong shadow-xl ring-4 ring-white/30 transition hover:-translate-y-0.5 hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  {t.pill}
+                </a>
+              ) : (
+                <span class="mt-5 flex w-full items-center justify-center rounded-full bg-[#FFF200] px-6 py-3.5 text-center font-display text-2xl text-cta-strong shadow-xl ring-4 ring-white/30">
+                  {t.pill}
+                </span>
+              )}
+            </div>
+          ))
+        }
       </div>
+    </div>
+  </section>
+
+  <!-- GALERÍA — carrusel "coverflow": 3 fotos con marco naranja (centro al frente + laterales
+       detrás, como el mockup) que rota automáticamente. Island de JS mínimo; respeta reduce-motion. -->
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <h2 class="title-outline text-center font-display text-4xl sm:text-5xl">Galería</h2>
+    <p class="mx-auto mt-4 max-w-2xl text-center text-ink/80">
+      Momentos reales de familias, amigos y animales viviendo el campo en Ecogranja Villa Juan.
+    </p>
+
+    <div
+      id="gallery"
+      class="relative mx-auto mt-10 aspect-[3/2] w-full max-w-5xl overflow-hidden [perspective:1400px] sm:aspect-[5/2]"
+      aria-roledescription="carrusel"
+      aria-label="Galería Villa Juan"
+    >
+      {
+        galeria.map((g, i) => (
+          <figure
+            class="gal-slide absolute top-1/2 left-1/2 w-[78%] cursor-pointer overflow-hidden rounded-[2rem] bg-cta p-2 shadow-2xl transition-all duration-700 ease-out will-change-transform motion-reduce:transition-none sm:w-[54%]"
+            data-i={i}
+            style={galInit[i] ?? galPos.center}
+            aria-roledescription="slide"
+            aria-label={`${i + 1} de ${galeria.length}`}
+          >
+            <Image
+              src={g.img}
+              alt={g.alt}
+              widths={[480, 768, 1100]}
+              sizes="(min-width: 640px) 34rem, 80vw"
+              format="webp"
+              quality={72}
+              loading="lazy"
+              class="aspect-[3/2] w-full rounded-[1.6rem] object-cover"
+            />
+          </figure>
+        ))
+      }
+
+      <!-- Flechas (las activa el script) -->
+      <button
+        type="button"
+        data-gal-prev
+        aria-label="Foto anterior"
+        class="absolute top-1/2 left-2 z-40 hidden -translate-y-1/2 rounded-full bg-black/40 p-2 text-white backdrop-blur-sm transition hover:bg-black/60 data-[on]:block sm:left-4"
+      >
+        <span aria-hidden="true" class="block h-6 w-6 text-2xl leading-none">‹</span>
+      </button>
+      <button
+        type="button"
+        data-gal-next
+        aria-label="Foto siguiente"
+        class="absolute top-1/2 right-2 z-40 hidden -translate-y-1/2 rounded-full bg-black/40 p-2 text-white backdrop-blur-sm transition hover:bg-black/60 data-[on]:block sm:right-4"
+      >
+        <span aria-hidden="true" class="block h-6 w-6 text-2xl leading-none">›</span>
+      </button>
+    </div>
+
+    <!-- Dots (los activa el script) -->
+    <div class="mt-6 flex justify-center gap-3">
+      {
+        galeria.map((_, i) => (
+          <button
+            type="button"
+            data-gal-dot
+            aria-label={`Ir a la foto ${i + 1}`}
+            class="h-3 w-3 rounded-full bg-cta/40 ring-1 ring-black/10 transition hover:bg-cta aria-[current=true]:w-6 aria-[current=true]:bg-cta"
+          />
+        ))
+      }
+    </div>
+
+    <div class="mt-8 text-center">
+      <a
+        href={social.instagram}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center rounded-full bg-brand-strong px-8 py-3 font-display text-xl text-white shadow-lg ring-1 ring-white/30 transition hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      >
+        Síguenos en Instagram
+      </a>
     </div>
   </section>
 </Base>
@@ -439,6 +679,73 @@ const cronicas = [
     window.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update, { passive: true });
     update();
+  }
+</script>
+
+<script>
+  // Galería: carrusel "coverflow" con autoplay. Cada foto rota por 3 posiciones
+  // (centro / derecha / izquierda). Flechas + dots + swipe + clic en un lateral.
+  // Pausa en hover/focus. Respeta prefers-reduced-motion (invariante #4).
+  const gallery = document.getElementById('gallery');
+  if (gallery) {
+    const slides = Array.from(gallery.querySelectorAll<HTMLElement>('.gal-slide'));
+    const n = slides.length;
+    const dots = Array.from(document.querySelectorAll<HTMLElement>('[data-gal-dot]'));
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const POS: Record<string, { t: string; z: string; o: string; f: string }> = {
+      center: { t: 'translate(-50%,-50%) scale(1)', z: '30', o: '1', f: 'none' },
+      right: { t: 'translate(-6%,-50%) scale(0.82) rotateY(-18deg)', z: '20', o: '0.78', f: 'brightness(0.82)' },
+      left: { t: 'translate(-94%,-50%) scale(0.82) rotateY(18deg)', z: '20', o: '0.78', f: 'brightness(0.82)' },
+      hidden: { t: 'translate(-50%,-50%) scale(0.6)', z: '0', o: '0', f: 'none' },
+    };
+    const posFor = (rel: number) =>
+      rel === 0 ? 'center' : rel === 1 ? 'right' : rel === n - 1 ? 'left' : 'hidden';
+
+    let idx = 0;
+    const render = () => {
+      slides.forEach((el, i) => {
+        const p = POS[posFor((i - idx + n) % n)];
+        el.style.transform = p.t;
+        el.style.zIndex = p.z;
+        el.style.opacity = p.o;
+        el.style.filter = p.f;
+        el.setAttribute('aria-hidden', p.o === '0' ? 'true' : 'false');
+      });
+      dots.forEach((d, j) => d.setAttribute('aria-current', j === idx ? 'true' : 'false'));
+    };
+    const goTo = (i: number) => { idx = (i + n) % n; render(); };
+
+    dots.forEach((d, i) => d.addEventListener('click', () => { goTo(i); restart(); }));
+    slides.forEach((el, i) => el.addEventListener('click', () => { if (i !== idx) { goTo(i); restart(); } }));
+    const prev = document.querySelector<HTMLElement>('[data-gal-prev]');
+    const next = document.querySelector<HTMLElement>('[data-gal-next]');
+    [prev, next].forEach((b) => b?.setAttribute('data-on', ''));
+    prev?.addEventListener('click', () => { goTo(idx - 1); restart(); });
+    next?.addEventListener('click', () => { goTo(idx + 1); restart(); });
+
+    // Swipe táctil
+    let x0: number | null = null;
+    gallery.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+    gallery.addEventListener('pointerup', (e) => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0;
+      if (Math.abs(dx) > 40) { goTo(idx + (dx < 0 ? 1 : -1)); restart(); }
+      x0 = null;
+    });
+
+    // Autoplay (pausa en hover/focus; nada si reduce-motion)
+    let timer: number | undefined;
+    const stop = () => { if (timer) window.clearInterval(timer); };
+    const start = () => { if (reduce) return; stop(); timer = window.setInterval(() => goTo(idx + 1), 3500); };
+    const restart = () => { stop(); start(); };
+    gallery.addEventListener('pointerenter', stop);
+    gallery.addEventListener('pointerleave', start);
+    gallery.addEventListener('focusin', stop);
+    gallery.addEventListener('focusout', start);
+
+    render();
+    start();
   }
 </script>
 

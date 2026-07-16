@@ -1,7 +1,8 @@
 ---
 /**
  * PageIntro — encabezado de página de vertical (hero simple + CTA de cotización).
- * scene-green con texto OSCURO (ink): el lima falla AA con blanco (invariante #2).
+ * Fondo transparente: deja ver el SiteBackground global (mismo fondo que el home, en
+ * todas las páginas). Texto OSCURO (ink): el verde lima falla AA con blanco (invariante #2).
  */
 import { contact } from '../../lib/site';
 
@@ -15,7 +16,7 @@ interface Props {
 const { title, intro, kicker } = Astro.props;
 ---
 
-<section class="scene-green">
+<section>
   <div class="mx-auto max-w-6xl px-4 py-16 text-ink sm:py-24">
     {kicker && <p class="font-display text-lg text-ink/70">{kicker}</p>}
     <h1 class="title-outline mt-2 max-w-3xl font-display text-4xl leading-tight sm:text-5xl">

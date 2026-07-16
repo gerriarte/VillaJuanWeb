@@ -35,7 +35,9 @@ const {
   <body class="flex min-h-screen flex-col">
     <SiteBackground />
     <Header overlay={heroHeader} />
-    <main class="flex-1">
+    <!-- pb: reserva aire sobre el footer para que el caballo reclinado (que asoma ~50%
+         sobre la separación) no tape el contenido de la última sección. -->
+    <main class="flex-1 pb-28 sm:pb-40 md:pb-56">
       <slot />
     </main>
     <Footer />

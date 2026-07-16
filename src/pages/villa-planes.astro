@@ -1,89 +1,359 @@
 ---
 import Base from '../layouts/Base.astro';
-import PageIntro from '../components/sections/PageIntro.astro';
-import InfoCard from '../components/sections/InfoCard.astro';
+import { Image } from 'astro:assets';
 import { wa } from '../lib/site';
+import heroImg from '../assets/images/villa-planes/hero.webp';
+import tituloVP from '../assets/images/villa-planes/titulo-villa-planes.png';
+import verMenu from '../assets/images/villa-planes/vermenu.png';
+import reservaYa from '../assets/images/villa-planes/Reserva.png';
+import barril1 from '../assets/images/villa-planes/barril1.webp';
+import barril2 from '../assets/images/villa-planes/barril2.webp';
+import barril3 from '../assets/images/villa-planes/barril3.webp';
+import barril4 from '../assets/images/villa-planes/barril4.webp';
+import tallerImg from '../assets/images/villa-planes/taller.webp';
+import selfieAnimales from '../assets/images/home/selfie_con_animales.png';
+import contactanos from '../assets/images/home/contactanos.png';
 
+// Botones-píldora de planes (degradé por plan). Orden del mockup: Trote, Trocha, Paso Fino.
+// TODO(post-scaffold): apuntar a la descarga real del PDF (Villa_Plan_*.pdf) con `download`.
 const planes = [
-  {
-    title: 'Paso Fino',
-    body: 'El plan para disfrutar del campo a un ritmo tranquilo, ideal para toda la familia.',
-    imageTodo: 'Villa_Plan_Paso_Fino.pdf',
-  },
-  {
-    title: 'Trocha y Galope',
-    body: 'Aventura intermedia con más recorrido y adrenalina entre los senderos de la granja.',
-    imageTodo: 'Villa_Plan_Trocha_y_Galope.pdf',
-  },
-  {
-    title: 'Trote y Galope',
-    body: 'La experiencia más completa para quienes buscan retos y un día lleno de actividades.',
-    imageTodo: 'Villa_Plan_Trote_y_Galope.pdf',
-  },
+  { title: 'Trote y Galope', grad: 'linear-gradient(90deg,#4ba82b 0%,#00811e 100%)' },
+  { title: 'Trocha y Galope', grad: 'linear-gradient(90deg,#e0431f 0%,#c0360d 100%)' },
+  { title: 'Paso Fino', grad: 'linear-gradient(90deg,#f2c14e 0%,#d99323 100%)' },
 ];
 
-const incluye = [
-  'Desayuno de la granja',
-  'Espacio exclusivo',
-  'Recorrido por la granja',
-  'Taller de ordeño',
-  'Almuerzo a la carta',
-  'GranjaFest',
-  'Feria de juegos tradicionales',
-  'Show Villa Juan',
-  'Paseo a caballo o en cuatrimoto',
+// Tabla comparativa. Marcas coloreadas por columna (verde / rojo / dorado).
+const columns = [
+  { label: 'Trote y Galope', color: '#0a8a24' },
+  { label: 'Trocha y Galope', color: '#c0360d' },
+  { label: 'Paso Fino', color: '#c58a1e' },
+];
+const rows: { name: string; v: boolean[] }[] = [
+  { name: 'Desayuno de la granja', v: [false, false, true] },
+  { name: 'Espacio exclusivo', v: [true, true, true] },
+  { name: 'Recorrido granja', v: [true, true, true] },
+  { name: 'Taller de ordeño', v: [true, true, true] },
+  { name: 'Almuerzo a la carta', v: [true, true, true] },
+  { name: 'GranjaFest', v: [true, true, true] },
+  { name: 'Feria de juegos tradicionales', v: [true, true, true] },
+  { name: 'Show Villa Juan', v: [true, true, true] },
+  { name: 'Paseo a caballo o Paseo a cuatrimoto', v: [false, true, true] },
+];
+
+// El arte de la carne al barril — 4 pasos.
+const barrilSteps = [
+  {
+    img: barril1,
+    title: 'Selección y Maduración',
+    body: 'Elegimos cortes de alta calidad con una maduración controlada. Este proceso natural intensifica el sabor y garantiza una textura excepcionalmente tierna antes de tocar el fuego.',
+  },
+  {
+    img: barril2,
+    title: 'Sazonado Artesanal',
+    body: 'Aplicamos una mezcla de especias seleccionadas que realzan el perfil cárnico sin opacarlo, preparando la pieza para su transformación en el ahumador.',
+  },
+  {
+    img: barril3,
+    title: 'Cocción al Barril',
+    body: 'Usamos calor indirecto con carbón vegetal. Al no haber llama directa, la carne se cocina uniformemente por horas, conservando todos sus jugos y logrando un dorado exterior perfecto.',
+  },
+  {
+    img: barril4,
+    title: 'Espectáculo en Vivo',
+    body: 'La preparación final se realiza frente a tus ojos. Más que una cena, es un show gastronómico donde la suavidad y el aroma del ahumado son los protagonistas de tu evento.',
+  },
 ];
 ---
 
 <Base
+  heroHeader
   title="Villa Planes · Pasadías y ecoturismo en Tenjo | Ecogranja Villa Juan"
-  description="Villa Planes: pasadías de ecoturismo en la Sabana de Bogotá. Paso Fino, Trocha y Galope o Trote y Galope, con desayuno de la granja, recorridos y show Villa Juan."
+  description="Villa Planes: pasadías de ecoturismo en la Sabana de Bogotá. Trote y Galope, Trocha y Galope o Paso Fino, con desayuno de la granja, recorridos, gastronomía al barril y show Villa Juan."
 >
-  <PageIntro
-    title="Villa Planes"
-    kicker="Pasadías en Tenjo"
-    intro="¿Buscas escapar de la rutina y respirar aire puro sin pasar horas en el tráfico? A pocos minutos del norte de Bogotá te espera un espacio único rodeado de naturaleza, aventura y tranquilidad."
-  />
-
-  <section class="mx-auto max-w-4xl px-4 py-12 text-center">
-    <p class="text-lg leading-relaxed text-ink/80">
-      Nuestros Villa Planes están pensados para quienes buscan el mejor ecoturismo en la Sabana de
-      Bogotá. Una escapada de fin de semana en familia, un plan romántico en pareja o un día de
-      retos con amigos: tenemos una experiencia a tu medida.
-    </p>
+  <!-- HERO — delicias al barril, imagen full-bleed detrás del header flotante. -->
+  <section class="relative">
+    <Image
+      src={heroImg}
+      alt="Delicias fritas y al barril servidas en la Ecogranja Villa Juan"
+      widths={[768, 1280, 1920]}
+      sizes="100vw"
+      format="webp"
+      quality={72}
+      loading="eager"
+      fetchpriority="high"
+      class="h-[52vh] min-h-[360px] w-full object-cover sm:h-[64vh]"
+    />
   </section>
 
-  <section class="mx-auto max-w-6xl px-4 pb-16">
-    <h2 class="title-outline font-display text-4xl sm:text-5xl">Elige tu plan</h2>
-    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        planes.map((p) => (
-          <InfoCard
-            title={p.title}
-            body={p.body}
-            imageTodo={p.imageTodo}
-            imageAlt={`Villa Plan ${p.title}`}
-            ctaLabel="Consultar"
-            ctaHref={wa(`Quiero información del Villa Plan ${p.title}`)}
-          />
-        ))
-      }
+  <!-- CONOCE LOS VILLA PLANES — intro + selfie + botones de planes. -->
+  <section>
+    <div class="mx-auto max-w-6xl px-4 py-16 text-ink">
+      <img
+        src={tituloVP.src}
+        alt="Conoce los ¡Villa Planes!"
+        width={tituloVP.width}
+        height={tituloVP.height}
+        class="mx-auto w-72 [filter:drop-shadow(0_4px_10px_rgba(0,0,0,0.2))] sm:w-[30rem]"
+      />
+
+      <div class="mx-auto mt-8 max-w-3xl space-y-5 text-center text-lg leading-relaxed text-ink/90">
+        <p>
+          ¿Buscas escapar de la rutina y respirar aire puro sin pasar horas en el tráfico? En
+          <strong class="text-cta-strong">Eco Granja Villa Juan</strong>, ubicada en Tenjo,
+          Cundinamarca, diseñamos la escapada perfecta para ti. A solo unos minutos del norte de
+          Bogotá, te espera un espacio único rodeado de naturaleza, aventura y tranquilidad.
+        </p>
+        <p>
+          Nuestros <strong class="text-cta-strong">Villa Planes</strong> están pensados para quienes
+          buscan el mejor ecoturismo en la Sabana de Bogotá. Ya sea que estés planeando una escapada
+          de fin de semana en <strong class="text-cta-strong">familia</strong>, un plan romántico en
+          <strong class="text-cta-strong">pareja</strong> o un día de retos y trabajo en equipo con
+          <strong class="text-cta-strong">amigos</strong>, tenemos una experiencia a tu medida.
+        </p>
+      </div>
+
+      <div class="mt-10 grid items-end gap-8 md:grid-cols-[1.35fr_1fr]">
+        <Image
+          src={selfieAnimales}
+          alt="Don Juan tomándose una selfie con los animales de la Ecogranja Villa Juan"
+          widths={[480, 768, 1100]}
+          sizes="(min-width: 768px) 56vw, 100vw"
+          format="webp"
+          quality={72}
+          loading="lazy"
+          class="w-full md:-mb-16 md:self-end md:order-first"
+        />
+        <div>
+          <p class="text-center font-bold text-ink/80 md:text-right">
+            Descarga el <span class="text-cta-strong">.pdf</span> de tu Villa Plan favorito*
+          </p>
+          <ul class="mt-5 space-y-4">
+            {
+              planes.map((p) => (
+                <li>
+                  <a
+                    href={wa(`Quiero el Villa Plan ${p.title}`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Descargar el Villa Plan ${p.title}`}
+                    style={`background-image:${p.grad};`}
+                    class="flex items-center justify-center rounded-full px-6 py-5 text-center font-display text-3xl text-white shadow-lg ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:text-4xl [text-shadow:0_1px_3px_rgba(0,0,0,0.45)]"
+                  >
+                    {p.title}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="scene-green">
-    <div class="mx-auto max-w-6xl px-4 py-16 text-ink">
-      <h2 class="font-display text-3xl sm:text-4xl">¿Qué incluye tu pasadía?</h2>
-      <ul class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+  <!-- TABLA COMPARATIVA de planes. -->
+  <section>
+    <div class="mx-auto max-w-4xl px-4 pb-12">
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[34rem] border-separate border-spacing-1.5 text-center">
+          <thead>
+            <tr>
+              <th scope="col" class="w-2/5 rounded-2xl bg-cta-strong px-3 py-3 text-left align-bottom font-display text-2xl leading-none text-white sm:text-3xl">
+                Villa <br /> Planes
+              </th>
+              {
+                columns.map((c) => (
+                  <th
+                    scope="col"
+                    class="rounded-2xl bg-white/20 px-2 py-3 align-bottom font-display text-xl leading-tight ring-1 ring-white/40 sm:text-2xl"
+                    style={`color:${c.color};text-shadow:0 1px 2px rgba(255,255,255,0.5);`}
+                  >
+                    {c.label}
+                  </th>
+                ))
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              rows.map((row) => (
+                <tr>
+                  <th
+                    scope="row"
+                    class="rounded-2xl bg-cta-strong px-3 py-2.5 text-center font-display text-[20pt] leading-tight text-white"
+                  >
+                    {row.name}
+                  </th>
+                  {
+                    row.v.map((ok, i) => (
+                      <td class="rounded-2xl bg-white/25 ring-1 ring-white/40">
+                        <span class="sr-only">{ok ? 'Incluido' : 'No incluido'}</span>
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                          class="mx-auto h-7 w-7 sm:h-8 sm:w-8 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]"
+                          style={`color:${columns[i].color};`}
+                        >
+                          {ok ? <path d="M4 12.5l5 5L20 6" /> : <path d="M6 6l12 12M18 6L6 18" />}
+                        </svg>
+                      </td>
+                    ))
+                  }
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Contáctanos -->
+      <div class="mt-10 flex justify-center">
+        <a href={wa('Quiero información de los Villa Planes')} target="_blank" rel="noopener noreferrer" aria-label="Contáctanos por WhatsApp" class="transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+          <Image
+            src={contactanos}
+            alt="Contáctanos — Don Juan, la mascota de Villa Juan"
+            widths={[240, 360, 480]}
+            sizes="16rem"
+            format="webp"
+            quality={80}
+            loading="lazy"
+            class="w-52 [filter:drop-shadow(0_8px_16px_rgba(0,0,0,0.25))] sm:w-64"
+          />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- GASTRONOMÍA + CARNE AL BARRIL — franja naranja. -->
+  <section class="scene-orange text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.45)]">
+    <div class="mx-auto max-w-4xl px-4 pt-16 pb-8 text-center">
+      <h2 class="font-display text-4xl text-[#0cbd35] [text-shadow:0_2px_0_#fff,0_-1px_0_#fff,1px_0_0_#fff,-1px_0_0_#fff] sm:text-5xl">
+        Gastronomía de Origen
+      </h2>
+      <p class="mx-auto mt-6 max-w-3xl leading-relaxed">
+        En Ecogranja Villa Juan, transformamos la gastronomía en una experiencia inolvidable. Nuestra
+        propuesta culinaria es un homenaje a la diversidad de nuestra tierra, combinando la maestría
+        artesanal de los cortes al barril con los sabores más reconfortantes de la cocina tradicional
+        colombiana. Cada plato es una invitación a recordar el calor del hogar a través de recetas
+        auténticas.
+      </p>
+      <p class="mt-6 font-bold">Una Experiencia Gastronómica en Contacto con la Naturaleza</p>
+      <p class="mx-auto mt-2 max-w-3xl leading-relaxed">
+        Creemos firmemente en el valor de lo local. Por ello, nuestra carta destaca por la frescura de
+        ingredientes regionales, seleccionados cuidadosamente para garantizar una explosión de sabor
+        en cada bocado. Ya sea que busques compartir platos típicos en familia o deleitarte con
+        nuestras exclusivas especialidades de la casa, aquí encontrarás el equilibrio perfecto entre
+        sazón y bienestar.
+      </p>
+
+      <a
+        href="/gastronomia"
+        aria-label="Ver el menú"
+        class="mt-8 inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+      >
+        <img
+          src={verMenu.src}
+          alt="Ver el menú"
+          width={verMenu.width}
+          height={verMenu.height}
+          loading="lazy"
+          class="mx-auto w-52 [filter:drop-shadow(0_6px_12px_rgba(0,0,0,0.3))] sm:w-60"
+        />
+      </a>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-4 pt-8 pb-16 text-center">
+      <h2 class="font-display text-4xl text-[#FFF200] [text-shadow:0_2px_4px_rgba(0,0,0,0.35)] sm:text-5xl">
+        El Arte de nuestra Carne al Barril
+      </h2>
+      <p class="mx-auto mt-5 max-w-3xl leading-relaxed">
+        En Ecogranja Villa Juan, elevamos la gastronomía rústica a un nivel superior. Nuestra técnica
+        de cocción al barril no es solo una forma de preparar alimentos; es un ritual artesanal
+        diseñado para honrar la calidad de nuestros cortes y ofrecerte una explosión de jugosidad en
+        cada bocado.
+      </p>
+
+      <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {
-          incluye.map((item) => (
-            <li class="flex items-center gap-3 rounded-2xl bg-surface/80 px-4 py-3 text-ink">
-              <span aria-hidden="true" class="font-display text-cta">✓</span>
-              <span class="text-sm font-medium">{item}</span>
-            </li>
+          barrilSteps.map((s) => (
+            <article class="flex flex-col overflow-hidden rounded-3xl bg-surface p-3 text-center shadow-lg [text-shadow:none]">
+              <Image
+                src={s.img}
+                alt={s.title}
+                widths={[280, 400, 560]}
+                sizes="(min-width: 1024px) 16rem, (min-width: 640px) 40vw, 90vw"
+                format="webp"
+                quality={72}
+                loading="lazy"
+                class="h-36 w-full rounded-2xl object-cover"
+              />
+              <h3 class="mt-4 font-bold text-cta-strong">{s.title}</h3>
+              <p class="mt-2 grow px-1 pb-1 text-sm text-ink/70">{s.body}</p>
+            </article>
           ))
         }
-      </ul>
+      </div>
+
+      <a
+        href={wa('Quiero reservar una experiencia gastronómica al barril')}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Reserva ya"
+        class="mt-10 inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+      >
+        <img
+          src={reservaYa.src}
+          alt="¡Reserva ya!"
+          width={reservaYa.width}
+          height={reservaYa.height}
+          loading="lazy"
+          class="mx-auto w-44 [filter:drop-shadow(0_8px_14px_rgba(0,0,0,0.35))] sm:w-52"
+        />
+      </a>
+    </div>
+  </section>
+
+  <!-- TALLER ASADOS AL BARRIL -->
+  <section>
+    <div class="mx-auto max-w-5xl px-4 py-16">
+      <h2 class="title-outline text-center font-display text-4xl sm:text-5xl">
+        Taller asados al Barril
+      </h2>
+
+      <div class="mt-10 grid items-center gap-6 rounded-[2.5rem] bg-surface p-4 shadow-xl sm:grid-cols-2 sm:gap-8 sm:p-6">
+        <Image
+          src={tallerImg}
+          alt="Costillas asándose dentro del barril en un taller de Villa Juan"
+          widths={[400, 640, 900]}
+          sizes="(min-width: 640px) 28rem, 90vw"
+          format="webp"
+          quality={74}
+          loading="lazy"
+          class="h-full max-h-80 w-full rounded-[1.8rem] object-cover"
+        />
+        <div class="text-center sm:text-left">
+          <p class="leading-relaxed text-ink/80">
+            Conviértete en un maestro parrillero y domina el arte de la cocción lenta en nuestros
+            talleres especializados de asado al barril. Aprenderás las mejores técnicas de marinado,
+            manejo del fuego y secretos gastronómicos para lograr carnes jugosas con ese sabor ahumado
+            único de la granja. Es el plan ideal para compartir con amigos o familia mientras
+            disfrutas del aire libre y descubres el placer de cocinar con paciencia y tradición en un
+            entorno natural inolvidable.
+          </p>
+          <a
+            href={wa('Quiero información del taller de asados al barril')}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-6 inline-flex items-center justify-center rounded-full bg-cta-strong px-8 py-3 font-display text-xl text-white shadow-lg transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"
+          >
+            Saber más
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 </Base>

@@ -66,7 +66,7 @@ export const social = {
   facebook: 'https://www.facebook.com/ecogranjavillajuan',
   instagram: 'https://www.instagram.com/ecogranjavillajuan/',
   tiktok: 'https://www.tiktok.com/@ecogranjavillajuan',
-  // LinkedIn pendiente en el doc de contenido.
+  linkedin: '', // TODO: URL real de LinkedIn (pendiente en el doc de contenido).
 };
 
 export const visit = {
