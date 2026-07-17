@@ -154,7 +154,9 @@ export async function getPosts(): Promise<Post[]> {
           limit: -1,
         }),
       );
-      if (rows.length) return rows.map(mapPost);
+      // Ignora posts sin slug (incompletos): no tienen URL válida y romperían el build.
+      const valid = rows.filter((r) => r.slug);
+      if (valid.length) return valid.map(mapPost);
     } catch (e) {
       console.warn('[blog] Directus no disponible, usando semilla local:', (e as Error).message);
     }

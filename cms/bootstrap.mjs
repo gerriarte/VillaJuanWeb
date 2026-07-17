@@ -67,7 +67,7 @@ async function createSchema() {
     { field: 'sort', type: 'integer', meta: { interface: 'input', hidden: true } },
     { field: 'title', type: 'string', meta: { interface: 'input', width: 'full', required: true } },
     { field: 'slug', type: 'string', schema: { is_unique: true },
-      meta: { interface: 'input', width: 'half', options: { slug: true }, note: 'URL: /blog/<slug>' } },
+      meta: { interface: 'input', width: 'half', required: true, options: { slug: true }, note: 'URL: /blog/<slug>' } },
     { field: 'date', type: 'date', meta: { interface: 'datetime', width: 'half' } },
     { field: 'categories', type: 'json',
       meta: { interface: 'tags', width: 'full', special: ['cast-json'],

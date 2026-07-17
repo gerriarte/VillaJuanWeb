@@ -50,7 +50,7 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
             </svg>
           </summary>
 
-          <ul class="absolute right-0 top-full z-50 mt-3 flex min-w-60 flex-col gap-1 rounded-2xl bg-brand-strong p-3 font-display text-2xl text-[#FFF200] shadow-xl ring-1 ring-black/10">
+          <ul class="absolute right-0 top-full z-50 mt-3 flex max-h-[80dvh] min-w-60 flex-col gap-1 overflow-y-auto rounded-2xl bg-brand-strong p-3 font-display text-2xl text-[#FFF200] shadow-xl ring-1 ring-black/10">
             {
               nav.map((item) => (
                 <li>
@@ -163,3 +163,17 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
     display: block;
   }
 </style>
+
+<script>
+  // Progressive enhancement: cierra el menú móvil (<details>) al tocar fuera o con Escape.
+  // Sin esto el menú igual funciona (se cierra con la ✕ o al navegar).
+  const menu = document.querySelector<HTMLDetailsElement>('.mobile-nav');
+  if (menu) {
+    document.addEventListener('click', (e) => {
+      if (menu.open && !menu.contains(e.target as Node)) menu.open = false;
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) menu.open = false;
+    });
+  }
+</script>
