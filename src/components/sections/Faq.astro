@@ -1,0 +1,60 @@
+---
+/**
+ * Preguntas frecuentes — acordeón cero-JS (<details>/<summary>) + JSON-LD FAQPage.
+ * El FAQPage ayuda a que Google y los motores de respuesta (IA) citen respuestas directas.
+ */
+const faqs = [
+  {
+    q: '¿Dónde queda la Ecogranja Villa Juan?',
+    a: 'Estamos en la Vereda Guangatá, Tenjo, Cundinamarca, a solo 30 minutos del norte de Bogotá.',
+  },
+  {
+    q: '¿Qué días y en qué horario abren?',
+    a: 'Abrimos sábados, domingos y festivos, de 9:30 a. m. a 6:00 p. m.',
+  },
+  {
+    q: '¿Cómo llego desde Bogotá?',
+    a: 'En carro, búscanos en Waze o Google Maps como “Ecogranja Villa Juan” (unos 45 minutos). En transporte público: Portal 80 o Portal Norte, bus intermunicipal hasta el pueblo de Tenjo y luego taxi. También organizamos transporte grupal para tu pasadía o evento.',
+  },
+  {
+    q: '¿Qué experiencias y planes ofrecen?',
+    a: 'Villa Planes (pasadías de ecoturismo a caballo), celebraciones (bodas campestres, XV años, cumpleaños, reencuentros y primeras comuniones), eventos corporativos con coaching asistido con caballos, salidas pedagógicas para colegios y gastronomía al barril.',
+  },
+  {
+    q: '¿Hacen eventos empresariales y salidas de colegios?',
+    a: 'Sí. Contamos con 38.000 m² organizados por zonas para eventos corporativos, desde grupos de 10 hasta convenciones de más de 2.000 asistentes, y con talleres pedagógicos diseñados para instituciones educativas.',
+  },
+  {
+    q: '¿Cómo reservo o cotizo mi visita?',
+    a: 'Escríbenos por WhatsApp al +57 320 868 9681 y te ayudamos a planear tu pasadía o evento a la medida.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<section class="mx-auto max-w-3xl px-4 py-16">
+  <h2 class="section-title text-center">Preguntas frecuentes</h2>
+  <div class="mt-8 space-y-3">
+    {
+      faqs.map((f) => (
+        <details class="group rounded-2xl bg-surface p-5 shadow-sm ring-1 ring-black/5">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg text-cta-strong [&::-webkit-details-marker]:hidden">
+            {f.q}
+            <span class="shrink-0 text-2xl leading-none text-cta transition-transform group-open:rotate-45">+</span>
+          </summary>
+          <p class="mt-3 leading-relaxed text-ink/80">{f.a}</p>
+        </details>
+      ))
+    }
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+</section>

@@ -20,9 +20,39 @@ export async function getStaticPaths() {
 
 const { post, related } = Astro.props;
 const bodyHtml = marked.parse(post.bodyMarkdown);
+
+const siteUrl = Astro.site?.href ?? 'https://www.villa-juan.com/';
+const coverUrl =
+  post.image.kind === 'directus'
+    ? assetUrl(post.image.id, { width: 1200 })
+    : new URL(post.image.asset.src, siteUrl).href;
+
+const blogPosting = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.excerpt,
+  image: coverUrl,
+  datePublished: post.date,
+  author: { '@type': 'Organization', name: 'Ecogranja Villa Juan', url: siteUrl },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Ecogranja Villa Juan',
+    logo: { '@type': 'ImageObject', url: new URL('/og-default.jpg', siteUrl).href },
+  },
+  mainEntityOfPage: new URL(`/blog/${post.slug}`, siteUrl).href,
+  articleSection: post.categories.join(', '),
+};
 ---
 
-<Base heroHeader title={`${post.title} · Blog Villa Juan`} description={post.excerpt}>
+<Base
+  heroHeader
+  ogType="article"
+  image={coverUrl}
+  title={`${post.title} · Blog Villa Juan`}
+  description={post.excerpt}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(blogPosting)} />
   <article>
     <!-- PORTADA — imagen full-bleed (header flota encima). -->
     <div class="relative">

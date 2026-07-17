@@ -30,6 +30,7 @@ pnpm-debug.log*
 # …pero los assets del sitio SÍ (ya optimizados; las páginas los importan).
 !src/assets/images/**/*.jpg
 !src/assets/images/**/*.jpeg
+!public/og-default.jpg
 *.fig
 mock_web/
 design/VillaJuan.fig
