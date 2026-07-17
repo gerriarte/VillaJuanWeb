@@ -12,20 +12,20 @@ import h7 from '../../assets/images/Hoja_7.png';
 import h9 from '../../assets/images/Hoja_9.png';
 
 const srcs = await Promise.all(
-  [h2, h4, h5, h7, h9].map((s) => getImage({ src: s, format: 'webp', width: 140, quality: 66 })),
+  [h2, h4, h5, h7, h9].map((s) => getImage({ src: s, format: 'webp', width: 260, quality: 66 })),
 );
 
 type L = { i: number; x: number; size: number; dur: number; delay: number; drift: number; spin: number; op: number };
 const leaves: L[] = [
-  { i: 0, x: 5, size: 2.2, dur: 14, delay: -2, drift: 5, spin: 320, op: 0.5 },
-  { i: 1, x: 17, size: 1.5, dur: 18, delay: -9, drift: -4, spin: -280, op: 0.4 },
-  { i: 2, x: 30, size: 2.6, dur: 12, delay: -5, drift: 7, spin: 360, op: 0.45 },
-  { i: 3, x: 43, size: 1.8, dur: 16, delay: -13, drift: -6, spin: 300, op: 0.45 },
-  { i: 4, x: 56, size: 2.3, dur: 13, delay: -1, drift: 5, spin: -340, op: 0.5 },
-  { i: 0, x: 67, size: 1.5, dur: 19, delay: -7, drift: -5, spin: 260, op: 0.38 },
-  { i: 2, x: 78, size: 2.4, dur: 15, delay: -4, drift: 6, spin: 340, op: 0.45 },
-  { i: 3, x: 88, size: 1.7, dur: 17, delay: -11, drift: -4, spin: -300, op: 0.4 },
-  { i: 1, x: 95, size: 2.1, dur: 13, delay: -6, drift: 4, spin: 320, op: 0.45 },
+  { i: 0, x: 5, size: 4.4, dur: 14, delay: -2, drift: 5, spin: 320, op: 0.5 },
+  { i: 1, x: 17, size: 3, dur: 18, delay: -9, drift: -4, spin: -280, op: 0.4 },
+  { i: 2, x: 30, size: 5.2, dur: 12, delay: -5, drift: 7, spin: 360, op: 0.45 },
+  { i: 3, x: 43, size: 3.6, dur: 16, delay: -13, drift: -6, spin: 300, op: 0.45 },
+  { i: 4, x: 56, size: 4.6, dur: 13, delay: -1, drift: 5, spin: -340, op: 0.5 },
+  { i: 0, x: 67, size: 3, dur: 19, delay: -7, drift: -5, spin: 260, op: 0.38 },
+  { i: 2, x: 78, size: 4.8, dur: 15, delay: -4, drift: 6, spin: 340, op: 0.45 },
+  { i: 3, x: 88, size: 3.4, dur: 17, delay: -11, drift: -4, spin: -300, op: 0.4 },
+  { i: 1, x: 95, size: 4.2, dur: 13, delay: -6, drift: 4, spin: 320, op: 0.45 },
 ];
 ---
 
