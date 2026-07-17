@@ -5,30 +5,26 @@ import { Image } from 'astro:assets';
 import { wa } from '../lib/site';
 import bannerColegios from '../assets/images/colegios/Banner_Colegios.jpg';
 import badgeColegios from '../assets/images/colegios/Colegios.webp';
+import { img } from '../lib/images';
+import { getCards, type Card } from '../lib/content';
+import { assetUrl } from '../lib/directus';
 
-// imageName → archivo en src/assets/images/colegios/ (drop-and-go, resuelto por img()).
-const talleres = [
-  {
-    title: 'Granjeritos por un Día',
-    body: 'Una aventura para que los más pequeños descubran los secretos de la naturaleza y el respeto ambiental. Con retos, observación de fauna y expediciones, los niños despiertan su curiosidad y se convierten en guardianes del ecosistema. La experiencia perfecta para fomentar el liderazgo, el trabajo en equipo y el amor por la vida rural en un entorno seguro y emocionante.',
-    imageName: 'Granjeritos_por_un_dia',
-  },
-  {
-    title: 'Exploradores por un Día',
-    body: 'Expediciones por la granja donde niños y jóvenes exploran, observan y aprenden. A través de divertidos retos y observación de fauna, despiertan su curiosidad y desarrollan el trabajo en equipo, el liderazgo y el amor por la vida rural en un entorno seguro.',
-    imageName: 'Exploradores_por_un_dia',
-  },
-  {
-    title: 'Agricultor por un Día',
-    body: 'Vive la experiencia de cultivar la tierra y descubre el origen de tus alimentos. Niños y adultos siembran, cosechan y conocen los ciclos naturales de nuestra huerta orgánica. La oportunidad perfecta para valorar el trabajo del campo y conectar con la alimentación saludable bajo el sol de Tenjo.',
-    imageName: 'Agricultor_por_un_dia',
-  },
-  {
-    title: 'Ecologistas por un Día',
-    body: 'Los estudiantes se convierten en guardianes del medio ambiente descubriendo acciones concretas para proteger los recursos naturales: reciclaje, conservación, biodiversidad y prácticas sostenibles que pueden aplicar en su vida cotidiana. Un taller que inspira una nueva generación comprometida con el planeta.',
-    imageName: 'Ecologista_por_un_dia',
-  },
+// Semilla local (fallback). En Directus: colección `cards`, section=colegios-talleres.
+const seed: Card[] = [
+  { title: 'Granjeritos por un Día', imageRight: false,
+    image: { kind: 'local', asset: img('Granjeritos_por_un_dia')!, alt: 'Granjeritos por un Día' },
+    body: 'Una aventura para que los más pequeños descubran los secretos de la naturaleza y el respeto ambiental. Con retos, observación de fauna y expediciones, los niños despiertan su curiosidad y se convierten en guardianes del ecosistema. La experiencia perfecta para fomentar el liderazgo, el trabajo en equipo y el amor por la vida rural en un entorno seguro y emocionante.' },
+  { title: 'Exploradores por un Día', imageRight: false,
+    image: { kind: 'local', asset: img('Exploradores_por_un_dia')!, alt: 'Exploradores por un Día' },
+    body: 'Expediciones por la granja donde niños y jóvenes exploran, observan y aprenden. A través de divertidos retos y observación de fauna, despiertan su curiosidad y desarrollan el trabajo en equipo, el liderazgo y el amor por la vida rural en un entorno seguro.' },
+  { title: 'Agricultor por un Día', imageRight: false,
+    image: { kind: 'local', asset: img('Agricultor_por_un_dia')!, alt: 'Agricultor por un Día' },
+    body: 'Vive la experiencia de cultivar la tierra y descubre el origen de tus alimentos. Niños y adultos siembran, cosechan y conocen los ciclos naturales de nuestra huerta orgánica. La oportunidad perfecta para valorar el trabajo del campo y conectar con la alimentación saludable bajo el sol de Tenjo.' },
+  { title: 'Ecologistas por un Día', imageRight: false,
+    image: { kind: 'local', asset: img('Ecologista_por_un_dia')!, alt: 'Ecologistas por un Día' },
+    body: 'Los estudiantes se convierten en guardianes del medio ambiente descubriendo acciones concretas para proteger los recursos naturales: reciclaje, conservación, biodiversidad y prácticas sostenibles que pueden aplicar en su vida cotidiana. Un taller que inspira una nueva generación comprometida con el planeta.' },
 ];
+const talleres = await getCards('colegios-talleres', seed);
 ---
 
 <Base
@@ -82,8 +78,9 @@ const talleres = [
           <ServiceCard
             title={t.title}
             body={t.body}
-            imageName={t.imageName}
-            imageAlt={t.title}
+            image={t.image.kind === 'local' ? t.image.asset : undefined}
+            imageUrl={t.image.kind === 'directus' ? assetUrl(t.image.id, { width: 760 }) : undefined}
+            imageAlt={t.image.alt}
             square
             ctaLabel="Saber más"
             ctaHref={wa(`Quiero información del taller "${t.title}" para mi colegio`)}

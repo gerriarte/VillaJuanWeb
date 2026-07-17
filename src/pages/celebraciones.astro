@@ -9,56 +9,28 @@ import imgXV from '../assets/images/celebraciones/xvanos_image.png';
 import imgBoda from '../assets/images/celebraciones/boda_campestre_image.png';
 import imgReencuentro from '../assets/images/celebraciones/Reencuentros_Familiares.jpg';
 import imgComunion from '../assets/images/celebraciones/Primeras_comuniones.jpg';
-import type { ImageMetadata } from 'astro';
+import { getCards, type Card } from '../lib/content';
+import { assetUrl } from '../lib/directus';
 
-interface Celebracion {
-  title: string;
-  note?: string;
-  img: ImageMetadata;
-  alt: string;
-  imgRight: boolean;
-  body: string;
-}
-
-// Tarjetas de celebración — la imagen alterna izquierda/derecha (imgRight).
-const celebraciones: Celebracion[] = [
-  {
-    title: 'Cumpleaños',
-    note: 'Para grupos de 10 personas en adelante*',
-    img: imgCumpleanos,
-    alt: 'Torta de cumpleaños y brindis al aire libre en Villa Juan',
-    imgRight: true,
-    body: 'Celebra tu cumpleaños en Ecogranja Villa Juan y vive una experiencia única rodeada de naturaleza, diversión y momentos inolvidables. Disfruta de amplios espacios al aire libre, ideales para compartir con familiares y amigos, y aprovecha nuestras promociones especiales: recibe la torta para todo el grupo y la decoración del espacio completamente gratis, o elige el pasadía gratuito para el cumpleañero. Todo en un entorno campestre perfecto para celebrar, disfrutar y crear recuerdos especiales.',
-  },
-  {
-    title: 'XV Años y Grados',
-    img: imgXV,
-    alt: 'Celebración de XV años iluminada en la noche campestre',
-    imgRight: false,
-    body: 'El lugar perfecto para una celebración vibrante y llena de estilo. Espacios abiertos para fotos increíbles y zonas de fiesta seguras y amplias.',
-  },
-  {
-    title: 'Bodas Campestres',
-    img: imgBoda,
-    alt: 'Ceremonia de boda campestre al atardecer en Villa Juan',
-    imgRight: true,
-    body: "Un 'Sí, acepto' rodeado de atardeceres mágicos y el encanto del campo. Ofrecemos escenarios instagrameables y una logística impecable para el día más importante de tu vida.",
-  },
-  {
-    title: 'Reencuentros Familiares',
-    img: imgReencuentro,
-    alt: 'Familia disfrutando un día de campo en Villa Juan',
-    imgRight: false,
-    body: 'Celebramos la unión. Disfruta de un día de campo con actividades para todas las edades, desde los más pequeños hasta los abuelos.',
-  },
-  {
-    title: 'Primeras Comuniones y Bautizos',
-    img: imgComunion,
-    alt: 'Decoración de primera comunión al aire libre en Villa Juan',
-    imgRight: true,
-    body: 'Ambientes tranquilos y acogedores para compartir la fe y la alegría en familia, con menús que encantan a todos.',
-  },
+// Semilla local (fallback). En Directus: colección `cards`, section=celebraciones.
+const seed: Card[] = [
+  { title: 'Cumpleaños', note: 'Para grupos de 10 personas en adelante*', imageRight: true,
+    image: { kind: 'local', asset: imgCumpleanos, alt: 'Torta de cumpleaños y brindis al aire libre en Villa Juan' },
+    body: 'Celebra tu cumpleaños en Ecogranja Villa Juan y vive una experiencia única rodeada de naturaleza, diversión y momentos inolvidables. Disfruta de amplios espacios al aire libre, ideales para compartir con familiares y amigos, y aprovecha nuestras promociones especiales: recibe la torta para todo el grupo y la decoración del espacio completamente gratis, o elige el pasadía gratuito para el cumpleañero. Todo en un entorno campestre perfecto para celebrar, disfrutar y crear recuerdos especiales.' },
+  { title: 'XV Años y Grados', imageRight: false,
+    image: { kind: 'local', asset: imgXV, alt: 'Celebración de XV años iluminada en la noche campestre' },
+    body: 'El lugar perfecto para una celebración vibrante y llena de estilo. Espacios abiertos para fotos increíbles y zonas de fiesta seguras y amplias.' },
+  { title: 'Bodas Campestres', imageRight: true,
+    image: { kind: 'local', asset: imgBoda, alt: 'Ceremonia de boda campestre al atardecer en Villa Juan' },
+    body: "Un 'Sí, acepto' rodeado de atardeceres mágicos y el encanto del campo. Ofrecemos escenarios instagrameables y una logística impecable para el día más importante de tu vida." },
+  { title: 'Reencuentros Familiares', imageRight: false,
+    image: { kind: 'local', asset: imgReencuentro, alt: 'Familia disfrutando un día de campo en Villa Juan' },
+    body: 'Celebramos la unión. Disfruta de un día de campo con actividades para todas las edades, desde los más pequeños hasta los abuelos.' },
+  { title: 'Primeras Comuniones y Bautizos', imageRight: true,
+    image: { kind: 'local', asset: imgComunion, alt: 'Decoración de primera comunión al aire libre en Villa Juan' },
+    body: 'Ambientes tranquilos y acogedores para compartir la fe y la alegría en familia, con menús que encantan a todos.' },
 ];
+const celebraciones = await getCards('celebraciones', seed);
 ---
 
 <Base
@@ -123,19 +95,25 @@ const celebraciones: Celebracion[] = [
       {
         celebraciones.map((c) => (
           <article class="grid gap-5 rounded-[2rem] bg-surface p-4 shadow-xl sm:p-6 md:grid-cols-2 md:items-center md:gap-8">
-            <Image
-              src={c.img}
-              alt={c.alt}
-              widths={[360, 560, 760]}
-              sizes="(min-width: 768px) 24rem, 90vw"
-              format="webp"
-              quality={72}
-              loading="lazy"
-              class:list={[
-                'h-52 w-full rounded-[1.5rem] object-cover sm:h-64',
-                c.imgRight && 'md:order-last',
-              ]}
-            />
+            {c.image.kind === 'directus' ? (
+              <img
+                src={assetUrl(c.image.id, { width: 760 })}
+                alt={c.image.alt}
+                loading="lazy"
+                class:list={['h-52 w-full rounded-[1.5rem] object-cover sm:h-64', c.imageRight && 'md:order-last']}
+              />
+            ) : (
+              <Image
+                src={c.image.asset}
+                alt={c.image.alt}
+                widths={[360, 560, 760]}
+                sizes="(min-width: 768px) 24rem, 90vw"
+                format="webp"
+                quality={72}
+                loading="lazy"
+                class:list={['h-52 w-full rounded-[1.5rem] object-cover sm:h-64', c.imageRight && 'md:order-last']}
+              />
+            )}
             <div class="px-1 text-center md:text-left">
               <h2 class="card-title">
                 {c.title}

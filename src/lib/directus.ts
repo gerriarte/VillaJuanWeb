@@ -21,8 +21,21 @@ export interface DirectusPost {
   body: string | null; // Markdown
 }
 
+export interface DirectusCard {
+  id: number;
+  status: string;
+  section: string;
+  sort: number | null;
+  title: string;
+  note: string | null;
+  body: string | null;
+  image: string | null; // id del archivo
+  image_right: boolean | null;
+}
+
 interface Schema {
   posts: DirectusPost[];
+  cards: DirectusCard[];
 }
 
 export const directus = !directusEnabled

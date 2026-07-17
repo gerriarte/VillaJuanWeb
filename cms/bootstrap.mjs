@@ -104,7 +104,96 @@ async function publicRead() {
     await api('/permissions', { method: 'POST', body: {
       policy: pub.id, collection: 'directus_files', action: 'read', fields: ['*'], permissions: {} } });
   }
+  if (!has('cards')) {
+    console.log('· lectura pública: cards (publicadas)');
+    await api('/permissions', { method: 'POST', body: {
+      policy: pub.id, collection: 'cards', action: 'read', fields: ['*'], permissions: { status: { _eq: 'published' } } } });
+  }
 }
+
+async function createCardsSchema() {
+  console.log('· creando colección cards…');
+  await api('/collections', {
+    method: 'POST',
+    body: {
+      collection: 'cards',
+      meta: { icon: 'dashboard', note: 'Tarjetas editables de las verticales', sort_field: 'sort' },
+      schema: {},
+      fields: [
+        { field: 'id', type: 'integer', meta: { hidden: true, readonly: true },
+          schema: { is_primary_key: true, has_auto_increment: true } },
+      ],
+    },
+  });
+  const fields = [
+    { field: 'status', type: 'string', schema: { default_value: 'published' },
+      meta: { interface: 'select-dropdown', width: 'half', display: 'labels',
+        options: { choices: [{ text: 'Publicado', value: 'published' }, { text: 'Borrador', value: 'draft' }] } } },
+    { field: 'section', type: 'string',
+      meta: { interface: 'select-dropdown', width: 'half', note: 'A qué página/bloque pertenece',
+        options: { choices: [
+          { text: 'Celebraciones', value: 'celebraciones' },
+          { text: 'Colegios · talleres', value: 'colegios-talleres' },
+        ] } } },
+    { field: 'sort', type: 'integer', meta: { interface: 'input', hidden: true } },
+    { field: 'title', type: 'string', meta: { interface: 'input', width: 'full', required: true } },
+    { field: 'note', type: 'string', meta: { interface: 'input', width: 'full', note: 'Aclaración opcional (ej. "Para grupos de 10…")' } },
+    { field: 'body', type: 'text', meta: { interface: 'input-multiline', width: 'full' } },
+    { field: 'image', type: 'uuid', meta: { interface: 'file-image', special: ['file'], width: 'full' } },
+    { field: 'image_right', type: 'boolean', schema: { default_value: false },
+      meta: { interface: 'boolean', width: 'half', note: 'Imagen a la derecha (layout alternado)' } },
+  ];
+  for (const f of fields) {
+    console.log(`  · campo ${f.field}`);
+    await api('/fields/cards', { method: 'POST', body: f });
+  }
+  console.log('· relación image → directus_files');
+  await api('/relations', { method: 'POST', body: { collection: 'cards', field: 'image', related_collection: 'directus_files' } });
+}
+
+async function seedCards() {
+  const existing = await api('/items/cards?fields[]=id&limit=1').catch(() => []);
+  if ((existing || []).length) { console.log('· cards ya sembradas, salto'); return; }
+  for (const [i, c] of CARDS.entries()) {
+    console.log(`· card: ${c.section} / ${c.title}`);
+    const imgId = await uploadImage(c.image, c.title);
+    await api('/items/cards', { method: 'POST', body: {
+      status: 'published', section: c.section, sort: i + 1, title: c.title,
+      note: c.note ?? null, body: c.body, image: imgId, image_right: !!c.imageRight } });
+  }
+}
+
+const CARDS = [
+  // ── Celebraciones ──
+  { section: 'celebraciones', title: 'Cumpleaños', note: 'Para grupos de 10 personas en adelante*', imageRight: true,
+    image: 'src/assets/images/celebraciones/Cumpleaños_Villa_Juan.jpg',
+    body: 'Celebra tu cumpleaños en Ecogranja Villa Juan y vive una experiencia única rodeada de naturaleza, diversión y momentos inolvidables. Disfruta de amplios espacios al aire libre, ideales para compartir con familiares y amigos, y aprovecha nuestras promociones especiales: recibe la torta para todo el grupo y la decoración del espacio completamente gratis, o elige el pasadía gratuito para el cumpleañero. Todo en un entorno campestre perfecto para celebrar, disfrutar y crear recuerdos especiales.' },
+  { section: 'celebraciones', title: 'XV Años y Grados', imageRight: false,
+    image: 'src/assets/images/celebraciones/xvanos_image.png',
+    body: 'El lugar perfecto para una celebración vibrante y llena de estilo. Espacios abiertos para fotos increíbles y zonas de fiesta seguras y amplias.' },
+  { section: 'celebraciones', title: 'Bodas Campestres', imageRight: true,
+    image: 'src/assets/images/celebraciones/boda_campestre_image.png',
+    body: "Un 'Sí, acepto' rodeado de atardeceres mágicos y el encanto del campo. Ofrecemos escenarios instagrameables y una logística impecable para el día más importante de tu vida." },
+  { section: 'celebraciones', title: 'Reencuentros Familiares', imageRight: false,
+    image: 'src/assets/images/celebraciones/Reencuentros_Familiares.jpg',
+    body: 'Celebramos la unión. Disfruta de un día de campo con actividades para todas las edades, desde los más pequeños hasta los abuelos.' },
+  { section: 'celebraciones', title: 'Primeras Comuniones y Bautizos', imageRight: true,
+    image: 'src/assets/images/celebraciones/Primeras_comuniones.jpg',
+    body: 'Ambientes tranquilos y acogedores para compartir la fe y la alegría en familia, con menús que encantan a todos.' },
+  // ── Colegios · talleres ──
+  { section: 'colegios-talleres', title: 'Granjeritos por un Día', imageRight: false,
+    image: 'src/assets/images/colegios/Granjeritos_por_un_dia.jpg',
+    body: 'Una aventura para que los más pequeños descubran los secretos de la naturaleza y el respeto ambiental. Con retos, observación de fauna y expediciones, los niños despiertan su curiosidad y se convierten en guardianes del ecosistema. La experiencia perfecta para fomentar el liderazgo, el trabajo en equipo y el amor por la vida rural en un entorno seguro y emocionante.' },
+  { section: 'colegios-talleres', title: 'Exploradores por un Día', imageRight: false,
+    image: 'src/assets/images/colegios/Exploradores_por_un_dia.jpg',
+    body: 'Expediciones por la granja donde niños y jóvenes exploran, observan y aprenden. A través de divertidos retos y observación de fauna, despiertan su curiosidad y desarrollan el trabajo en equipo, el liderazgo y el amor por la vida rural en un entorno seguro.' },
+  { section: 'colegios-talleres', title: 'Agricultor por un Día', imageRight: false,
+    image: 'src/assets/images/colegios/Agricultor_por_un_dia.jpg',
+    body: 'Vive la experiencia de cultivar la tierra y descubre el origen de tus alimentos. Niños y adultos siembran, cosechan y conocen los ciclos naturales de nuestra huerta orgánica. La oportunidad perfecta para valorar el trabajo del campo y conectar con la alimentación saludable bajo el sol de Tenjo.' },
+  { section: 'colegios-talleres', title: 'Ecologistas por un Día', imageRight: false,
+    image: 'src/assets/images/colegios/Ecologista_por_un_dia.jpg',
+    body: 'Los estudiantes se convierten en guardianes del medio ambiente descubriendo acciones concretas para proteger los recursos naturales: reciclaje, conservación, biodiversidad y prácticas sostenibles que pueden aplicar en su vida cotidiana. Un taller que inspira una nueva generación comprometida con el planeta.' },
+];
 
 const MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', avif: 'image/avif' };
 async function uploadImage(relPath, title) {
@@ -186,15 +275,15 @@ async function seed() {
   console.log(`→ Directus en ${URL}`);
   await login();
   console.log('· login admin OK');
-  if (await collectionExists('posts')) {
-    console.log('· la colección posts ya existe, salto esquema');
-  } else {
-    await createSchema();
-  }
+  if (await collectionExists('posts')) console.log('· colección posts ya existe');
+  else await createSchema();
+  if (await collectionExists('cards')) console.log('· colección cards ya existe');
+  else await createCardsSchema();
   await publicRead();
   await seed();
-  const posts = await api('/items/posts?fields[]=slug&fields[]=title&limit=-1');
-  console.log(`\n✓ listo. posts en Directus: ${posts.length}`);
-  posts.forEach((p) => console.log(`   · ${p.slug}`));
+  await seedCards();
+  const posts = await api('/items/posts?fields[]=slug&limit=-1');
+  const cards = await api('/items/cards?fields[]=section&limit=-1');
+  console.log(`\n✓ listo. posts: ${posts.length} · cards: ${cards.length}`);
   console.log('\nAdmin:  http://localhost:8055   (login con DIRECTUS_ADMIN_EMAIL/PASSWORD del .env)');
 })().catch((e) => { console.error('\n✗ error:', e.message); process.exit(1); });

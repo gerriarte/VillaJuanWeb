@@ -28,6 +28,8 @@ interface Props {
   image?: ImageMetadata;
   /** Nombre del archivo en src/assets/images (drop-and-go). Se resuelve con img(). */
   imageName?: string;
+  /** URL ya lista (ej. asset de Directus con transform). Tiene prioridad sobre image/imageName. */
+  imageUrl?: string;
   imageAlt?: string;
   /** Título como <h2> en vez de <h3> cuando la card no vive bajo un heading de sección. */
   headingLevel?: 'h2' | 'h3';
@@ -45,6 +47,7 @@ const {
   ctaHref = '#cotizar',
   image,
   imageName,
+  imageUrl,
   imageAlt = '',
   headingLevel = 'h3',
   reverse = false,
@@ -65,7 +68,15 @@ const Heading = headingLevel;
 >
   <div class="md:w-2/5 md:shrink-0">
     {
-      resolved ? (
+      imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={imageAlt}
+          loading="lazy"
+          decoding="async"
+          class:list={[square ? 'aspect-square' : 'aspect-[5/3]', 'w-full rounded-2xl object-cover']}
+        />
+      ) : resolved ? (
         <Image
           src={resolved}
           alt={imageAlt}
