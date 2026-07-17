@@ -1,0 +1,74 @@
+---
+/**
+ * LeafRain — lluvia de hojas ambiental en toda la navegación. CSS puro (cero JS),
+ * `fixed` (cae mientras scrolleás), `pointer-events-none`, `aria-hidden`.
+ * Respeta prefers-reduced-motion (se oculta). Assets reutilizados y optimizados a WebP.
+ */
+import { getImage } from 'astro:assets';
+import h2 from '../../assets/images/Hoja_2.png';
+import h4 from '../../assets/images/Hoja_4.png';
+import h5 from '../../assets/images/Hoja_5.png';
+import h7 from '../../assets/images/Hoja_7.png';
+import h9 from '../../assets/images/Hoja_9.png';
+
+const srcs = await Promise.all(
+  [h2, h4, h5, h7, h9].map((s) => getImage({ src: s, format: 'webp', width: 140, quality: 66 })),
+);
+
+type L = { i: number; x: number; size: number; dur: number; delay: number; drift: number; spin: number; op: number };
+const leaves: L[] = [
+  { i: 0, x: 5, size: 2.2, dur: 14, delay: -2, drift: 5, spin: 320, op: 0.5 },
+  { i: 1, x: 17, size: 1.5, dur: 18, delay: -9, drift: -4, spin: -280, op: 0.4 },
+  { i: 2, x: 30, size: 2.6, dur: 12, delay: -5, drift: 7, spin: 360, op: 0.45 },
+  { i: 3, x: 43, size: 1.8, dur: 16, delay: -13, drift: -6, spin: 300, op: 0.45 },
+  { i: 4, x: 56, size: 2.3, dur: 13, delay: -1, drift: 5, spin: -340, op: 0.5 },
+  { i: 0, x: 67, size: 1.5, dur: 19, delay: -7, drift: -5, spin: 260, op: 0.38 },
+  { i: 2, x: 78, size: 2.4, dur: 15, delay: -4, drift: 6, spin: 340, op: 0.45 },
+  { i: 3, x: 88, size: 1.7, dur: 17, delay: -11, drift: -4, spin: -300, op: 0.4 },
+  { i: 1, x: 95, size: 2.1, dur: 13, delay: -6, drift: 4, spin: 320, op: 0.45 },
+];
+---
+
+<div class="leaf-rain pointer-events-none fixed inset-0 z-20 overflow-hidden" aria-hidden="true">
+  {
+    leaves.map((l) => (
+      <img
+        src={srcs[l.i].src}
+        alt=""
+        class="leaf"
+        style={`left:${l.x}%;width:${l.size}rem;opacity:${l.op};--dur:${l.dur}s;--delay:${l.delay}s;--drift:${l.drift}vw;--spin:${l.spin}deg;`}
+      />
+    ))
+  }
+</div>
+
+<style>
+  .leaf {
+    position: absolute;
+    top: 0;
+    will-change: transform;
+    animation: leaf-fall var(--dur) linear var(--delay) infinite;
+  }
+  @keyframes leaf-fall {
+    0% {
+      transform: translate3d(0, -14vh, 0) rotate(0deg);
+    }
+    25% {
+      transform: translate3d(calc(var(--drift) * 0.6), 20vh, 0) rotate(calc(var(--spin) * 0.25));
+    }
+    50% {
+      transform: translate3d(calc(var(--drift) * -0.3), 55vh, 0) rotate(calc(var(--spin) * 0.5));
+    }
+    75% {
+      transform: translate3d(calc(var(--drift) * 0.8), 85vh, 0) rotate(calc(var(--spin) * 0.75));
+    }
+    100% {
+      transform: translate3d(var(--drift), 116vh, 0) rotate(var(--spin));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .leaf-rain {
+      display: none;
+    }
+  }
+</style>

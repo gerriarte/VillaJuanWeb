@@ -4,6 +4,7 @@ import { Font } from 'astro:assets';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import SiteBackground from '../components/layout/SiteBackground.astro';
+import LeafRain from '../components/layout/LeafRain.astro';
 import { contact, visit, social } from '../lib/site';
 
 interface Props {
@@ -95,6 +96,7 @@ const localBusiness = {
   </head>
   <body class="flex min-h-screen flex-col">
     <SiteBackground />
+    <LeafRain />
     <Header overlay={heroHeader} />
     <!-- pb: reserva aire sobre el footer para que el caballo reclinado (que asoma ~50%
          sobre la separación) no tape el contenido de la última sección. -->

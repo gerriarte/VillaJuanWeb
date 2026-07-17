@@ -24,7 +24,6 @@ export const nav: NavItem[] = [
       { label: 'Colegios', href: '/colegios' },
     ],
   },
-  { label: 'Gastronomía', href: '/gastronomia' },
   { label: 'Blog', href: '/blog' },
 ];
 
@@ -35,7 +34,6 @@ export const footerNav: NavItem[] = [
   { label: 'Celebraciones', href: '/celebraciones' },
   { label: 'Empresas', href: '/empresas' },
   { label: 'Colegios', href: '/colegios' },
-  { label: 'Gastronomía', href: '/gastronomia' },
   { label: 'Blog', href: '/blog' },
 ];
 
@@ -44,7 +42,6 @@ export const verticals: Vertical[] = [
   { label: 'Celebraciones', href: '/celebraciones', blurb: 'XV, bodas, cumpleaños y reencuentros al aire libre.' },
   { label: 'Empresas', href: '/empresas', blurb: 'Integración corporativa y coaching asistido con caballos.' },
   { label: 'Colegios', href: '/colegios', blurb: 'Salidas pedagógicas que enseñan explorando la naturaleza.' },
-  { label: 'Gastronomía', href: '/gastronomia', blurb: 'El arte del asado al barril y la cocina de origen.' },
 ];
 
 const WA_PHONE = '573208689681';

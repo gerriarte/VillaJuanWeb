@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import HeroCarousel from '../components/sections/HeroCarousel.astro';
 import Faq from '../components/sections/Faq.astro';
 import { visit, wa, social } from '../lib/site';
+import pdfMenu from '../assets/images/villa-planes/Menu_Villa_Juan_Sin_Precios.pdf?url';
 import fuenteCaballos from '../assets/images/home/fuente_caballos.jpg';
 import horseCronicas from '../assets/images/home/horse_cronicas.png';
 import tituloCronicas from '../assets/images/home/Titulo_cronicas.png';
@@ -258,7 +259,9 @@ const galInit = [galPos.center, galPos.right, galPos.left];
         convencional.
       </p>
       <a
-        href="/gastronomia"
+        href={pdfMenu}
+        target="_blank"
+        rel="noopener noreferrer"
         aria-label="Ver el menú"
         class="mt-6 inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
       >
