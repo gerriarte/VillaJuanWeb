@@ -1,0 +1,48 @@
+# Directus (CMS headless) + Postgres para desarrollo local.
+# Uso:  docker compose up -d     ·  admin en http://localhost:8055
+# El esquema y el contenido se crean con:  node cms/bootstrap.mjs
+services:
+  database:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', '${DB_USER}', '-d', '${DB_DATABASE}']
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  directus:
+    image: directus/directus:11
+    restart: unless-stopped
+    ports:
+      - '8055:8055'
+    volumes:
+      - directus_uploads:/directus/uploads
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      SECRET: ${DIRECTUS_SECRET}
+      DB_CLIENT: pg
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      PUBLIC_URL: 'http://localhost:8055'
+      CORS_ENABLED: 'true'
+      CORS_ORIGIN: 'http://localhost:4321'
+      # Presets de transformación de imágenes que consume el sitio.
+      ASSETS_TRANSFORM_MAX_CONCURRENT: '4'
+
+volumes:
+  db_data:
+  directus_uploads:

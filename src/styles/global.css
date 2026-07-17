@@ -59,6 +59,46 @@
   color: var(--color-cta);
 }
 
+/* Cuerpo de artículo del blog renderizado desde Markdown (set:html, sin scope). */
+.post-body > * + * {
+  margin-top: 1.25rem;
+}
+.post-body h2 {
+  margin-top: 2rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.2;
+  letter-spacing: 1pt;
+  color: var(--color-cta-strong);
+}
+@media (min-width: 640px) {
+  .post-body h2 {
+    font-size: 1.5rem;
+  }
+}
+.post-body ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+.post-body ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+.post-body li + li {
+  margin-top: 0.25rem;
+}
+.post-body li::marker {
+  color: var(--color-cta);
+}
+.post-body a {
+  color: var(--color-cta-strong);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.post-body strong {
+  font-weight: 700;
+}
+
 /* Barril: la llama ("barril on") se enciende con el scroll; lo controla el script de index.astro.
    Fallback sin JS o con reduce-motion: llama encendida (opacity 1). */
 .barril-on {
