@@ -29,6 +29,15 @@ services:
       CORS_ORIGIN: ${SITE_ORIGIN}
       ASSETS_TRANSFORM_MAX_CONCURRENT: '4'
       ASSETS_CACHE_TTL: '30d'
+    networks:
+      - coolify
+
+# Red predefinida de Coolify: aquí vive el Postgres managed, así Directus
+# resuelve su hostname interno (DB_HOST). Si tu deploy falla con
+# "network coolify not found", corré `docker network ls` y usá el nombre real.
+networks:
+  coolify:
+    external: true
 
 volumes:
   directus_uploads:
