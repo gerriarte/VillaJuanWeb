@@ -59,6 +59,13 @@
   color: var(--color-cta);
 }
 
+/* Texto blanco sobre el fondo verde del sitio: sombra para legibilidad (el verde
+   lima falla contraste AA con blanco liso). Usar en intros/cuerpos sobre scene-green. */
+.text-on-green {
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
 /* Cuerpo de artículo del blog renderizado desde Markdown (set:html, sin scope). */
 .post-body > * + * {
   margin-top: 1.25rem;
