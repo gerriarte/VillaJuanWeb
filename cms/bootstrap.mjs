@@ -164,6 +164,34 @@ async function ensureSectionChoices() {
     meta: { options: { choices: SECTION_CHOICES } } } }).catch(() => {});
 }
 
+// Marcadores por página/bloque en el menú lateral: cada uno = vista filtrada + miniaturas.
+const BOOKMARKS = [
+  { name: 'Blog', collection: 'posts', icon: 'article', src: 'cover', filter: null },
+  { name: 'Celebraciones', collection: 'cards', icon: 'celebration', src: 'image', section: 'celebraciones' },
+  { name: 'Colegios · Talleres', collection: 'cards', icon: 'school', src: 'image', section: 'colegios-talleres' },
+  { name: 'Empresas · Celebraciones', collection: 'cards', icon: 'business_center', src: 'image', section: 'empresas-celebraciones' },
+  { name: 'Empresas · Experiencias', collection: 'cards', icon: 'hiking', src: 'image', section: 'empresas-experiencias' },
+  { name: 'Empresas · Beneficios', collection: 'cards', icon: 'workspace_premium', src: 'image', section: 'empresas-beneficios' },
+  { name: 'Empresas · Bienestar', collection: 'cards', icon: 'spa', src: 'image', section: 'empresas-bienestar' },
+  { name: 'Villa Planes · Barril', collection: 'cards', icon: 'outdoor_grill', src: 'image', section: 'villaplanes-barril' },
+];
+
+async function ensureBookmarks() {
+  const existing = await api('/presets?fields[]=bookmark&limit=-1').catch(() => []);
+  const have = new Set((existing || []).map((p) => p.bookmark).filter(Boolean));
+  for (const b of BOOKMARKS) {
+    if (have.has(b.name)) continue;
+    console.log(`· bookmark: ${b.name}`);
+    await api('/presets', { method: 'POST', body: {
+      bookmark: b.name, collection: b.collection, role: null, user: null, icon: b.icon,
+      filter: b.section ? { section: { _eq: b.section } } : null,
+      layout: 'cards',
+      layout_query: { cards: { sort: ['sort'] } },
+      layout_options: { cards: { icon: 'image', title: '{{title}}', subtitle: '{{status}}', size: 4, imageFit: 'crop', src: b.src } },
+    } });
+  }
+}
+
 async function seedCards() {
   const existing = await api('/items/cards?fields[]=section&fields[]=title&limit=-1').catch(() => []);
   const have = new Set((existing || []).map((c) => `${c.section}|${c.title}`));
@@ -361,6 +389,7 @@ async function seed() {
   await ensureSectionChoices();
   await seed();
   await seedCards();
+  await ensureBookmarks();
   const posts = await api('/items/posts?fields[]=slug&limit=-1');
   const cards = await api('/items/cards?fields[]=section&limit=-1');
   console.log(`\n✓ listo. posts: ${posts.length} · cards: ${cards.length}`);
