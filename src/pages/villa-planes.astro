@@ -2,6 +2,8 @@
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import { wa } from '../lib/site';
+import { getCards } from '../lib/content';
+import { assetUrl } from '../lib/directus';
 import heroImg from '../assets/images/villa-planes/Villa_Planes_Resturante.jpg';
 import tituloVP from '../assets/images/villa-planes/Conoce_Villa_Planes.webp';
 import verMenu from '../assets/images/villa-planes/vermenu.png';
@@ -49,29 +51,17 @@ const rows: { name: string; v: boolean[] }[] = [
   { name: 'Paseo a caballo o Paseo a cuatrimoto', v: [false, true, true] },
 ];
 
-// El arte de la carne al barril — 4 pasos.
-const barrilSteps = [
-  {
-    img: barril1,
-    title: 'Selección y Maduración',
-    body: 'Elegimos cortes de alta calidad con una maduración controlada. Este proceso natural intensifica el sabor y garantiza una textura excepcionalmente tierna antes de tocar el fuego.',
-  },
-  {
-    img: barril2,
-    title: 'Sazonado Artesanal',
-    body: 'Aplicamos una mezcla de especias seleccionadas que realzan el perfil cárnico sin opacarlo, preparando la pieza para su transformación en el ahumador.',
-  },
-  {
-    img: barril3,
-    title: 'Cocción al Barril',
-    body: 'Usamos calor indirecto con carbón vegetal. Al no haber llama directa, la carne se cocina uniformemente por horas, conservando todos sus jugos y logrando un dorado exterior perfecto.',
-  },
-  {
-    img: barril4,
-    title: 'Espectáculo en Vivo',
-    body: 'La preparación final se realiza frente a tus ojos. Más que una cena, es un show gastronómico donde la suavidad y el aroma del ahumado son los protagonistas de tu evento.',
-  },
-];
+// El arte de la carne al barril — 4 pasos (CMS: cards, section=villaplanes-barril).
+const barrilSteps = await getCards('villaplanes-barril', [
+  { title: 'Selección y Maduración', imageRight: false, image: { kind: 'local', asset: barril1, alt: 'Selección y Maduración' },
+    body: 'Elegimos cortes de alta calidad con una maduración controlada. Este proceso natural intensifica el sabor y garantiza una textura excepcionalmente tierna antes de tocar el fuego.' },
+  { title: 'Sazonado Artesanal', imageRight: false, image: { kind: 'local', asset: barril2, alt: 'Sazonado Artesanal' },
+    body: 'Aplicamos una mezcla de especias seleccionadas que realzan el perfil cárnico sin opacarlo, preparando la pieza para su transformación en el ahumador.' },
+  { title: 'Cocción al Barril', imageRight: false, image: { kind: 'local', asset: barril3, alt: 'Cocción al Barril' },
+    body: 'Usamos calor indirecto con carbón vegetal. Al no haber llama directa, la carne se cocina uniformemente por horas, conservando todos sus jugos y logrando un dorado exterior perfecto.' },
+  { title: 'Espectáculo en Vivo', imageRight: false, image: { kind: 'local', asset: barril4, alt: 'Espectáculo en Vivo' },
+    body: 'La preparación final se realiza frente a tus ojos. Más que una cena, es un show gastronómico donde la suavidad y el aroma del ahumado son los protagonistas de tu evento.' },
+]);
 ---
 
 <Base
@@ -323,16 +313,20 @@ const barrilSteps = [
         {
           barrilSteps.map((s) => (
             <article class="flex flex-col overflow-hidden rounded-3xl bg-surface p-3 text-center shadow-lg [text-shadow:none]">
-              <Image
-                src={s.img}
-                alt={s.title}
-                widths={[280, 400, 560]}
-                sizes="(min-width: 1024px) 16rem, (min-width: 640px) 40vw, 90vw"
-                format="webp"
-                quality={72}
-                loading="lazy"
-                class="h-36 w-full rounded-2xl object-cover"
-              />
+              {s.image.kind === 'directus' ? (
+                <img src={assetUrl(s.image.id, { width: 560 })} alt={s.image.alt} loading="lazy" class="h-36 w-full rounded-2xl object-cover" />
+              ) : (
+                <Image
+                  src={s.image.asset}
+                  alt={s.image.alt}
+                  widths={[280, 400, 560]}
+                  sizes="(min-width: 1024px) 16rem, (min-width: 640px) 40vw, 90vw"
+                  format="webp"
+                  quality={72}
+                  loading="lazy"
+                  class="h-36 w-full rounded-2xl object-cover"
+                />
+              )}
               <h3 class="mt-4 card-title">{s.title}</h3>
               <p class="mt-2 grow px-1 pb-1 text-sm text-ink/70">{s.body}</p>
             </article>

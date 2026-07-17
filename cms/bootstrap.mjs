@@ -131,10 +131,7 @@ async function createCardsSchema() {
         options: { choices: [{ text: 'Publicado', value: 'published' }, { text: 'Borrador', value: 'draft' }] } } },
     { field: 'section', type: 'string',
       meta: { interface: 'select-dropdown', width: 'half', note: 'A qué página/bloque pertenece',
-        options: { choices: [
-          { text: 'Celebraciones', value: 'celebraciones' },
-          { text: 'Colegios · talleres', value: 'colegios-talleres' },
-        ] } } },
+        options: { choices: SECTION_CHOICES } } },
     { field: 'sort', type: 'integer', meta: { interface: 'input', hidden: true } },
     { field: 'title', type: 'string', meta: { interface: 'input', width: 'full', required: true } },
     { field: 'note', type: 'string', meta: { interface: 'input', width: 'full', note: 'Aclaración opcional (ej. "Para grupos de 10…")' } },
@@ -151,10 +148,27 @@ async function createCardsSchema() {
   await api('/relations', { method: 'POST', body: { collection: 'cards', field: 'image', related_collection: 'directus_files' } });
 }
 
+const SECTION_CHOICES = [
+  { text: 'Celebraciones', value: 'celebraciones' },
+  { text: 'Colegios · talleres', value: 'colegios-talleres' },
+  { text: 'Empresas · celebraciones', value: 'empresas-celebraciones' },
+  { text: 'Empresas · experiencias', value: 'empresas-experiencias' },
+  { text: 'Empresas · beneficios', value: 'empresas-beneficios' },
+  { text: 'Empresas · bienestar', value: 'empresas-bienestar' },
+  { text: 'Villa Planes · barril', value: 'villaplanes-barril' },
+];
+
+// Mantiene actualizadas las opciones del dropdown `section` (para instancias ya creadas).
+async function ensureSectionChoices() {
+  await api('/fields/cards/section', { method: 'PATCH', body: {
+    meta: { options: { choices: SECTION_CHOICES } } } }).catch(() => {});
+}
+
 async function seedCards() {
-  const existing = await api('/items/cards?fields[]=id&limit=1').catch(() => []);
-  if ((existing || []).length) { console.log('· cards ya sembradas, salto'); return; }
+  const existing = await api('/items/cards?fields[]=section&fields[]=title&limit=-1').catch(() => []);
+  const have = new Set((existing || []).map((c) => `${c.section}|${c.title}`));
   for (const [i, c] of CARDS.entries()) {
+    if (have.has(`${c.section}|${c.title}`)) continue;
     console.log(`· card: ${c.section} / ${c.title}`);
     const imgId = await uploadImage(c.image, c.title);
     await api('/items/cards', { method: 'POST', body: {
@@ -193,6 +207,70 @@ const CARDS = [
   { section: 'colegios-talleres', title: 'Ecologistas por un Día', imageRight: false,
     image: 'src/assets/images/colegios/Ecologista_por_un_dia.jpg',
     body: 'Los estudiantes se convierten en guardianes del medio ambiente descubriendo acciones concretas para proteger los recursos naturales: reciclaje, conservación, biodiversidad y prácticas sostenibles que pueden aplicar en su vida cotidiana. Un taller que inspira una nueva generación comprometida con el planeta.' },
+
+  // ── Empresas · celebraciones ──
+  { section: 'empresas-celebraciones', title: 'Día de la Familia Empresarial', imageRight: false,
+    image: 'src/assets/images/empresas/dia_de_la_familia.jpg',
+    body: 'Fortalece el salario emocional de tus colaboradores con una jornada campestre única. Diseñamos actividades de integración dinámicas para todas las edades, dinámicas con animales de la granja y espacios de esparcimiento para que los equipos disfruten junto a sus seres queridos.' },
+  { section: 'empresas-celebraciones', title: 'Fiestas de Fin de Año Corporativas', imageRight: false,
+    image: 'src/assets/images/empresas/Fiestas_de_fin.jpg',
+    body: 'Despide el año laboral con una celebración memorable. Ofrecemos banquetes campestres, zonas para eventos musicales, integración de equipos y un ambiente natural exclusivo para celebrar los logros alcanzados por tu empresa.' },
+  { section: 'empresas-celebraciones', title: 'Fiestas de Halloween Empresariales', imageRight: false,
+    image: 'src/assets/images/empresas/Fiestas_de_Halloween.jpg',
+    body: 'Una jornada diferente y divertida adaptada para los hijos de los colaboradores o para el mismo equipo de trabajo. Organizamos concursos de disfraces, decoración temática, senderos recreativos y actividades especiales en un entorno seguro y al aire libre.' },
+  { section: 'empresas-celebraciones', title: 'Festival de Cometas Corporativo', imageRight: false,
+    image: 'src/assets/images/empresas/Festival_de_cometas.jpg',
+    body: 'Aprovecha las mejores temporadas de viento para una dinámica de team building de alto impacto. Una actividad perfecta para fomentar el trabajo en equipo, la creatividad en el diseño de cometas y la sana competencia en un amplio espacio verde sin interferencias.' },
+
+  // ── Empresas · experiencias ──
+  { section: 'empresas-experiencias', title: 'Bicipaseos Villa Juan', imageRight: false,
+    image: 'src/assets/images/empresas/Bicipaseos_Villa_Juan.png',
+    body: 'Recorre senderos diseñados para disfrutar de la brisa y el paisaje de la granja. Una actividad ideal para fomentar la actividad física y el compañerismo mientras exploramos cada rincón de nuestra infraestructura natural.' },
+  { section: 'empresas-experiencias', title: 'Despedidas Fin de Año', imageRight: false,
+    image: 'src/assets/images/empresas/Fiestas_de_fin.jpg',
+    body: 'Cierra el año junto a tu equipo en un entorno campestre exclusivo. Brindis, integración y espacios al aire libre para celebrar juntos los logros y despedir el año a lo grande.' },
+  { section: 'empresas-experiencias', title: 'Caminatas de Observación', imageRight: false,
+    image: 'src/assets/images/empresas/Caminatas_de_observación.png',
+    body: 'Más que caminar, se trata de ver. Acompañados de guías, los participantes recorren nuestras zonas de reserva para identificar flora local y fauna, fomentando la curiosidad y el respeto por el ecosistema.' },
+  { section: 'empresas-experiencias', title: 'Talleres de Siembra y Huerta', imageRight: false,
+    image: 'src/assets/images/empresas/Talleres_de_siembra.png',
+    body: "Una experiencia de 'manos en la tierra'. Aprende los ciclos de la vida vegetal, la importancia de la seguridad alimentaria y llévate la satisfacción de haber plantado vida. Un retorno a nuestras raíces campesinas." },
+
+  // ── Empresas · beneficios ──
+  { section: 'empresas-beneficios', title: 'Liderazgo y Confianza', imageRight: false,
+    image: 'src/assets/images/empresas/Liderazgo_y_confianza.webp',
+    body: 'Actividades diseñadas para identificar y potenciar líderes.' },
+  { section: 'empresas-beneficios', title: 'Productividad', imageRight: false,
+    image: 'src/assets/images/empresas/Productividad.webp',
+    body: 'Reducción del estrés laboral mediante el contacto directo con la naturaleza.' },
+  { section: 'empresas-beneficios', title: 'Sentido de Pertenencia', imageRight: false,
+    image: 'src/assets/images/empresas/Sentido_de_pertenencia.webp',
+    body: 'Dinámicas que alinean los objetivos del colaborador con los de la empresa.' },
+
+  // ── Empresas · bienestar ──
+  { section: 'empresas-bienestar', title: 'Formación Asistida Con Caballos', imageRight: true,
+    image: 'src/assets/images/empresas/Formacion_asistida.jpg',
+    body: 'Una experiencia transformadora donde el caballo actúa como espejo de nuestras emociones. Ideal para quienes buscan fortalecer su liderazgo, mejorar la comunicación asertiva o simplemente vivir un momento de bienestar y reflexión personal.' },
+  { section: 'empresas-bienestar', title: 'Jornada de Siembra', imageRight: false,
+    image: 'src/assets/images/empresas/Jornada_siembra.jpg',
+    body: 'Deja una huella positiva en el planeta y conecta con la tierra en nuestras jornadas de reforestación guiada. Esta actividad te permite ser parte activa del equilibrio ecológico de Tenjo, aprendiendo sobre especies nativas mientras siembras vida con tus propias manos. Es el plan ideal para familias, empresas y grupos que buscan una experiencia con propósito, transformando el paisaje y contribuyendo a un futuro más verde y sostenible para todos.' },
+  { section: 'empresas-bienestar', title: 'Bici-Paseos', imageRight: true,
+    image: 'src/assets/images/empresas/Bicipaseos_Villa_Juan.png',
+    body: 'Recorre los paisajes de Tenjo sobre dos ruedas en una ruta diseñada para desconectarte y respirar aire puro. Es la actividad ideal para quienes buscan combinar deporte, aventura y naturaleza, explorando senderos rurales de forma dinámica y divertida en familia o con amigos. Atrévete a pedalear por caminos inolvidables mientras descubres la biodiversidad local y disfrutas del mejor turismo activo cerca de la ciudad.' },
+
+  // ── Villa Planes · barril (pasos) ──
+  { section: 'villaplanes-barril', title: 'Selección y Maduración', imageRight: false,
+    image: 'src/assets/images/villa-planes/Seleccion_y_Maduracion.png',
+    body: 'Elegimos cortes de alta calidad con una maduración controlada. Este proceso natural intensifica el sabor y garantiza una textura excepcionalmente tierna antes de tocar el fuego.' },
+  { section: 'villaplanes-barril', title: 'Sazonado Artesanal', imageRight: false,
+    image: 'src/assets/images/villa-planes/Sazonado_Artesanal.jpg',
+    body: 'Aplicamos una mezcla de especias seleccionadas que realzan el perfil cárnico sin opacarlo, preparando la pieza para su transformación en el ahumador.' },
+  { section: 'villaplanes-barril', title: 'Cocción al Barril', imageRight: false,
+    image: 'src/assets/images/villa-planes/Cocción_al_barril.jpg',
+    body: 'Usamos calor indirecto con carbón vegetal. Al no haber llama directa, la carne se cocina uniformemente por horas, conservando todos sus jugos y logrando un dorado exterior perfecto.' },
+  { section: 'villaplanes-barril', title: 'Espectáculo en Vivo', imageRight: false,
+    image: 'src/assets/images/villa-planes/Espectaculo_en_vivo.jpg',
+    body: 'La preparación final se realiza frente a tus ojos. Más que una cena, es un show gastronómico donde la suavidad y el aroma del ahumado son los protagonistas de tu evento.' },
 ];
 
 const MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', avif: 'image/avif' };
@@ -280,6 +358,7 @@ async function seed() {
   if (await collectionExists('cards')) console.log('· colección cards ya existe');
   else await createCardsSchema();
   await publicRead();
+  await ensureSectionChoices();
   await seed();
   await seedCards();
   const posts = await api('/items/posts?fields[]=slug&limit=-1');
