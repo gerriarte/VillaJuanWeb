@@ -1,0 +1,34 @@
+# Directus (CMS) para Coolify apuntando a un Postgres MANAGED de Coolify
+# (recurso PostgreSQL aparte, NO embebido). Todos los valores van como env vars
+# del recurso en la UI de Coolify — nunca en git.
+#
+# DB_HOST = hostname interno del Postgres managed (lo da Coolify).
+# SERVICE_FQDN_DIRECTUS_8055 = dominio → enruta al puerto 8055 de Directus.
+#   Dejalo vacío en el 1er deploy para que Coolify genere un dominio temporal
+#   (sirve mientras el DNS no apunte al VPS); luego seteá cms.villa-juan.com.
+# PUBLIC_URL = URL pública COMPLETA (con https://), debe coincidir con el dominio.
+services:
+  directus:
+    image: directus/directus:11
+    restart: unless-stopped
+    volumes:
+      - directus_uploads:/directus/uploads
+    environment:
+      SERVICE_FQDN_DIRECTUS_8055: ${SERVICE_FQDN_DIRECTUS_8055:-}
+      PUBLIC_URL: ${PUBLIC_URL}
+      SECRET: ${DIRECTUS_SECRET}
+      DB_CLIENT: pg
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      CORS_ENABLED: 'true'
+      CORS_ORIGIN: ${SITE_ORIGIN}
+      ASSETS_TRANSFORM_MAX_CONCURRENT: '4'
+      ASSETS_CACHE_TTL: '30d'
+
+volumes:
+  directus_uploads:
