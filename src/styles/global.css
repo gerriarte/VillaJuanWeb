@@ -29,13 +29,34 @@
   }
 }
 
-/* Título naranja con contorno blanco (hero). paint-order deja el naranja nítido y el
-   blanco como halo detrás. Fallback sin text-stroke: naranja + sombra. */
-.title-outline {
+/* Título naranja con contorno blanco. paint-order deja el naranja nítido y el
+   blanco como halo detrás. Fallback sin text-stroke: naranja + sombra.
+   · .title-outline → look base (hero/carrusel; conserva su propio tamaño).
+   · .section-title → título de SECCIÓN canónico y normalizado: Sunrise + naranja
+     + borde blanco + 35pt. Tamaño fluido que topa EXACTO en 35pt en desktop y
+     baja en móvil (invariante #1: se genera responsive, no se copia el desktop). */
+.title-outline,
+.section-title {
   color: var(--color-cta);
   -webkit-text-stroke: 2px #ffffff;
   paint-order: stroke fill;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 6vw, 35pt);
+  line-height: 1.05;
+}
+
+/* Título de CARD en Sunrise (naranja, sobre superficie clara). Tamaño canónico
+   28pt: la display custom pierde legibilidad en chico, así que se sube y se abre
+   +1pt de interletrado. Fluido con piso legible en móvil (invariante #1). */
+.card-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 5vw, 28pt);
+  letter-spacing: 1pt;
+  line-height: 1.1;
+  color: var(--color-cta);
 }
 
 /* Barril: la llama ("barril on") se enciende con el scroll; lo controla el script de index.astro.

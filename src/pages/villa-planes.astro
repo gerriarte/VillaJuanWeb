@@ -2,24 +2,33 @@
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import { wa } from '../lib/site';
-import heroImg from '../assets/images/villa-planes/hero.webp';
-import tituloVP from '../assets/images/villa-planes/titulo-villa-planes.png';
+import heroImg from '../assets/images/villa-planes/Villa_Planes_Resturante.jpg';
+import tituloVP from '../assets/images/villa-planes/Conoce_Villa_Planes.webp';
 import verMenu from '../assets/images/villa-planes/vermenu.png';
-import reservaYa from '../assets/images/villa-planes/Reserva.png';
-import barril1 from '../assets/images/villa-planes/barril1.webp';
-import barril2 from '../assets/images/villa-planes/barril2.webp';
-import barril3 from '../assets/images/villa-planes/barril3.webp';
-import barril4 from '../assets/images/villa-planes/barril4.webp';
+import reservaYa from '../assets/images/villa-planes/Reserva.webp';
+import barril1 from '../assets/images/villa-planes/Seleccion_y_Maduracion.png';
+import barril2 from '../assets/images/villa-planes/Sazonado_Artesanal.jpg';
+import barril3 from '../assets/images/villa-planes/Cocción_al_barril.jpg';
+import barril4 from '../assets/images/villa-planes/Espectaculo_en_vivo.jpg';
 import tallerImg from '../assets/images/villa-planes/taller.webp';
-import selfieAnimales from '../assets/images/home/selfie_con_animales.png';
+import selfieAnimales from '../assets/images/villa-planes/Selfie.webp';
 import contactanos from '../assets/images/home/contactanos.png';
+import troteGalope from '../assets/images/villa-planes/Trote_Galope.webp';
+import trochaGalope from '../assets/images/villa-planes/Trocha_Galope.webp';
+import pasoFino from '../assets/images/villa-planes/Paso_Fino.webp';
+import tronco from '../assets/images/villa-planes/Tronco_fondo.webp';
+import cartel from '../assets/images/villa-planes/Cartel_Villa_Planes.webp';
+import pdfTrote from '../assets/images/villa-planes/Villa_Plan_Trote_y_Galope.pdf?url';
+import pdfTrocha from '../assets/images/villa-planes/Villa_Plan_Trocha_y_Galope.pdf?url';
+import pdfPasoFino from '../assets/images/villa-planes/Villa_Plan_Paso_Fino.pdf?url';
+import pdfMenu from '../assets/images/villa-planes/Menu_Villa_Juan_Sin_Precios.pdf?url';
 
-// Botones-píldora de planes (degradé por plan). Orden del mockup: Trote, Trocha, Paso Fino.
+// Planes como gráficos de texto (Sunrise, por color). Orden del mockup: Trote, Trocha, Paso Fino.
 // TODO(post-scaffold): apuntar a la descarga real del PDF (Villa_Plan_*.pdf) con `download`.
 const planes = [
-  { title: 'Trote y Galope', grad: 'linear-gradient(90deg,#4ba82b 0%,#00811e 100%)' },
-  { title: 'Trocha y Galope', grad: 'linear-gradient(90deg,#e0431f 0%,#c0360d 100%)' },
-  { title: 'Paso Fino', grad: 'linear-gradient(90deg,#f2c14e 0%,#d99323 100%)' },
+  { title: 'Trote y Galope', img: troteGalope, pdf: pdfTrote, grad: 'linear-gradient(90deg,#4ba82b 0%,#00811e 100%)' },
+  { title: 'Trocha y Galope', img: trochaGalope, pdf: pdfTrocha, grad: 'linear-gradient(90deg,#e0431f 0%,#c0360d 100%)' },
+  { title: 'Paso Fino', img: pasoFino, pdf: pdfPasoFino, grad: 'linear-gradient(90deg,#f2c14e 0%,#d99323 100%)' },
 ];
 
 // Tabla comparativa. Marcas coloreadas por columna (verde / rojo / dorado).
@@ -87,12 +96,15 @@ const barrilSteps = [
 
   <!-- CONOCE LOS VILLA PLANES — intro + selfie + botones de planes. -->
   <section>
-    <div class="mx-auto max-w-6xl px-4 py-16 text-ink">
-      <img
-        src={tituloVP.src}
+    <div class="mx-auto max-w-6xl px-4 pt-16 pb-0 text-ink">
+      <Image
+        src={tituloVP}
         alt="Conoce los ¡Villa Planes!"
-        width={tituloVP.width}
-        height={tituloVP.height}
+        widths={[384, 640, 960]}
+        sizes="(min-width: 640px) 30rem, 18rem"
+        format="webp"
+        quality={80}
+        loading="lazy"
         class="mx-auto w-72 [filter:drop-shadow(0_4px_10px_rgba(0,0,0,0.2))] sm:w-[30rem]"
       />
 
@@ -127,19 +139,27 @@ const barrilSteps = [
           <p class="text-center font-bold text-ink/80 md:text-right">
             Descarga el <span class="text-cta-strong">.pdf</span> de tu Villa Plan favorito*
           </p>
-          <ul class="mt-5 space-y-4">
+          <ul class="mx-auto mt-5 flex max-w-xs flex-col gap-3 md:mx-0 md:ml-auto">
             {
               planes.map((p) => (
                 <li>
                   <a
-                    href={wa(`Quiero el Villa Plan ${p.title}`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Descargar el Villa Plan ${p.title}`}
+                    href={p.pdf}
+                    download={`Villa Plan ${p.title}.pdf`}
+                    aria-label={`Descargar el Villa Plan ${p.title} (PDF)`}
                     style={`background-image:${p.grad};`}
-                    class="flex items-center justify-center rounded-full px-6 py-5 text-center font-display text-3xl text-white shadow-lg ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:text-4xl [text-shadow:0_1px_3px_rgba(0,0,0,0.45)]"
+                    class="flex w-full items-center justify-center rounded-full px-6 py-3 shadow-lg ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
-                    {p.title}
+                    <Image
+                      src={p.img}
+                      alt={p.title}
+                      widths={[160, 240, 320]}
+                      sizes="10rem"
+                      format="webp"
+                      quality={85}
+                      loading="lazy"
+                      class="h-14 w-auto [filter:drop-shadow(0_2px_5px_rgba(0,0,0,0.45))] sm:h-16"
+                    />
                   </a>
                 </li>
               ))
@@ -150,6 +170,26 @@ const barrilSteps = [
     </div>
   </section>
 
+  <!-- BANNER — cartel "¡Villa Planes!" sobre tronco de madera full-bleed. -->
+  <section class="relative mt-[20px] flex items-center justify-center overflow-hidden">
+    <img
+      src={tronco.src}
+      alt=""
+      aria-hidden="true"
+      class="pointer-events-none absolute top-1/2 left-1/2 -z-10 w-full max-w-none -translate-x-1/2 -translate-y-1/2"
+    />
+    <Image
+      src={cartel}
+      alt="¡Villa Planes!"
+      widths={[320, 480, 640]}
+      sizes="(min-width: 640px) 26rem, 80vw"
+      format="webp"
+      quality={82}
+      loading="lazy"
+      class="relative w-64 [filter:drop-shadow(0_6px_12px_rgba(0,0,0,0.35))] sm:w-[26rem]"
+    />
+  </section>
+
   <!-- TABLA COMPARATIVA de planes. -->
   <section>
     <div class="mx-auto max-w-4xl px-4 pb-12">
@@ -157,14 +197,14 @@ const barrilSteps = [
         <table class="w-full min-w-[34rem] border-separate border-spacing-1.5 text-center">
           <thead>
             <tr>
-              <th scope="col" class="w-2/5 rounded-2xl bg-cta-strong px-3 py-3 text-left align-bottom font-display text-2xl leading-none text-white sm:text-3xl">
+              <th scope="col" class="w-2/5 rounded-2xl bg-cta-strong px-3 py-3 text-left align-bottom font-display text-2xl leading-none tracking-[2pt] text-white sm:text-3xl">
                 Villa <br /> Planes
               </th>
               {
                 columns.map((c) => (
                   <th
                     scope="col"
-                    class="rounded-2xl bg-white/20 px-2 py-3 align-bottom font-display text-xl leading-tight ring-1 ring-white/40 sm:text-2xl"
+                    class="rounded-2xl bg-white/20 px-2 py-3 align-bottom font-display text-xl leading-tight tracking-[2pt] ring-1 ring-white/40 sm:text-2xl"
                     style={`color:${c.color};text-shadow:0 1px 2px rgba(255,255,255,0.5);`}
                   >
                     {c.label}
@@ -179,7 +219,7 @@ const barrilSteps = [
                 <tr>
                   <th
                     scope="row"
-                    class="rounded-2xl bg-cta-strong px-3 py-2.5 text-center font-display text-[20pt] leading-tight text-white"
+                    class="rounded-2xl bg-cta-strong px-3 py-2.5 text-center font-display text-[20pt] leading-tight tracking-[2pt] text-white"
                   >
                     {row.name}
                   </th>
@@ -251,8 +291,10 @@ const barrilSteps = [
       </p>
 
       <a
-        href="/gastronomia"
-        aria-label="Ver el menú"
+        href={pdfMenu}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Ver el menú (PDF)"
         class="mt-8 inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
       >
         <img
@@ -291,7 +333,7 @@ const barrilSteps = [
                 loading="lazy"
                 class="h-36 w-full rounded-2xl object-cover"
               />
-              <h3 class="mt-4 font-bold text-cta-strong">{s.title}</h3>
+              <h3 class="mt-4 card-title">{s.title}</h3>
               <p class="mt-2 grow px-1 pb-1 text-sm text-ink/70">{s.body}</p>
             </article>
           ))
@@ -305,11 +347,13 @@ const barrilSteps = [
         aria-label="Reserva ya"
         class="mt-10 inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
       >
-        <img
-          src={reservaYa.src}
+        <Image
+          src={reservaYa}
           alt="¡Reserva ya!"
-          width={reservaYa.width}
-          height={reservaYa.height}
+          widths={[208, 320, 416]}
+          sizes="(min-width: 640px) 13rem, 11rem"
+          format="webp"
+          quality={80}
           loading="lazy"
           class="mx-auto w-44 [filter:drop-shadow(0_8px_14px_rgba(0,0,0,0.35))] sm:w-52"
         />
@@ -320,7 +364,7 @@ const barrilSteps = [
   <!-- TALLER ASADOS AL BARRIL -->
   <section>
     <div class="mx-auto max-w-5xl px-4 py-16">
-      <h2 class="title-outline text-center font-display text-4xl sm:text-5xl">
+      <h2 class="section-title text-center">
         Taller asados al Barril
       </h2>
 
@@ -345,7 +389,7 @@ const barrilSteps = [
             entorno natural inolvidable.
           </p>
           <a
-            href={wa('Quiero información del taller de asados al barril')}
+            href={wa('Quiero información sobre el taller de asados al barril.')}
             target="_blank"
             rel="noopener noreferrer"
             class="mt-6 inline-flex items-center justify-center rounded-full bg-cta-strong px-8 py-3 font-display text-xl text-white shadow-lg transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"

@@ -1,68 +1,117 @@
 ---
 import Base from '../layouts/Base.astro';
-import PageIntro from '../components/sections/PageIntro.astro';
-import InfoCard from '../components/sections/InfoCard.astro';
+import ServiceCard from '../components/sections/ServiceCard.astro';
+import { Image } from 'astro:assets';
 import { wa } from '../lib/site';
+import bannerColegios from '../assets/images/colegios/Banner_Colegios.jpg';
+import badgeColegios from '../assets/images/colegios/Colegios.webp';
 
-// imageName → archivo en src/assets/images/colegios/ (drop-and-go).
+// imageName → archivo en src/assets/images/colegios/ (drop-and-go, resuelto por img()).
 const talleres = [
   {
     title: 'Granjeritos por un Día',
-    body: 'Una aventura para que los más pequeños descubran los secretos de la naturaleza y el respeto ambiental. Con retos, observación de fauna y expediciones, los niños despiertan su curiosidad y se convierten en guardianes del ecosistema.',
+    body: 'Una aventura para que los más pequeños descubran los secretos de la naturaleza y el respeto ambiental. Con retos, observación de fauna y expediciones, los niños despiertan su curiosidad y se convierten en guardianes del ecosistema. La experiencia perfecta para fomentar el liderazgo, el trabajo en equipo y el amor por la vida rural en un entorno seguro y emocionante.',
     imageName: 'Granjeritos_por_un_dia',
   },
   {
     title: 'Exploradores por un Día',
-    body: 'Expediciones por la granja donde niños y jóvenes exploran, observan y aprenden. La experiencia perfecta para fomentar el liderazgo, el trabajo en equipo y el amor por la vida rural en un entorno seguro y emocionante.',
+    body: 'Expediciones por la granja donde niños y jóvenes exploran, observan y aprenden. A través de divertidos retos y observación de fauna, despiertan su curiosidad y desarrollan el trabajo en equipo, el liderazgo y el amor por la vida rural en un entorno seguro.',
     imageName: 'Exploradores_por_un_dia',
   },
   {
     title: 'Agricultor por un Día',
-    body: 'Vive la experiencia de cultivar la tierra y descubre el origen de tus alimentos. Los estudiantes siembran, cosechan y conocen los ciclos naturales de nuestra huerta orgánica bajo el sol de Tenjo.',
+    body: 'Vive la experiencia de cultivar la tierra y descubre el origen de tus alimentos. Niños y adultos siembran, cosechan y conocen los ciclos naturales de nuestra huerta orgánica. La oportunidad perfecta para valorar el trabajo del campo y conectar con la alimentación saludable bajo el sol de Tenjo.',
     imageName: 'Agricultor_por_un_dia',
   },
   {
     title: 'Ecologistas por un Día',
-    body: 'Los estudiantes se convierten en guardianes del medio ambiente: reciclaje, conservación, biodiversidad y prácticas sostenibles que pueden aplicar en su vida cotidiana. Una generación comprometida con el planeta.',
+    body: 'Los estudiantes se convierten en guardianes del medio ambiente descubriendo acciones concretas para proteger los recursos naturales: reciclaje, conservación, biodiversidad y prácticas sostenibles que pueden aplicar en su vida cotidiana. Un taller que inspira una nueva generación comprometida con el planeta.',
     imageName: 'Ecologista_por_un_dia',
   },
 ];
 ---
 
 <Base
+  heroHeader
   title="Colegios · Salidas pedagógicas en Villa Juan | Tenjo"
   description="Salidas pedagógicas para colegios en Ecogranja Villa Juan: talleres donde los estudiantes aprenden haciendo, explorando y conectándose con la naturaleza en Tenjo."
 >
-  <PageIntro
-    title="Salidas pedagógicas para colegios"
-    intro="Transformamos el aprendizaje en una experiencia inolvidable. Los estudiantes aprenden haciendo, explorando y conectándose con la naturaleza a través de talleres que complementan los procesos educativos de manera práctica, divertida y significativa."
-  />
-
-  <section class="mx-auto max-w-4xl px-4 py-12 text-center">
-    <p class="text-lg leading-relaxed text-ink/80">
-      Nuestros programas permiten que niños y jóvenes desarrollen habilidades ambientales,
-      científicas, sociales y emocionales mientras viven una jornada llena de descubrimientos en un
-      entorno seguro y rodeado de naturaleza.
-    </p>
+  <!-- HERO — banner full-bleed (header flota encima con degradé). -->
+  <section class="relative">
+    <Image
+      src={bannerColegios}
+      alt="Estudiantes conociendo de cerca una llama en la Ecogranja Villa Juan"
+      widths={[768, 1280, 1920]}
+      sizes="100vw"
+      format="webp"
+      quality={72}
+      loading="eager"
+      fetchpriority="high"
+      class="h-[52vh] min-h-[360px] w-full object-cover sm:h-[64vh]"
+    />
   </section>
 
-  <section class="mx-auto max-w-6xl px-4 pb-16">
+  <!-- INTRO — título de sección + dos párrafos. Texto oscuro (ink): blanco falla AA
+       sobre el verde lima del fondo (invariante #2). -->
+  <section class="mx-auto max-w-4xl px-4 py-16 text-center">
+    <h1 class="title-outline font-display leading-[1.05] text-[length:clamp(2.25rem,7vw,48pt)]">
+      Salidas pedagógicas
+      <span class="block leading-tight text-[length:clamp(1.875rem,5.8vw,40pt)]">para colegios en Villa Juan</span>
+    </h1>
+    <div class="mx-auto mt-8 max-w-3xl space-y-4 text-lg leading-relaxed text-ink/90">
+      <p>
+        Transformamos el aprendizaje en una experiencia inolvidable. En la Ecogranja Villa Juan, los
+        estudiantes aprenden haciendo, explorando y conectándose con la naturaleza a través de
+        talleres diseñados para complementar los procesos educativos de manera práctica, divertida y
+        significativa.
+      </p>
+      <p>
+        Nuestros programas permiten que niños y jóvenes desarrollen habilidades ambientales,
+        científicas, sociales y emocionales mientras viven una jornada llena de descubrimientos en un
+        entorno seguro y rodeado de naturaleza.
+      </p>
+    </div>
+  </section>
+
+  <!-- TALLERES — cards horizontales (imagen izq. + texto der. + CTA). -->
+  <section class="mx-auto max-w-5xl px-4 pb-8">
     <h2 class="sr-only">Talleres pedagógicos</h2>
-    <div class="grid gap-6 sm:grid-cols-2">
-      {talleres.map((t) => <InfoCard title={t.title} body={t.body} imageName={t.imageName} imageAlt={t.title} />)}
+    <div class="space-y-6">
+      {
+        talleres.map((t) => (
+          <ServiceCard
+            title={t.title}
+            body={t.body}
+            imageName={t.imageName}
+            imageAlt={t.title}
+            square
+            ctaLabel="Saber más"
+            ctaHref={wa(`Quiero información del taller "${t.title}" para mi colegio`)}
+          />
+        ))
+      }
     </div>
   </section>
 
-  <section>
-    <div class="mx-auto max-w-4xl px-4 py-16 text-center text-ink">
-      <h2 class="font-display text-3xl sm:text-4xl">Planea la salida de tu colegio</h2>
-      <p class="mt-4 text-ink/80">Diseñamos la jornada a la medida de tu institución.</p>
-      <a
-        href={wa('Quiero planear una salida pedagógica para mi colegio en Villa Juan')}
-        class="mt-6 inline-flex items-center justify-center rounded-full bg-cta-strong px-6 py-3 font-display text-lg text-white transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"
-      >
-        Solicitar información
-      </a>
-    </div>
+  <!-- CTA FINAL — badge ilustrado "Solicitar servicios para colegios". -->
+  <section class="px-4 pt-6 pb-8 text-center">
+    <a
+      href={wa('Quiero planear mi visita Villa Juan')}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Solicitar servicios para colegios"
+      class="inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+    >
+      <Image
+        src={badgeColegios}
+        alt="Solicitar servicios para colegios"
+        widths={[384, 640, 1024]}
+        sizes="(min-width: 640px) 30rem, 90vw"
+        format="webp"
+        quality={80}
+        loading="lazy"
+        class="mx-auto w-72 [filter:drop-shadow(0_8px_16px_rgba(0,0,0,0.3))] sm:w-[30rem]"
+      />
+    </a>
   </section>
 </Base>

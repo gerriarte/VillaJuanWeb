@@ -1,32 +1,53 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PageIntro from '../../components/sections/PageIntro.astro';
-
-const categorias = [
-  'Maestría al Barril',
-  'Bienestar y Naturaleza',
-  'Mundo Equino',
-  'Eventos',
-  'Cultura',
-];
+import { Image } from 'astro:assets';
+import banner from '../../assets/images/blog/Blog.jpg';
+import { posts, categories } from '../../lib/blog';
 ---
 
 <Base
+  heroHeader
   title="Blog · Historias de la Granja | Villa Juan"
   description="Historias de la Granja: cocina al barril, bienestar en la naturaleza, mundo equino y todo para que tu próxima visita a Ecogranja Villa Juan sea inolvidable."
 >
-  <PageIntro
-    title="Historias de la Granja"
-    kicker="Naturaleza, tradición y bienestar"
-    intro="Un espacio para los amantes de la vida de campo. Compartimos los secretos de nuestra cocina al barril, consejos para conectar con la naturaleza, curiosidades del mundo equino y todo lo que necesitas para que tu próxima visita sea inolvidable."
-  />
+  <!-- HERO — banner full-bleed (header flota encima). -->
+  <section class="relative">
+    <Image
+      src={banner}
+      alt="Recorriendo la Ecogranja Villa Juan en cuatrimoto"
+      widths={[768, 1280, 1920]}
+      sizes="100vw"
+      format="webp"
+      quality={72}
+      loading="eager"
+      fetchpriority="high"
+      class="h-[52vh] min-h-[360px] w-full object-cover sm:h-[64vh]"
+    />
+  </section>
 
-  <section class="mx-auto max-w-6xl px-4 py-12">
-    <h2 class="title-outline font-display text-3xl sm:text-4xl">Categorías</h2>
-    <ul class="mt-6 flex flex-wrap gap-3">
+  <!-- INTRO — título a dos tamaños + bienvenida. Texto oscuro (ink): blanco falla AA
+       sobre el verde lima del fondo (invariante #2). -->
+  <section class="mx-auto max-w-4xl px-4 pt-16 text-center">
+    <h1 class="section-title">
+      Historias de la Granja
+      <span class="block text-[0.62em] leading-tight">Naturaleza, tradición y bienestar</span>
+    </h1>
+    <p class="mx-auto mt-8 max-w-3xl text-lg leading-relaxed text-ink/90">
+      Bienvenido a nuestro rincón digital: un espacio para los amantes de la vida de campo y las
+      experiencias auténticas. Aquí compartimos los secretos de nuestra cocina al barril, consejos
+      para conectar con la naturaleza, curiosidades del mundo equino y todo lo que necesitas para que
+      tu próxima visita sea inolvidable.
+    </p>
+  </section>
+
+  <!-- CATEGORÍAS — chips (filtro visual; el filtrado llega con el CMS). -->
+  <section class="mx-auto max-w-5xl px-4 pt-10">
+    <h2 class="sr-only">Categorías</h2>
+    <!-- TODO(post-scaffold): filtrar por categoría (página /blog/categoria/[cat] o island mínima). -->
+    <ul class="flex flex-wrap justify-center gap-3">
       {
-        categorias.map((c) => (
-          <li class="rounded-full bg-surface px-4 py-2 text-sm font-medium text-ink/80 ring-1 ring-black/5">
+        categories.map((c) => (
+          <li class="rounded-full bg-brand-strong px-5 py-2 font-display text-sm tracking-[1pt] text-white ring-1 ring-white/20">
             {c}
           </li>
         ))
@@ -34,12 +55,38 @@ const categorias = [
     </ul>
   </section>
 
-  <section class="mx-auto max-w-6xl px-4 pb-20">
-    <p class="text-ink/60">
-      🚧 Muy pronto publicaremos nuestros primeros artículos.
-    </p>
-    <!-- TODO(post-scaffold): listar posts desde Directus / content collections (frame o2SKv).
-         Artículos previstos: "Beneficios del coaching equino para ejecutivos",
-         "Secretos de la cocción al barril", "Taller de caballos para equipos". -->
+  <!-- ARTÍCULOS — grid de cards. -->
+  <section class="mx-auto max-w-5xl px-4 py-12">
+    <h2 class="sr-only">Artículos</h2>
+    <div class="grid gap-6 sm:grid-cols-2">
+      {
+        posts.map((post) => (
+          <article class="flex flex-col overflow-hidden rounded-3xl bg-surface shadow-lg ring-1 ring-black/5">
+            <Image
+              src={post.image}
+              alt={post.imageAlt}
+              widths={[320, 480, 640]}
+              sizes="(min-width: 640px) 40vw, 90vw"
+              format="webp"
+              quality={72}
+              loading="lazy"
+              class="aspect-[16/10] w-full object-cover"
+            />
+            <div class="flex flex-1 flex-col gap-3 p-5">
+              <p class="font-display text-xs tracking-[1pt] text-cta-strong uppercase">{post.categories[0]}</p>
+              <h3 class="card-title">{post.title}</h3>
+              <p class="text-sm leading-relaxed text-ink/75">{post.excerpt}</p>
+              <a
+                href={`/blog/${post.slug}`}
+                aria-label={`Leer más: ${post.title}`}
+                class="mt-auto inline-flex w-fit items-center justify-center rounded-full bg-cta-strong px-6 py-2.5 font-display text-base tracking-[1pt] text-white transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"
+              >
+                Leer más
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
   </section>
 </Base>

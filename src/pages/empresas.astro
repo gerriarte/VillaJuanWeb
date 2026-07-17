@@ -4,25 +4,25 @@ import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { wa } from '../lib/site';
 import heroImg from '../assets/images/empresas/hero.webp';
-import badgeCorp from '../assets/images/empresas/Corporativa_cotizar.png';
+import badgeCorp from '../assets/images/empresas/Propuesta_Corporativo.webp';
 import cotizarCoaching from '../assets/images/empresas/Coach_titulo.png';
-import ventana1 from '../assets/images/empresas/horse_ventana1.png';
-import ventana2 from '../assets/images/empresas/horse_ventana2.png';
-import ventana3 from '../assets/images/empresas/horse_ventana3.png';
+import ventana1 from '../assets/images/empresas/Liderazgo_y_confianza.webp';
+import ventana2 from '../assets/images/empresas/Productividad.webp';
+import ventana3 from '../assets/images/empresas/Sentido_de_pertenencia.webp';
 import icono01 from '../assets/images/empresas/icono01.png';
 import icono02 from '../assets/images/empresas/icono02.png';
 import icono03 from '../assets/images/empresas/icono03.png';
 import icono04 from '../assets/images/empresas/icono04.png';
 import icono05 from '../assets/images/empresas/icono05.png';
-import imgDiaFamilia from '../assets/images/empresas/dia_familia.webp';
-import imgFinAno from '../assets/images/empresas/fin_ano.webp';
-import imgHalloween from '../assets/images/empresas/halloween.webp';
-import imgCometas from '../assets/images/empresas/cometas.webp';
-import imgBici from '../assets/images/empresas/bicipaseos.webp';
-import imgCaminatas from '../assets/images/empresas/caminatas.webp';
-import imgTalleres from '../assets/images/empresas/talleres.webp';
-import imgFormacion from '../assets/images/empresas/formacion.webp';
-import imgSiembra from '../assets/images/empresas/siembra.webp';
+import imgDiaFamilia from '../assets/images/empresas/dia_de_la_familia.jpg';
+import imgFinAno from '../assets/images/empresas/Fiestas_de_fin.jpg';
+import imgHalloween from '../assets/images/empresas/Fiestas_de_Halloween.jpg';
+import imgCometas from '../assets/images/empresas/Festival_de_cometas.jpg';
+import imgBici from '../assets/images/empresas/Bicipaseos_Villa_Juan.png';
+import imgCaminatas from '../assets/images/empresas/Caminatas_de_observación.png';
+import imgTalleres from '../assets/images/empresas/Talleres_de_siembra.png';
+import imgFormacion from '../assets/images/empresas/Formacion_asistida.jpg';
+import imgSiembra from '../assets/images/empresas/Jornada_siembra.jpg';
 import gal1 from '../assets/images/empresas/gal1.webp';
 import gal2 from '../assets/images/empresas/gal2.webp';
 import gal3 from '../assets/images/empresas/gal3.webp';
@@ -31,8 +31,7 @@ import cronica2 from '../assets/images/home/hero_home_coaching.jpg';
 import cronica3 from '../assets/images/home/hero_home_restaurante.jpg';
 
 // Clases de títulos de sección reutilizadas.
-const titleGreen =
-  'text-center font-display text-4xl leading-tight text-white [paint-order:stroke_fill] [-webkit-text-stroke:2.5px_#0a7d24] [text-shadow:0_3px_8px_rgba(0,0,0,0.25)] sm:text-5xl';
+const titleSection = 'section-title text-center';
 const titleOrange =
   'text-center font-display text-4xl leading-tight text-[#FFF200] [text-shadow:0_2px_4px_rgba(0,0,0,0.35)] sm:text-5xl';
 
@@ -108,7 +107,7 @@ const cronicas = [
   <!-- CELEBRACIONES CORPORATIVAS -->
   <section>
     <div class="mx-auto max-w-6xl px-4 py-16">
-      <h1 class={titleGreen}>Celebraciones</h1>
+      <h1 class={titleSection}>Celebraciones</h1>
       <div class="mx-auto mt-6 max-w-4xl space-y-4 text-center text-lg leading-relaxed text-ink/90">
         <p>
           En Ecogranja Villa Juan transformamos las celebraciones corporativas en experiencias
@@ -128,7 +127,7 @@ const cronicas = [
           celebraciones.map((c) => (
             <article class="flex flex-col overflow-hidden rounded-3xl bg-surface p-4 text-center shadow-lg">
               <Image src={c.img} alt={c.alt} widths={[320, 480, 640]} sizes="(min-width: 640px) 28rem, 90vw" format="webp" quality={72} loading="lazy" class="h-48 w-full rounded-2xl object-cover" />
-              <h2 class="mt-4 font-display text-2xl text-cta">{c.title}</h2>
+              <h2 class="mt-4 card-title">{c.title}</h2>
               <p class="mt-2 px-2 pb-1 text-sm leading-relaxed text-ink/70">{c.body}</p>
             </article>
           ))
@@ -140,7 +139,7 @@ const cronicas = [
   <!-- EXPERIENCIAS VILLA JUAN -->
   <section>
     <div class="mx-auto max-w-6xl px-4 pb-16">
-      <h2 class={titleGreen}>Experiencias Villa Juan</h2>
+      <h2 class={titleSection}>Experiencias Villa Juan</h2>
       <p class="mx-auto mt-6 max-w-4xl text-center text-lg leading-relaxed text-ink/90">
         En <strong class="text-cta-strong">Ecogranja Villa Juan</strong>, las salidas no son solo
         recorridos; son oportunidades para el descubrimiento. Hemos diseñado una serie de actividades
@@ -156,7 +155,7 @@ const cronicas = [
           experiencias.map((c) => (
             <article class="flex flex-col overflow-hidden rounded-3xl bg-surface p-4 text-center shadow-lg">
               <Image src={c.img} alt={c.alt} widths={[320, 480, 640]} sizes="(min-width: 640px) 28rem, 90vw" format="webp" quality={72} loading="lazy" class="h-48 w-full rounded-2xl object-cover" />
-              <h3 class="mt-4 font-display text-2xl text-cta">{c.title}</h3>
+              <h3 class="mt-4 card-title">{c.title}</h3>
               <p class="mt-2 px-2 pb-1 text-sm leading-relaxed text-ink/70">{c.body}</p>
             </article>
           ))
@@ -166,7 +165,7 @@ const cronicas = [
       <!-- Badge Solicitar Propuesta Corporativa -->
       <div class="mt-12 text-center">
         <a href={wa('Quiero solicitar una propuesta corporativa')} target="_blank" rel="noopener noreferrer" aria-label="Solicitar propuesta corporativa" class="inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
-          <img src={badgeCorp.src} alt="Solicitar propuesta corporativa" width={badgeCorp.width} height={badgeCorp.height} loading="lazy" class="mx-auto w-72 [filter:drop-shadow(0_8px_16px_rgba(0,0,0,0.25))] sm:w-96" />
+          <Image src={badgeCorp} alt="Solicitar propuesta corporativa" widths={[288, 384, 576]} sizes="(min-width: 640px) 24rem, 18rem" format="webp" quality={80} loading="lazy" class="mx-auto w-72 [filter:drop-shadow(0_8px_16px_rgba(0,0,0,0.25))] sm:w-96" />
         </a>
       </div>
     </div>
@@ -175,7 +174,7 @@ const cronicas = [
   <!-- EL ESCENARIO / INFRAESTRUCTURA -->
   <section>
     <div class="mx-auto max-w-4xl px-4 pb-12 text-center">
-      <h2 class={titleGreen}>El Escenario donde la Estrategia y la Naturaleza se Encuentran</h2>
+      <h2 class={titleSection}>El Escenario donde la Estrategia y la Naturaleza se Encuentran</h2>
       <p class="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-ink/90">
         En <strong class="text-cta-strong">Ecogranja Villa Juan</strong>, elevamos el concepto de
         eventos institucionales. Contamos con una infraestructura única de
@@ -192,13 +191,13 @@ const cronicas = [
   <!-- BENEFICIOS -->
   <section>
     <div class="mx-auto max-w-5xl px-4 pb-8">
-      <h2 class={titleGreen}>Beneficios</h2>
+      <h2 class={titleSection}>Beneficios</h2>
       <div class="mt-8 grid gap-6 sm:grid-cols-3">
         {
           beneficios.map((b) => (
             <div class="text-center">
-              <img src={b.img.src} alt={b.title} width={b.img.width} height={b.img.height} loading="lazy" class="mx-auto w-40 [filter:drop-shadow(0_6px_12px_rgba(0,0,0,0.3))]" />
-              <h3 class="mt-3 font-display text-2xl text-cta">{b.title}</h3>
+              <Image src={b.img} alt={b.title} widths={[160, 320]} sizes="10rem" format="webp" quality={78} loading="lazy" class="mx-auto w-40 [filter:drop-shadow(0_6px_12px_rgba(0,0,0,0.3))]" />
+              <h3 class="mt-3 card-title">{b.title}</h3>
               <p class="mx-auto mt-2 max-w-xs text-ink/80">{b.body}</p>
             </div>
           ))
@@ -219,14 +218,14 @@ const cronicas = [
   <!-- BIENESTAR FÍSICO Y MENTAL -->
   <section>
     <div class="mx-auto max-w-5xl px-4 py-12">
-      <h2 class={titleGreen}>Bienestar Físico y Mental</h2>
+      <h2 class={titleSection}>Bienestar Físico y Mental</h2>
       <div class="mt-10 space-y-8">
         {
           bienestar.map((c) => (
             <article class="grid gap-5 rounded-[2rem] bg-surface p-4 shadow-xl sm:p-6 md:grid-cols-2 md:items-center md:gap-8">
               <Image src={c.img} alt={c.alt} widths={[360, 560, 760]} sizes="(min-width: 768px) 24rem, 90vw" format="webp" quality={72} loading="lazy" class:list={['h-52 w-full rounded-[1.5rem] object-cover sm:h-64', c.imgRight && 'md:order-last']} />
               <div class="px-1 text-center md:text-left">
-                <h3 class="font-display text-2xl text-cta sm:text-3xl">{c.title}</h3>
+                <h3 class="card-title">{c.title}</h3>
                 <p class="mt-3 text-sm leading-relaxed text-ink/75">{c.body}</p>
                 <a href={wa(`Quiero información de ${c.title}`)} target="_blank" rel="noopener noreferrer" class="mt-5 inline-flex items-center justify-center rounded-full bg-cta-strong px-8 py-2.5 font-display text-lg text-white shadow transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong">
                   Saber más
@@ -293,7 +292,7 @@ const cronicas = [
   <!-- CRÓNICAS DEL GALOPE -->
   <section>
     <div class="mx-auto max-w-5xl px-4 py-16">
-      <h2 class="title-outline text-center font-display text-4xl sm:text-5xl">Crónicas del Galope</h2>
+      <h2 class="section-title text-center">Crónicas del Galope</h2>
       <div class="mt-10 grid gap-6 sm:grid-cols-3">
         {
           cronicas.map((p) => (

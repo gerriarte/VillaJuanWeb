@@ -13,8 +13,8 @@
  *  #5 imágenes: <Image> de astro:assets (AVIF/WebP, responsive, lazy).
  *  #7 estilo solo vía tokens (text-cta, bg-cta-strong, font-display, surface…).
  *
- * Tipografía: título en font-body bold (como el .fig, legible); label del CTA en
- * font-display (Sunrise), que el diseño reserva para acentos/botones.
+ * Tipografía: título en Sunrise vía .card-title (canónico, 28pt + interletrado
+ * para legibilidad); label del CTA en font-display.
  */
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
@@ -33,6 +33,8 @@ interface Props {
   headingLevel?: 'h2' | 'h3';
   /** En desktop coloca la imagen a la derecha (layout alternado del diseño). */
   reverse?: boolean;
+  /** Recorta la imagen 1:1 (aspect-square) en vez del 5:3 por defecto. */
+  square?: boolean;
 }
 
 const {
@@ -46,6 +48,7 @@ const {
   imageAlt = '',
   headingLevel = 'h3',
   reverse = false,
+  square = false,
 } = Astro.props;
 
 const resolved = image ?? (imageName ? img(imageName) : undefined);
@@ -70,11 +73,11 @@ const Heading = headingLevel;
           sizes="(min-width: 768px) 40vw, 100vw"
           loading="lazy"
           decoding="async"
-          class="aspect-[5/3] w-full rounded-2xl object-cover"
+          class:list={[square ? 'aspect-square' : 'aspect-[5/3]', 'w-full rounded-2xl object-cover']}
         />
       ) : (
         <div
-          class="aspect-[5/3] w-full rounded-2xl bg-line"
+          class:list={[square ? 'aspect-square' : 'aspect-[5/3]', 'w-full rounded-2xl bg-line']}
           role="img"
           aria-label={imageAlt || 'Imagen del servicio'}
         />
@@ -83,7 +86,7 @@ const Heading = headingLevel;
   </div>
 
   <div class="flex flex-1 flex-col gap-3 md:gap-4">
-    <Heading class="text-2xl font-bold text-cta md:text-3xl lg:text-4xl">
+    <Heading class="card-title">
       {title}
     </Heading>
     <p class="text-base leading-relaxed text-ink md:text-lg">
