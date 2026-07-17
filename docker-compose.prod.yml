@@ -1,0 +1,59 @@
+# Directus (CMS) + Postgres para PRODUCCIÓN en Coolify.
+#
+# En Coolify: New Resource → Docker Compose → pegar/usar este archivo.
+# Coolify inyecta el dominio + SSL (Let's Encrypt) vía la variable mágica
+# SERVICE_FQDN_DIRECTUS (setéala en la UI, p.ej.  cms.villa-juan.com ).
+# El resto de secretos (DB_PASSWORD, DIRECTUS_SECRET, ADMIN_*) se cargan como
+# variables de entorno del recurso en la propia UI de Coolify — NUNCA en git.
+#
+# Tras el primer arranque, sembrar esquema + contenido una sola vez:
+#   DIRECTUS_URL=https://cms.villa-juan.com \
+#   DIRECTUS_ADMIN_EMAIL=... DIRECTUS_ADMIN_PASSWORD=... \
+#   node cms/bootstrap.mjs
+services:
+  database:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', '${DB_USER}', '-d', '${DB_DATABASE}']
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  directus:
+    image: directus/directus:11
+    restart: unless-stopped
+    volumes:
+      - directus_uploads:/directus/uploads
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      # Coolify: setéala en la UI como  cms.villa-juan.com  (gestiona dominio + SSL).
+      SERVICE_FQDN_DIRECTUS: ${SERVICE_FQDN_DIRECTUS}
+      PUBLIC_URL: ${SERVICE_FQDN_DIRECTUS}
+      SECRET: ${DIRECTUS_SECRET}
+      DB_CLIENT: pg
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      CORS_ENABLED: 'true'
+      # Dominio del sitio Astro (para que el navegador pueda leer assets del CMS).
+      CORS_ORIGIN: ${SITE_ORIGIN}
+      ASSETS_TRANSFORM_MAX_CONCURRENT: '4'
+      # Recomendado en prod: subir caché de assets del navegador.
+      ASSETS_CACHE_TTL: '30d'
+
+volumes:
+  db_data:
+  directus_uploads:
