@@ -24,9 +24,12 @@ pnpm-debug.log*
 .idea/
 
 # Fuentes de diseño pesadas — NO se versionan (mockups + Figma).
-# El .ttf (src/assets/fonts) y los PNG de assets SÍ se versionan.
+# El .ttf (src/assets/fonts) y los PNG/JPG de assets SÍ se versionan.
 *.jpg
 *.jpeg
+# …pero los assets del sitio SÍ (ya optimizados; las páginas los importan).
+!src/assets/images/**/*.jpg
+!src/assets/images/**/*.jpeg
 *.fig
 mock_web/
 design/VillaJuan.fig
