@@ -67,7 +67,7 @@ const slides: Slide[] = [
         const Heading = i === 0 ? 'h1' : 'h2';
         return (
           <article
-            class="relative min-h-screen w-full shrink-0"
+            class="relative min-h-dvh w-full shrink-0"
             aria-roledescription="slide"
             aria-label={`${i + 1} de ${slides.length}`}
           >
@@ -83,7 +83,7 @@ const slides: Slide[] = [
               class="absolute inset-0 h-full w-full object-cover"
             />
             <div class="absolute inset-0 bg-black/40" />
-            <div class="relative mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center px-4 py-28 text-center text-white">
+            <div class="relative mx-auto flex min-h-dvh max-w-4xl flex-col items-center justify-center px-4 py-28 text-center text-white">
               <Heading
                 class:list={[
                   'leading-tight',
