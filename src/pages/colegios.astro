@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import ServiceCard from '../components/sections/ServiceCard.astro';
 import { Image } from 'astro:assets';
+import LeafDivider from '../components/layout/LeafDivider.astro';
 import { wa } from '../lib/site';
 import bannerColegios from '../assets/images/colegios/Banner_Colegios.jpg';
 import badgeColegios from '../assets/images/colegios/Colegios.webp';
@@ -32,7 +33,8 @@ const talleres = await getCards('colegios-talleres', seed);
   title="Colegios · Salidas pedagógicas en Villa Juan | Tenjo"
   description="Salidas pedagógicas para colegios en Ecogranja Villa Juan: talleres donde los estudiantes aprenden haciendo, explorando y conectándose con la naturaleza en Tenjo."
 >
-  <!-- HERO — banner full-bleed (header flota encima con degradé). -->
+  <!-- HERO — banner full-bleed (header flota encima con degradé). Las hojas van DETRÁS del
+       banner (-z-10, contexto raíz) y asoman por debajo, por detrás de la sección siguiente. -->
   <section class="relative">
     <Image
       src={bannerColegios}
@@ -43,8 +45,9 @@ const talleres = await getCards('colegios-talleres', seed);
       quality={72}
       loading="eager"
       fetchpriority="high"
-      class="h-[80dvh] w-full object-cover sm:h-dvh"
+      class="h-[80dvh] w-full border-4 border-brand-strong object-cover sm:h-dvh"
     />
+    <LeafDivider class="absolute inset-x-0 bottom-0 -z-10 translate-y-[50%]" />
   </section>
 
   <!-- INTRO — título de sección + dos párrafos. Texto oscuro (ink): blanco falla AA

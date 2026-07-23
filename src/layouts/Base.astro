@@ -91,6 +91,12 @@ const localBusiness = {
     <script type="application/ld+json" set:html={JSON.stringify(localBusiness)} />
 
     <Font cssVariable="--font-sunrise" preload />
+
+    <!-- Reveal por scroll: marca <html> ANTES del paint para ocultar el estado inicial
+         sin FOUC. Si el JS está apagado, la clase no se pone → las imágenes se ven normales. -->
+    <script is:inline>
+      document.documentElement.classList.add('reveal-on');
+    </script>
     <!-- TODO(post-scaffold): <ClientRouter /> para View Transitions. Recordar re-init de
          ScrollTrigger en astro:page-load cuando entre GSAP. -->
   </head>
@@ -104,5 +110,31 @@ const localBusiness = {
       <slot />
     </main>
     <Footer />
+
+    <script>
+      // Reveal por scroll de las imágenes (todo el sitio). IntersectionObserver liviano.
+      // Respeta reduce-motion. Excluye hero/LCP (eager) y zonas con animación propia (.no-reveal).
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const targets = Array.from(
+        document.querySelectorAll<HTMLElement>('main img:not([loading="eager"]):not(.no-reveal)'),
+      );
+      if (reduce || !('IntersectionObserver' in window)) {
+        // Sin animación: mostrar todo (defensivo, por si el CSS ya ocultó).
+        targets.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries, obs) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-visible');
+                obs.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -12% 0px', threshold: 0.06 },
+        );
+        targets.forEach((el) => io.observe(el));
+      }
+    </script>
   </body>
 </html>

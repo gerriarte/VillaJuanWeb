@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
+import LeafDivider from '../components/layout/LeafDivider.astro';
 import { wa } from '../lib/site';
 import { getCards } from '../lib/content';
 import { assetUrl } from '../lib/directus';
@@ -69,7 +70,8 @@ const barrilSteps = await getCards('villaplanes-barril', [
   title="Villa Planes · Pasadías y ecoturismo en Tenjo | Ecogranja Villa Juan"
   description="Villa Planes: pasadías de ecoturismo en la Sabana de Bogotá. Trote y Galope, Trocha y Galope o Paso Fino, con desayuno de la granja, recorridos, gastronomía al barril y show Villa Juan."
 >
-  <!-- HERO — delicias al barril, imagen full-bleed detrás del header flotante. -->
+  <!-- HERO — delicias al barril, imagen full-bleed detrás del header flotante. Las hojas van
+       DETRÁS del banner (-z-10, contexto raíz) y asoman por debajo, por detrás de la sección siguiente. -->
   <section class="relative">
     <Image
       src={heroImg}
@@ -82,6 +84,7 @@ const barrilSteps = await getCards('villaplanes-barril', [
       fetchpriority="high"
       class="h-[80dvh] w-full object-cover sm:h-dvh"
     />
+    <LeafDivider class="absolute inset-x-0 bottom-0 -z-10 translate-y-[50%]" />
   </section>
 
   <!-- CONOCE LOS VILLA PLANES — intro + selfie + botones de planes. -->

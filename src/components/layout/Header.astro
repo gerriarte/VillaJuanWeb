@@ -50,7 +50,7 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
             </svg>
           </summary>
 
-          <ul class="absolute right-0 top-full z-50 mt-3 flex max-h-[80dvh] min-w-60 flex-col gap-1 overflow-y-auto rounded-2xl bg-brand-strong p-3 font-display text-2xl text-[#FFF200] shadow-xl ring-1 ring-black/10">
+          <ul class="absolute right-0 top-full z-50 mt-3 flex max-h-[80dvh] min-w-60 flex-col gap-1 overflow-y-auto rounded-2xl bg-brand-strong p-3 font-display text-[23pt] text-[#FFF200] shadow-xl ring-1 ring-black/10">
             {
               nav.map((item) => (
                 <li>
@@ -65,7 +65,7 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
                     {item.label}
                   </a>
                   {item.children && (
-                    <ul class="mt-1 mb-1 ml-3 flex flex-col gap-1 border-l border-white/25 pl-3 text-xl">
+                    <ul class="mt-1 mb-1 ml-3 flex flex-col gap-1 border-l border-white/25 pl-3 text-[20pt]">
                       {item.children.map((c) => (
                         <li>
                           <a
@@ -89,7 +89,7 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
         </details>
 
         <!-- Menú desktop (≥md): barra horizontal con flyout hover. -->
-        <ul class="hidden items-center gap-x-5 gap-y-1 font-display text-2xl text-[#FFF200] [text-shadow:0_1px_3px_rgba(0,0,0,0.4)] md:flex">
+        <ul class="hidden items-center gap-x-5 gap-y-1 font-display text-[23pt] text-[#FFF200] [text-shadow:0_1px_3px_rgba(0,0,0,0.4)] md:flex">
           {
             nav.map((item) =>
               item.children ? (
@@ -106,7 +106,7 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
                     {item.label}
                     <span aria-hidden="true" class="text-base">▾</span>
                   </a>
-                  <ul class="invisible absolute left-0 top-full z-50 mt-2 min-w-44 rounded-2xl bg-brand-strong p-2 text-xl opacity-0 shadow-xl ring-1 ring-black/10 transition duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                  <ul class="invisible absolute left-0 top-full z-50 mt-2 min-w-44 rounded-2xl bg-brand-strong p-2 text-[20pt] opacity-0 shadow-xl ring-1 ring-black/10 transition duration-150 before:absolute before:inset-x-0 before:-top-2 before:h-2 before:content-[''] group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
                     {item.children.map((c) => (
                       <li>
                         <a

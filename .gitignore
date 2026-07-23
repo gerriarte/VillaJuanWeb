@@ -42,3 +42,7 @@ public/HOME-*/
 # Fuentes de diseño pesadas del home (SVG-wrappers con raster embebido, ~155MB).
 # Se rasterizan/optimizan a PNG/WebP versionados en src/assets/images/home/.
 design/home-sources/
+
+# Originales sin optimizar del carrusel (~194MB). Las versiones optimizadas viven en
+# src/assets/images/home/carrusel/ y son las que importan las páginas.
+src/assets/images/home/Carrusel_home/

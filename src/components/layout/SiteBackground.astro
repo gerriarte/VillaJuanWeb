@@ -30,6 +30,8 @@ const hojas = await Promise.all(
 );
 
 // Dispersión de hojas por todo el alto (top %), lados alternados, tamaños/rotaciones/opacidad variados.
+// OP_FACTOR atenúa la opacidad de TODAS las hojas laterales (0.8 = 20% más transparentes).
+const OP_FACTOR = 0.5;
 type Leaf = { h: number; top: number; side: 'left' | 'right'; off: number; w: number; rot: number; op: number };
 const leaves: Leaf[] = [
   { h: 0, top: 3, side: 'left', off: -2, w: 9, rot: 14, op: 0.85 },
@@ -66,7 +68,7 @@ const leaves: Leaf[] = [
         src={hojas[l.h].src}
         alt=""
         loading="lazy"
-        style={`position:absolute;top:${l.top}%;${l.side}:${l.off}%;width:${l.w}rem;transform:rotate(${l.rot}deg);opacity:${l.op};`}
+        style={`position:absolute;top:${l.top}%;${l.side}:${l.off}%;width:${l.w}rem;transform:rotate(${l.rot}deg);opacity:${(l.op * OP_FACTOR).toFixed(2)};`}
       />
     ))
   }

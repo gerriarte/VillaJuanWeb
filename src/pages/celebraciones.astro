@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
+import LeafDivider from '../components/layout/LeafDivider.astro';
 import { wa } from '../lib/site';
 import heroImg from '../assets/images/celebraciones/Banner_Celebraciones.jpg';
 import celeHorse from '../assets/images/celebraciones/Celebraciones_horse.png';
@@ -38,7 +39,8 @@ const celebraciones = await getCards('celebraciones', seed);
   title="Celebraciones · Bodas, XV, cumpleaños y eventos en Tenjo | Ecogranja Villa Juan"
   description="Celebra en la Ecogranja Villa Juan: bodas campestres, XV años, cumpleaños, reencuentros familiares y primeras comuniones en escenarios naturales cerca de Bogotá."
 >
-  <!-- HERO — salón decorado, imagen full-bleed detrás del header flotante. -->
+  <!-- HERO — salón decorado, imagen full-bleed detrás del header flotante. Las hojas van
+       DETRÁS del banner (-z-10, contexto raíz) y asoman por debajo, por detrás de la sección siguiente. -->
   <section class="relative">
     <Image
       src={heroImg}
@@ -49,8 +51,9 @@ const celebraciones = await getCards('celebraciones', seed);
       quality={72}
       loading="eager"
       fetchpriority="high"
-      class="h-[80dvh] w-full object-cover sm:h-dvh"
+      class="h-[80dvh] w-full border-4 border-brand-strong object-cover sm:h-dvh"
     />
+    <LeafDivider class="absolute inset-x-0 bottom-0 -z-10 translate-y-[50%]" />
   </section>
 
   <!-- INTRO — título + caballo con globo naranja + párrafo. -->

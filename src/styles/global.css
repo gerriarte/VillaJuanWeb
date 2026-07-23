@@ -138,3 +138,59 @@
     transform: none;
   }
 }
+
+/* ============================================================
+   Reveal de imágenes al hacer scroll — CSS puro (scroll-driven, cero JS).
+   Invariante #4 (cero JS), reduce-motion respetado, LCP intacto:
+   · Se excluyen las imágenes `eager` (hero/LCP de cada página → no se ocultan).
+   · Se excluyen las zonas con animación propia: carrusel (#hero-track),
+     galería coverflow (#gallery) y el barril (.no-reveal).
+   · @supports: en navegadores sin scroll-timelines, las imágenes salen normales.
+   ============================================================ */
+/* Estado inicial (oculto) SOLO si hay JS (html.reveal-on, se pone en <head> antes del
+   paint → sin FOUC y sin ocultar nada si el JS está apagado). El observer de Base.astro
+   añade .is-visible al entrar la imagen en viewport. Excluidas: `eager` (hero/LCP) y
+   .no-reveal (carrusel, galería y barril, que tienen animación propia). */
+@media (prefers-reduced-motion: no-preference) {
+  html.reveal-on main img:not([loading="eager"]):not(.no-reveal) {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+    will-change: opacity, transform;
+  }
+  html.reveal-on main img:not([loading="eager"]):not(.no-reveal).is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================
+   Micro-interacciones (solo puntero fino + sin reduce-motion).
+   · Links con imagen: leve elevación al hover/focus.
+   · La imagen se aclara sutilmente (filter, no transform → no choca con el
+     reveal scroll-driven que controla el transform de la imagen).
+   ============================================================ */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  a:has(> img),
+  a:has(> picture) {
+    transition: transform 0.3s ease;
+  }
+  a:has(> img):hover,
+  a:has(> img):focus-visible,
+  a:has(> picture):hover,
+  a:has(> picture):focus-visible {
+    transform: translateY(-3px);
+  }
+  a > img,
+  a > picture > img {
+    transition: filter 0.3s ease;
+  }
+  a:hover > img,
+  a:focus-visible > img,
+  a:hover > picture > img,
+  a:focus-visible > picture > img {
+    filter: brightness(1.06);
+  }
+}

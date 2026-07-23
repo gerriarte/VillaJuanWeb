@@ -1,0 +1,29 @@
+---
+/**
+ * LeafDivider — tira de hojas que cubre el "corte" entre dos secciones (full-bleed).
+ * Decorativa (aria-hidden), no interactiva, fuera del reveal por scroll (.no-reveal).
+ * Aspecto NATURAL (h-auto, sin recorte) → las hojas se ven completas y se apoyan sobre
+ * la línea de color. El posicionamiento lo define quien lo usa vía `class` (normalmente
+ * con la base de la banda sobre la costura).
+ */
+import { Image } from 'astro:assets';
+import hojas from '../../assets/images/Hojas_Footer.png';
+
+interface Props {
+  /** Clases de posición/altura (p. ej. absolute inset-x-0 top-0 h-20 -translate-y-1/2). */
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<Image
+  src={hojas}
+  alt=""
+  aria-hidden="true"
+  widths={[768, 1280, 2000]}
+  sizes="100vw"
+  format="webp"
+  quality={82}
+  loading="lazy"
+  class:list={['no-reveal pointer-events-none select-none h-auto w-full', className]}
+/>

@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import HeroCarousel from '../components/sections/HeroCarousel.astro';
+import LeafDivider from '../components/layout/LeafDivider.astro';
 import Faq from '../components/sections/Faq.astro';
 import { visit, wa, social } from '../lib/site';
 import pdfMenu from '../assets/images/villa-planes/Menu_Villa_Juan_Sin_Precios.pdf?url';
@@ -27,9 +28,19 @@ import horseDatos from '../assets/images/home/horse_datos.svg';
 import selfieAnimales from '../assets/images/home/selfie_con_animales.png';
 import contactanos from '../assets/images/home/contactanos.png';
 import villaPlanesTitulo from '../assets/images/home/villa-planes-titulo.png';
-import galeria01 from '../assets/images/home/galeria01.png';
-import galeria02 from '../assets/images/home/galeria02.png';
-import galeria03 from '../assets/images/home/galeria03.png';
+import car01 from '../assets/images/home/carrusel/01-carrusel.jpg';
+import car02 from '../assets/images/home/carrusel/02-carrusel.jpg';
+import car03 from '../assets/images/home/carrusel/03-carrusel.jpg';
+import car04 from '../assets/images/home/carrusel/04-carrusel.jpg';
+import car05 from '../assets/images/home/carrusel/05-naturaleza.jpg';
+import car06 from '../assets/images/home/carrusel/06-planes-familiares.jpg';
+import car07 from '../assets/images/home/carrusel/07-planes-familiares.jpg';
+import car08 from '../assets/images/home/carrusel/08-planes-familiares.jpg';
+import car09 from '../assets/images/home/carrusel/09-planes-familiares.jpg';
+import car10 from '../assets/images/home/carrusel/10-planes-familiares.jpg';
+import car11 from '../assets/images/home/carrusel/11-restaurante.jpg';
+import car12 from '../assets/images/home/carrusel/12-restaurante.jpg';
+import car13 from '../assets/images/home/carrusel/13-granja.jpg';
 
 // Composición sobre la rama: Empresas ENCIMA; Pasadías, Celebraciones y Blog DEBAJO.
 // `pos` = posición absoluta (desktop). Las clases se escriben literales para que Tailwind las genere.
@@ -109,22 +120,41 @@ const llegar: {
 // Galería — carrusel "coverflow": las fotos rotan por 3 posiciones (centro al frente +
 // laterales detrás, como el mockup). Estilos base (también sirven de fallback sin JS).
 const galeria = [
-  { img: galeria02, alt: 'Una visitante saludando a un burro en Villa Juan, con la sabana de fondo' },
-  { img: galeria01, alt: 'La escultura del caballo de Villa Juan entre las zonas verdes de la ecogranja' },
-  { img: galeria03, alt: 'Un perro corriendo feliz por las zonas verdes de Villa Juan' },
+  { img: car05, alt: 'Vista panorámica de las zonas verdes de la Ecogranja Villa Juan en Tenjo, con montañas de fondo' },
+  { img: car08, alt: 'Visitante riendo junto a una llama en la Ecogranja Villa Juan' },
+  { img: car02, alt: 'El equipo de la Ecogranja Villa Juan celebrando el Granja Fest junto al jeep Willys' },
+  { img: car06, alt: 'Familia disfrutando un día de campo con sus mascotas en la Ecogranja Villa Juan' },
+  { img: car09, alt: 'Visitante disfrutando un paseo a caballo entre las carpas de camping de Villa Juan' },
+  { img: car07, alt: 'Visitante abrazando a un burro en las praderas de la Ecogranja Villa Juan' },
+  { img: car11, alt: 'Caballos ensillados listos para la cabalgata en la Ecogranja Villa Juan' },
+  { img: car01, alt: 'Mesa y bancas campestres bajo un cenador circular en las zonas verdes de Villa Juan' },
+  { img: car04, alt: 'Gallina de la granja asomándose en el gallinero de la Ecogranja Villa Juan' },
+  { img: car10, alt: 'Perro con arnés de colores paseando por las zonas verdes de la Ecogranja Villa Juan' },
+  { img: car12, alt: 'Dos caballos ensillados en las praderas verdes de la Ecogranja Villa Juan al atardecer' },
+  { img: car13, alt: 'Visitante en cuatrimoto frente a la sede de la Ecogranja Villa Juan' },
+  { img: car03, alt: 'Anfitriones de Villa Juan dando la bienvenida en la entrada del Granja Fest' },
 ];
 const galPos = {
   center: 'transform:translate(-50%,-50%) scale(1);z-index:30;opacity:1;filter:none;',
   right: 'transform:translate(-6%,-50%) scale(0.82) rotateY(-18deg);z-index:20;opacity:0.78;filter:brightness(0.82);',
   left: 'transform:translate(-94%,-50%) scale(0.82) rotateY(18deg);z-index:20;opacity:0.78;filter:brightness(0.82);',
+  hidden: 'transform:translate(-50%,-50%) scale(0.6);z-index:0;opacity:0;filter:none;',
 };
-// Orden inicial (SSR / sin JS): 0 = centro, 1 = derecha, 2 = izquierda.
-const galInit = [galPos.center, galPos.right, galPos.left];
+// Orden inicial (SSR / sin JS), espejo del render() del island: 0 = centro, 1 = derecha,
+// último = izquierda, resto oculto. Así no se apilan al centro antes de que corra el JS.
+const galInit = galeria.map((_, i) =>
+  i === 0 ? galPos.center : i === 1 ? galPos.right : i === galeria.length - 1 ? galPos.left : galPos.hidden,
+);
 ---
 
 <Base heroHeader>
-  <!-- HERO — carrusel de 4 slides detrás del header (que flota con degradé verde→transparente). -->
-  <HeroCarousel />
+  <!-- HERO — carrusel de 4 slides detrás del header. Las hojas van DETRÁS del carrusel
+       (-z-10, contexto raíz): las tapa el hero y asoman por debajo, por detrás de la
+       sección siguiente (no cubren su contenido). -->
+  <div class="relative">
+    <HeroCarousel />
+    <LeafDivider class="absolute inset-x-0 bottom-0 -z-10 translate-y-[50%]" />
+  </div>
 
   <!-- EXPERIENCIAS TRANSFORMADORAS (bienvenida): banner + título + caballo + globo. -->
   <section class="mx-auto max-w-6xl px-4 py-16">
@@ -226,20 +256,17 @@ const galInit = [galPos.center, galPos.right, galPos.left];
 
   <!-- BANDA negro → rojo → verde detrás de Sabor de fuego, Celebraciones y Villa Datos.
        Los extremos transparentes revelan el fondo verde continuo del sitio (blend). -->
-  <div
-    class="relative"
-    style="background-image:linear-gradient(180deg, transparent 0%, #0d0605 14%, #0d0605 30%, #5c0f06 48%, #a31d0b 68%, #a31d0b 90%, transparent 100%);"
-  >
+  <div class="fire-band relative">
     <!-- SABOR DE FUEGO (barril) — centrado; el barril se "enciende" con el scroll. -->
     <section class="mx-auto max-w-3xl px-4 pt-16 pb-16 text-center text-white">
-      <div class="relative mx-auto mb-6 w-52 sm:w-64">
+      <div class="relative mx-auto mb-6 w-[15.6rem] sm:w-[19.2rem]">
         <img
           src={barrilOff.src}
           alt="Barril de asado al carbón"
           width="507"
           height="546"
           loading="lazy"
-          class="w-full"
+          class="no-reveal w-full"
         />
         <img
           src={barrilOn.src}
@@ -248,7 +275,7 @@ const galInit = [galPos.center, galPos.right, galPos.left];
           width="507"
           height="546"
           loading="lazy"
-          class="barril-on absolute inset-0 w-full"
+          class="barril-on no-reveal absolute inset-0 w-full"
         />
       </div>
       <h2 class="section-title">Sabor de fuego</h2>
@@ -613,7 +640,7 @@ const galInit = [galPos.center, galPos.right, galPos.left];
               format="webp"
               quality={72}
               loading="lazy"
-              class="aspect-[3/2] w-full rounded-[1.6rem] object-cover"
+              class="no-reveal aspect-[3/2] w-full rounded-[1.6rem] object-cover"
             />
           </figure>
         ))
@@ -639,7 +666,7 @@ const galInit = [galPos.center, galPos.right, galPos.left];
     </div>
 
     <!-- Dots (los activa el script) -->
-    <div class="mt-6 flex justify-center gap-3">
+    <div class="mt-6 flex flex-wrap justify-center gap-3 px-4">
       {
         galeria.map((_, i) => (
           <button
@@ -667,20 +694,63 @@ const galInit = [galPos.center, galPos.right, galPos.left];
   <Faq />
 </Base>
 
+<style>
+  /* Banda "Sabor de fuego": el gradiente negro→rojo→verde vive en un ::before cuya
+     opacidad revela el color con el scroll (--fire, la maneja el JS de abajo, sincronizada
+     con el encendido del barril). Fallback 1 = color estático (sin JS o con reduce-motion). */
+  .fire-band::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      #0d0605 14%,
+      #0d0605 30%,
+      #5c0f06 48%,
+      #a31d0b 68%,
+      #a31d0b 90%,
+      transparent 100%
+    );
+    opacity: var(--fire, 1);
+    /* Amortigua el cambio frame-a-frame del scroll → reveal fluido, no a saltos. */
+    transition: opacity 0.7s ease-out;
+    will-change: opacity;
+  }
+
+  /* Barril encendido: misma amortiguación para que la ignición sea paulatina, no a saltos. */
+  .barril-on {
+    transition: opacity 0.7s ease-out;
+    will-change: opacity;
+  }
+</style>
+
 <script>
   // Enciende el barril ("on") gradualmente según el scroll. Respeta reduce-motion.
+  // El mismo progreso `p` revela el color de la banda "Sabor de fuego" (var --fire).
   const on = document.querySelector<HTMLElement>('.barril-on');
+  const fireBand = document.querySelector<HTMLElement>('.fire-band');
   if (on && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const sec = (on.closest('section') as HTMLElement) ?? (on.parentElement as HTMLElement);
     on.style.opacity = '0';
+    fireBand?.style.setProperty('--fire', '0');
     const update = () => {
       const r = sec.getBoundingClientRect();
       const vh = window.innerHeight;
       // La ignición ARRANCA cuando la sección se ve completa (bottom llega al viewport)
       // y termina cuando la sección llega arriba. Así el cambio ocurre a la vista.
-      const fullTop = Math.max(1, vh - r.height); // top de la sección al quedar completa
-      const p = Math.min(1, Math.max(0, (fullTop - r.top) / fullTop));
-      on.style.opacity = String(p);
+      // Barril: ignición PAULATINA. Arranca cuando la sección asoma por abajo (r.top≈vh)
+      // y llega a "on" pleno cuando ya está bien a la vista (r.top≈35% vh), MUCHO antes
+      // de pasarla. smoothstep + transición CSS = encendido gradual, sin saltos.
+      const bRaw = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.65)));
+      const bp = bRaw * bRaw * (3 - 2 * bRaw);
+      on.style.opacity = bp.toFixed(3);
+      // Color de la banda: reveal más sutil aún → arranca al asomar y se reparte sobre
+      // un rango ancho (~1.4 viewport), suavizado con smoothstep.
+      const raw = Math.min(1, Math.max(0, (vh - r.top) / (vh * 1.4)));
+      const eased = raw * raw * (3 - 2 * raw);
+      fireBand?.style.setProperty('--fire', eased.toFixed(3));
     };
     window.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update, { passive: true });

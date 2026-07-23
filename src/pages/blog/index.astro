@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { Image } from 'astro:assets';
+import LeafDivider from '../../components/layout/LeafDivider.astro';
 import banner from '../../assets/images/blog/Blog.jpg';
 import { getPosts, categories } from '../../lib/blog';
 import { assetUrl } from '../../lib/directus';
@@ -13,7 +14,8 @@ const posts = await getPosts();
   title="Blog · Historias de la Granja | Villa Juan"
   description="Historias de la Granja: cocina al barril, bienestar en la naturaleza, mundo equino y todo para que tu próxima visita a Ecogranja Villa Juan sea inolvidable."
 >
-  <!-- HERO — banner full-bleed (header flota encima). -->
+  <!-- HERO — banner full-bleed (header flota encima). Las hojas van DETRÁS del banner
+       (-z-10, contexto raíz) y asoman por debajo, por detrás de la sección siguiente. -->
   <section class="relative">
     <Image
       src={banner}
@@ -24,8 +26,9 @@ const posts = await getPosts();
       quality={72}
       loading="eager"
       fetchpriority="high"
-      class="h-[80dvh] w-full object-cover sm:h-dvh"
+      class="h-[80dvh] w-full border-4 border-brand-strong object-cover sm:h-dvh"
     />
+    <LeafDivider class="absolute inset-x-0 bottom-0 -z-10 translate-y-[50%]" />
   </section>
 
   <!-- INTRO — título a dos tamaños + bienvenida. Texto oscuro (ink): blanco falla AA

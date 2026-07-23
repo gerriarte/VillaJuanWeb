@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import LeafDivider from './LeafDivider.astro';
 import { footerNav as nav, contact, social, visit } from '../../lib/site';
 import horseFooter from '../../assets/images/home/horse_footer.png';
 import logoVillaJuan from '../../assets/images/home/Logo-villajuan-blanco.svg';
@@ -30,7 +31,16 @@ const socials = [
 ];
 ---
 
-<footer class="scene-orange relative text-white">
+<footer class="relative isolate text-white">
+  <!-- Tira de hojas: DETRÁS del fondo naranja. Va antes que la capa de fondo (mismo -z-10)
+       para que el naranja la tape donde se solapan; solo asoma por encima de la división de
+       color. `isolate` mantiene el -z-10 dentro del footer. -->
+  <LeafDivider class="absolute inset-x-0 bottom-full -z-10 translate-y-[30%]" />
+
+  <!-- Fondo naranja como capa propia (antes iba en el <footer>): encima de las hojas,
+       debajo del contenido y del caballo. -->
+  <div class="scene-orange absolute inset-0 -z-10" aria-hidden="true"></div>
+
   <!-- Don Juan reclinado: descansa sobre el borde superior del footer y asoma hacia arriba.
        Decorativo (aria-hidden), no interactivo. -->
   <Image
