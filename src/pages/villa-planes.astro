@@ -35,10 +35,12 @@ const planes = [
 ];
 
 // Tabla comparativa. Marcas coloreadas por columna (verde / rojo / dorado).
+// Colores OSCURECIDOS para contraste AA sobre celda clara (invariante #2): estos mismos
+// colores tiñen el título de columna y los íconos ✓/✗.
 const columns = [
-  { label: 'Trote y Galope', color: '#0a8a24' },
+  { label: 'Trote y Galope', color: '#00811e' },
   { label: 'Trocha y Galope', color: '#c0360d' },
-  { label: 'Paso Fino', color: '#c58a1e' },
+  { label: 'Paso Fino', color: '#9a6a0e' },
 ];
 const rows: { name: string; v: boolean[] }[] = [
   { name: 'Desayuno de la granja', v: [false, false, true] },
@@ -117,16 +119,16 @@ const barrilSteps = await getCards('villaplanes-barril', [
         </p>
       </div>
 
-      <div class="mt-10 grid items-end gap-8 md:grid-cols-[1.35fr_1fr]">
+      <div class="mt-10 grid items-end gap-8 md:grid-cols-[1.7fr_1fr]">
         <Image
           src={selfieAnimales}
           alt="Don Juan tomándose una selfie con los animales de la Ecogranja Villa Juan"
-          widths={[480, 768, 1100]}
-          sizes="(min-width: 768px) 56vw, 100vw"
+          widths={[480, 768, 1100, 1300]}
+          sizes="(min-width: 768px) 62vw, 100vw"
           format="webp"
           quality={72}
           loading="lazy"
-          class="w-full md:-mb-16 md:self-end md:order-first"
+          class="relative z-10 w-full -mb-6 md:-mb-24 md:self-end md:order-first"
         />
         <div>
           <p class="text-center font-bold text-on-green md:text-right">
@@ -197,8 +199,8 @@ const barrilSteps = await getCards('villaplanes-barril', [
                 columns.map((c) => (
                   <th
                     scope="col"
-                    class="rounded-2xl bg-white/20 px-2 py-3 align-bottom font-display text-xl leading-tight tracking-[2pt] ring-1 ring-white/40 sm:text-2xl"
-                    style={`color:${c.color};text-shadow:0 1px 2px rgba(255,255,255,0.5);`}
+                    class="rounded-2xl bg-white/85 px-2 py-3 align-bottom font-display text-xl leading-tight tracking-[2pt] ring-1 ring-black/10 sm:text-2xl"
+                    style={`color:${c.color};`}
                   >
                     {c.label}
                   </th>
@@ -212,13 +214,13 @@ const barrilSteps = await getCards('villaplanes-barril', [
                 <tr>
                   <th
                     scope="row"
-                    class="rounded-2xl bg-cta-strong px-3 py-2.5 text-center font-display text-[20pt] leading-tight tracking-[2pt] text-white"
+                    class="rounded-2xl bg-cta-strong px-4 py-3 text-left font-body text-base font-bold leading-snug text-white sm:text-lg"
                   >
                     {row.name}
                   </th>
                   {
                     row.v.map((ok, i) => (
-                      <td class="rounded-2xl bg-white/25 ring-1 ring-white/40">
+                      <td class="rounded-2xl bg-white/70 ring-1 ring-black/10">
                         <span class="sr-only">{ok ? 'Incluido' : 'No incluido'}</span>
                         <svg
                           viewBox="0 0 24 24"
@@ -261,8 +263,9 @@ const barrilSteps = await getCards('villaplanes-barril', [
     </div>
   </section>
 
-  <!-- GASTRONOMÍA + CARNE AL BARRIL — franja naranja. -->
-  <section class="scene-orange text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.45)]">
+  <!-- GASTRONOMÍA + CARNE AL BARRIL — banda con degradé negro→rojo revelado por scroll
+       (mismo efecto "fire-band" del home). Extremos transparentes → blend con el verde del sitio. -->
+  <section class="fire-band relative text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.45)]">
     <div class="mx-auto max-w-4xl px-4 pt-16 pb-8 text-center">
       <h2 class="font-display text-4xl text-[#0cbd35] [text-shadow:0_2px_0_#fff,0_-1px_0_#fff,1px_0_0_#fff,-1px_0_0_#fff] sm:text-5xl">
         Gastronomía de Origen
@@ -398,3 +401,49 @@ const barrilSteps = await getCards('villaplanes-barril', [
     </div>
   </section>
 </Base>
+
+<style>
+  /* Banda "Gastronomía": degradé negro→rojo cuya opacidad se revela con el scroll
+     (var --fire, la maneja el script). Extremos transparentes → blend con el verde del
+     sitio. Fallback sin JS o reduce-motion = color estático (--fire: 1). Igual que el home. */
+  .fire-band::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      #0d0605 14%,
+      #0d0605 30%,
+      #5c0f06 48%,
+      #a31d0b 68%,
+      #a31d0b 90%,
+      transparent 100%
+    );
+    opacity: var(--fire, 1);
+    transition: opacity 0.7s ease-out;
+    will-change: opacity;
+  }
+</style>
+
+<script>
+  // Revela el color de la banda "Gastronomía" (var --fire) según el scroll. Igual que el
+  // reveal de la banda "Sabor de fuego" del home. Respeta prefers-reduced-motion.
+  const fireBand = document.querySelector<HTMLElement>('.fire-band');
+  if (fireBand && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    fireBand.style.setProperty('--fire', '0');
+    const update = () => {
+      const r = fireBand.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Reveal sutil: arranca al asomar la sección por abajo (r.top≈vh) y se reparte sobre
+      // un rango ancho (~1.4 viewport), suavizado con smoothstep.
+      const raw = Math.min(1, Math.max(0, (vh - r.top) / (vh * 1.4)));
+      const eased = raw * raw * (3 - 2 * raw);
+      fireBand.style.setProperty('--fire', eased.toFixed(3));
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+</script>

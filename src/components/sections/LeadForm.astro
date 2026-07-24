@@ -1,0 +1,173 @@
+---
+/**
+ * Formulario de contacto / cotización — va al costado del FAQ.
+ * HTML semántico + validación nativa (required), cero dependencia de backend aún.
+ * Conversión por WhatsApp (invariante de CTAs): un island mínimo compone el mensaje
+ * con los datos y abre WhatsApp. Sin JS, el envío nativo abre WhatsApp igualmente.
+ * TODO(post-scaffold): apuntar a un endpoint real (Directus / email) para almacenar leads.
+ */
+import { contact } from '../../lib/site';
+
+// Teléfono en crudo (sin "tel:+") para construir el enlace de WhatsApp desde el island.
+const waPhone = contact.phoneHref.replace('tel:+', '');
+
+const companias = ['En familia', 'En pareja', 'Con amigos', 'Eventos de empresa'];
+const origenes = [
+  'Redes sociales',
+  'Búsqueda en Google',
+  'Recomendación de un conocido',
+  'Publicidad',
+];
+
+// Clases compartidas por los campos (tokens: line/ink/brand). Fondo blanco sobre la card.
+const field =
+  'w-full rounded-xl border border-line bg-white px-4 py-2.5 text-ink placeholder:text-ink/40 transition focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30';
+const labelCls = 'block text-sm font-semibold text-ink';
+---
+
+<div class="rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-black/5 sm:p-8">
+  <h3 class="card-title">Cuéntanos de tu plan</h3>
+  <p class="mt-2 text-sm text-ink/70">
+    Déjanos tus datos y te contactamos para ayudarte a planear tu experiencia en Villa Juan.
+  </p>
+
+  <form id="lead-form" data-wa-phone={waPhone} class="mt-6 space-y-5" novalidate>
+    <div>
+      <label for="lf-nombre" class={labelCls}>Nombre y apellido <span class="text-cta">*</span></label>
+      <input
+        id="lf-nombre"
+        name="nombre"
+        type="text"
+        required
+        autocomplete="name"
+        placeholder="Tu nombre completo"
+        class={`mt-1.5 ${field}`}
+      />
+    </div>
+
+    <div>
+      <label for="lf-email" class={labelCls}>Correo electrónico <span class="text-cta">*</span></label>
+      <input
+        id="lf-email"
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        placeholder="tucorreo@ejemplo.com"
+        class={`mt-1.5 ${field}`}
+      />
+    </div>
+
+    <div>
+      <label for="lf-tel" class={labelCls}>Teléfono / WhatsApp <span class="text-cta">*</span></label>
+      <input
+        id="lf-tel"
+        name="telefono"
+        type="tel"
+        required
+        autocomplete="tel"
+        inputmode="tel"
+        placeholder="+57 300 000 0000"
+        class={`mt-1.5 ${field}`}
+      />
+    </div>
+
+    <div>
+      <label for="lf-interes" class={labelCls}>
+        ¿Qué experiencia o producto te interesa más de Villa Juan?
+        <span class="font-normal text-ink/50">(opcional)</span>
+      </label>
+      <textarea
+        id="lf-interes"
+        name="interes"
+        rows="3"
+        placeholder="Cuéntanos qué te gustaría vivir…"
+        class={`mt-1.5 ${field} resize-y`}></textarea>
+    </div>
+
+    <fieldset>
+      <legend class={labelCls}>¿Con quién sueles disfrutar de este tipo de espacios?</legend>
+      <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        {
+          companias.map((c) => (
+            <label class="flex items-center gap-2.5 rounded-xl border border-line bg-white px-3 py-2.5 text-sm text-ink transition hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand/5">
+              <input
+                type="checkbox"
+                name="compania"
+                value={c}
+                class="h-4 w-4 shrink-0 accent-brand"
+              />
+              {c}
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <div>
+      <label for="lf-origen" class={labelCls}>¿Cómo nos encontraste?</label>
+      <select id="lf-origen" name="origen" class={`mt-1.5 ${field}`}>
+        <option value="" selected>Selecciona una opción…</option>
+        {origenes.map((o) => <option value={o}>{o}</option>)}
+      </select>
+    </div>
+
+    <label class="flex items-start gap-3 text-sm text-ink/80">
+      <input
+        type="checkbox"
+        name="privacidad"
+        required
+        class="mt-0.5 h-4 w-4 shrink-0 accent-brand"
+      />
+      <span>
+        Acepto la{' '}
+        <!-- TODO(post-scaffold): enlazar a la página real de política de privacidad. -->
+        <a
+          href="/politica-de-privacidad"
+          class="font-semibold text-brand-strong underline underline-offset-2"
+        >política de privacidad</a>{' '}
+        y el tratamiento de mis datos personales. <span class="text-cta">*</span>
+      </span>
+    </label>
+
+    <button
+      type="submit"
+      class="inline-flex w-full items-center justify-center rounded-full bg-cta-strong px-8 py-3.5 font-display text-2xl text-white shadow-lg ring-1 ring-white/20 transition hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"
+    >
+      Enviar
+    </button>
+
+    <p class="text-center text-xs text-ink/50">Los campos con <span class="text-cta">*</span> son obligatorios.</p>
+  </form>
+</div>
+
+<script>
+  // Progressive enhancement: compone un mensaje de WhatsApp con los datos y lo abre.
+  // La validación nativa (required) corre antes de este handler.
+  const form = document.getElementById('lead-form') as HTMLFormElement | null;
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const fd = new FormData(form);
+      const val = (k: string) => ((fd.get(k) as string) || '').trim();
+      const companias = fd.getAll('compania') as string[];
+
+      const lines = [
+        '¡Hola! Quiero información sobre Villa Juan.',
+        '',
+        `Nombre: ${val('nombre')}`,
+        `Correo: ${val('email')}`,
+        `Teléfono/WhatsApp: ${val('telefono')}`,
+      ];
+      if (val('interes')) lines.push(`Me interesa: ${val('interes')}`);
+      if (companias.length) lines.push(`Suelo disfrutar: ${companias.join(', ')}`);
+      if (val('origen')) lines.push(`Los conocí por: ${val('origen')}`);
+
+      const phone = form.dataset.waPhone ?? '';
+      const url = `https://api.whatsapp.com/send?phone=+${phone}&text=${encodeURIComponent(lines.join('\n'))}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    });
+  }
+</script>

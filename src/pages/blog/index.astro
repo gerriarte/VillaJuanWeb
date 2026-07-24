@@ -46,15 +46,32 @@ const posts = await getPosts();
     </p>
   </section>
 
-  <!-- CATEGORÍAS — chips (filtro visual; el filtrado llega con el CMS). -->
+  <!-- CATEGORÍAS — filtros. Island mínima (vanilla): filtra los artículos por categoría.
+       Sin JS, todos los posts se ven y las pastillas quedan como etiquetas inertes. -->
   <section class="mx-auto max-w-5xl px-4 pt-10">
-    <h2 class="sr-only">Categorías</h2>
-    <!-- TODO(post-scaffold): filtrar por categoría (página /blog/categoria/[cat] o island mínima). -->
-    <ul class="flex flex-wrap justify-center gap-3">
+    <h2 class="sr-only">Filtrar por categoría</h2>
+    <ul id="cat-filter" class="flex flex-wrap justify-center gap-3">
+      <li>
+        <button
+          type="button"
+          data-cat="*"
+          aria-pressed="true"
+          class="cat-pill cursor-pointer rounded-full bg-brand-strong px-5 py-2 font-display text-sm tracking-[1pt] text-white ring-1 ring-white/20 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white aria-pressed:bg-cta-strong aria-pressed:ring-white/40"
+        >
+          Todos
+        </button>
+      </li>
       {
         categories.map((c) => (
-          <li class="rounded-full bg-brand-strong px-5 py-2 font-display text-sm tracking-[1pt] text-white ring-1 ring-white/20">
-            {c}
+          <li>
+            <button
+              type="button"
+              data-cat={c}
+              aria-pressed="false"
+              class="cat-pill cursor-pointer rounded-full bg-brand-strong px-5 py-2 font-display text-sm tracking-[1pt] text-white ring-1 ring-white/20 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white aria-pressed:bg-cta-strong aria-pressed:ring-white/40"
+            >
+              {c}
+            </button>
           </li>
         ))
       }
@@ -64,10 +81,13 @@ const posts = await getPosts();
   <!-- ARTÍCULOS — grid de cards. -->
   <section class="mx-auto max-w-5xl px-4 py-12">
     <h2 class="sr-only">Artículos</h2>
-    <div class="grid gap-6 sm:grid-cols-2">
+    <div id="post-grid" class="grid gap-6 sm:grid-cols-2">
       {
         posts.map((post) => (
-          <article class="flex flex-col overflow-hidden rounded-3xl bg-surface shadow-lg ring-1 ring-black/5">
+          <article
+            data-cats={post.categories.join('|')}
+            class="flex flex-col overflow-hidden rounded-3xl bg-surface shadow-lg ring-1 ring-black/5"
+          >
             {post.image.kind === 'directus' ? (
               <img
                 src={assetUrl(post.image.id, { width: 640 })}
@@ -103,5 +123,41 @@ const posts = await getPosts();
         ))
       }
     </div>
+    <p id="post-empty" hidden class="mt-6 text-center text-lg text-on-green">
+      No hay artículos en esta categoría todavía.
+    </p>
   </section>
 </Base>
+
+<style>
+  /* Filtro del blog: ocultar cards con !important para ganarle al `display:flex` de la card. */
+  .is-hidden {
+    display: none !important;
+  }
+</style>
+
+<script>
+  // Filtro por categoría (island mínima, vanilla). Muestra los artículos cuya lista de
+  // categorías incluye la seleccionada; "Todos" (data-cat="*") los muestra todos.
+  const filterBar = document.getElementById('cat-filter');
+  const grid = document.getElementById('post-grid');
+  const empty = document.getElementById('post-empty');
+  if (filterBar && grid) {
+    const pills = Array.from(filterBar.querySelectorAll<HTMLButtonElement>('[data-cat]'));
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('[data-cats]'));
+
+    const apply = (cat: string) => {
+      let visible = 0;
+      cards.forEach((card) => {
+        const cats = (card.dataset.cats || '').split('|');
+        const show = cat === '*' || cats.includes(cat);
+        card.classList.toggle('is-hidden', !show);
+        if (show) visible++;
+      });
+      if (empty) empty.hidden = visible > 0;
+      pills.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cat === cat)));
+    };
+
+    pills.forEach((b) => b.addEventListener('click', () => apply(b.dataset.cat ?? '*')));
+  }
+</script>
