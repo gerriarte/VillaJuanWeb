@@ -64,6 +64,14 @@ const bienestar = await getCards('empresas-bienestar', [
   { title: 'Bici-Paseos', imageRight: true, image: { kind: 'local', asset: imgBici, alt: 'Bici-paseos por los paisajes de Tenjo' }, body: 'Recorre los paisajes de Tenjo sobre dos ruedas en una ruta diseñada para desconectarte y respirar aire puro. Es la actividad ideal para quienes buscan combinar deporte, aventura y naturaleza, explorando senderos rurales de forma dinámica y divertida en familia o con amigos. Atrévete a pedalear por caminos inolvidables mientras descubres la biodiversidad local y disfrutas del mejor turismo activo cerca de la ciudad.' },
 ]);
 
+// Enlace de cada tarjeta de "Bienestar Físico y Mental" a su post del blog (por título;
+// posts en Directus). Si una tarjeta del CMS no está mapeada, cae al índice del blog.
+const bienestarLinks: Record<string, string> = {
+  'Formación Asistida Con Caballos': '/blog/taller-de-caballos-team-building',
+  'Jornada de Siembra': '/blog/caballos-en-colombia',
+  'Bici-Paseos': '/blog/diferencias-clave-entre-los-tipos-de-caballos-para-tu-experiencia-campestre',
+};
+
 const programas = [
   { icon: icono01, label: 'Aprendizaje Experiencial in-Outdoor' },
   { icon: icono02, label: 'La Matemática del Corazón' },
@@ -78,10 +86,11 @@ const galeria = [
   { img: gal3, alt: 'Equipo trabajando con los caballos en Villa Juan' },
 ];
 
+// href apunta al slug real de cada post en el blog (posts en Directus).
 const cronicas = [
-  { img: cronica1, alt: 'Evento empresarial en Villa Juan', title: 'Team building que sí transforma equipos', href: '/blog' },
-  { img: cronica2, alt: 'Coaching con caballos en Villa Juan', title: 'Qué aprende un líder frente a un caballo', href: '/blog' },
-  { img: cronica3, alt: 'Almuerzo corporativo al barril en Villa Juan', title: 'El sabor al barril que une a tu empresa', href: '/blog' },
+  { img: cronica1, alt: 'Evento empresarial en Villa Juan', title: 'Team building que sí transforma equipos', href: '/blog/taller-de-caballos-team-building' },
+  { img: cronica2, alt: 'Coaching con caballos en Villa Juan', title: 'Qué aprende un líder frente a un caballo', href: '/blog/diferencias-clave-entre-los-tipos-de-caballos-para-tu-experiencia-campestre' },
+  { img: cronica3, alt: 'Almuerzo corporativo al barril en Villa Juan', title: 'El sabor al barril que une a tu empresa', href: '/blog/caballos-en-colombia' },
 ];
 ---
 
@@ -246,7 +255,7 @@ const cronicas = [
               <div class="px-1 text-center md:text-left">
                 <h3 class="card-title">{c.title}</h3>
                 <p class="mt-3 text-sm leading-relaxed text-ink/75">{c.body}</p>
-                <a href={wa(`Quiero información de ${c.title}`)} target="_blank" rel="noopener noreferrer" class="mt-5 inline-flex items-center justify-center rounded-full bg-cta-strong px-8 py-2.5 font-display text-lg text-white shadow transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong">
+                <a href={bienestarLinks[c.title] ?? '/blog'} class="mt-5 inline-flex items-center justify-center rounded-full bg-cta-strong px-8 py-2.5 font-display text-lg text-white shadow transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong">
                   Saber más
                 </a>
               </div>

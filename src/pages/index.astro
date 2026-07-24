@@ -63,14 +63,14 @@ const stats = [
 const fmt = (n: number): string => '+' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
 // Crónicas de la Tierra — posts destacados del blog en el home.
-// TODO(post-scaffold): traer estos posts desde Directus / content collections; href al slug real.
+// href apunta al slug real del post en el blog (posts en Directus).
 const cronicas = [
   {
     img: postCoaching,
     alt: 'Equipo corporativo celebrando en Villa Juan',
     title: 'Los Beneficios del Coaching Equino para Ejecutivos',
     excerpt: 'Descubre insights únicos sobre coaching desde Villa Juan.',
-    href: '/blog',
+    href: '/blog/los-beneficios-del-coaching-equino-para-ejecutivos',
   },
   {
     img: postBarril,
@@ -78,7 +78,7 @@ const cronicas = [
     title: 'Secretos de la Cocción al Barril: Técnica Artesanal',
     excerpt:
       'Descubre insights únicos sobre gastronomía desde Villa Juan, experiencias auténticas y consejos prácticos para el crecimiento personal.',
-    href: '/blog',
+    href: '/blog/secretos-de-la-coccion-al-barril-tecnica-artesanal-y-sabor-campestre',
   },
 ];
 
