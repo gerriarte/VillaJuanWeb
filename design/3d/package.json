@@ -1,0 +1,14 @@
+{
+  "name": "villajuan-3d-pipeline",
+  "private": true,
+  "type": "module",
+  "description": "Pipeline OFFLINE: .glb → sprite sheet de frames para public/3d/. No es parte del sitio.",
+  "scripts": {
+    "frames": "node render.mjs",
+    "sprite": "node sprite.mjs"
+  },
+  "dependencies": {
+    "puppeteer-core": "^24.0.0",
+    "three": "^0.185.0"
+  }
+}

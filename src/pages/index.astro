@@ -5,6 +5,7 @@ import HeroCarousel from '../components/sections/HeroCarousel.astro';
 import LeafDivider from '../components/layout/LeafDivider.astro';
 import Faq from '../components/sections/Faq.astro';
 import NotifyDialog from '../components/ui/NotifyDialog.astro';
+import SombreroTurntable from '../components/ui/SombreroTurntable.astro';
 import { visit, wa, social } from '../lib/site';
 import pdfMenu from '../assets/images/villa-planes/Menu_Villa_Juan_Sin_Precios.pdf?url';
 import fuenteCaballos from '../assets/images/home/fuente_caballos.jpg';
@@ -23,7 +24,6 @@ import blogOferta from '../assets/images/home/blog_ofertas.svg';
 import barrilOff from '../assets/images/home/barril_off.svg';
 import barrilOn from '../assets/images/home/barrill_on.svg';
 import menuJeep from '../assets/images/home/menu_jeep.svg';
-import sombrero from '../assets/images/home/sobrero.svg';
 import tituloVillaDatos from '../assets/images/home/Titulo-Villa-Datos.svg';
 import horseDatos from '../assets/images/home/horse_datos.svg';
 import selfieAnimales from '../assets/images/home/selfie_con_animales.png';
@@ -312,15 +312,7 @@ const galInit = galeria.map((_, i) =>
         fortalecer equipos y celebrar la vida. Contamos con amplias zonas verdes y espacios cubiertos
         ideales para momentos únicos.
       </p>
-      <img
-        src={sombrero.src}
-        alt=""
-        aria-hidden="true"
-        width="1040"
-        height="585"
-        loading="lazy"
-        class="mx-auto mt-8 w-[32rem] max-w-full drop-shadow-xl sm:w-[40rem]"
-      />
+      <SombreroTurntable class="mx-auto mt-8 w-[32rem] max-w-full sm:w-[40rem]" />
       <a
         href="/celebraciones"
         class="mt-4 inline-flex items-center justify-center rounded-full bg-brand-strong px-12 py-6 font-display text-3xl text-white ring-1 ring-white/30 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:text-4xl"

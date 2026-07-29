@@ -1,0 +1,89 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>GLB turntable renderer</title>
+<style>
+  html, body { margin: 0; background: #202020; }
+  canvas { display: block; }
+</style>
+<script type="importmap">
+  { "imports": { "three": "/vendor/build/three.module.js", "three/addons/": "/vendor/jsm/" } }
+</script>
+<script type="module">
+  import * as THREE from 'three';
+  import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+  import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+  const SIZE = Number(new URLSearchParams(location.search).get('size') || 900);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1);
+  renderer.setSize(SIZE, SIZE);
+  renderer.setClearAlpha(0);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  document.body.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  scene.background = null;
+
+  // Entorno PBR neutro para que las texturas del .glb se lean bien sin luces duras.
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+  // Luz de relleno cálida para que el sombrero no salga plano.
+  const key = new THREE.DirectionalLight(0xffffff, 2.2);
+  key.position.set(3, 5, 4);
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.9);
+  rim.position.set(-4, 2, -3);
+  scene.add(rim);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+
+  const camera = new THREE.PerspectiveCamera(30, 1, 0.01, 1000);
+
+  // `pivot` gira; el modelo se recentra dentro para que el eje pase por su centro.
+  const pivot = new THREE.Group();
+  scene.add(pivot);
+
+  const info = {};
+
+  new GLTFLoader().load('/model.glb', (gltf) => {
+    const model = gltf.scene;
+
+    const box = new THREE.Box3().setFromObject(model);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    model.position.sub(center);
+    pivot.add(model);
+
+    // Encuadre: distancia derivada del radio de la esfera envolvente.
+    // El pivote gira en Y, así que el radio horizontal es el que manda.
+    const radius = Math.max(size.x, size.z) * 0.5;
+    const fov = THREE.MathUtils.degToRad(camera.fov);
+    const dist = (radius / Math.tan(fov / 2)) * 1.06;
+
+    info.size = size.toArray().map((n) => +n.toFixed(3));
+    info.center = center.toArray().map((n) => +n.toFixed(3));
+    info.dist = +dist.toFixed(3);
+    info.animations = gltf.animations.map((a) => a.name);
+
+    window.__setCamera = (elevationDeg) => {
+      const el = THREE.MathUtils.degToRad(elevationDeg);
+      camera.position.set(0, Math.sin(el) * dist, Math.cos(el) * dist);
+      camera.lookAt(0, 0, 0);
+      camera.updateProjectionMatrix();
+    };
+    window.__setCamera(18);
+
+    window.__frame = (deg) => {
+      pivot.rotation.y = THREE.MathUtils.degToRad(deg);
+      renderer.render(scene, camera);
+      return renderer.domElement.toDataURL('image/png');
+    };
+
+    window.__info = info;
+    window.__ready = true;
+  }, undefined, (err) => {
+    window.__error = String(err);
+  });
+</script>

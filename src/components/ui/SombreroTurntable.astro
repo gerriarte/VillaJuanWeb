@@ -1,0 +1,128 @@
+---
+/**
+ * SombreroTurntable — el sombrero de marca girando sobre su eje al hacer scroll.
+ *
+ * Es un sprite sheet PRE-RENDERIZADO (36 frames, 6×6) del modelo 3D
+ * `sobrero_villajuan.glb`: cero WebGL y cero librería 3D en runtime (el .glb de 20 MB
+ * NO se publica; se renderizó offline). Solo un IntersectionObserver + rAF que mueven
+ * el sheet con `transform` → una capa compuesta, sin repaint por frame.
+ *
+ * Progressive enhancement (invariante #4):
+ * · Sin JS o con reduce-motion → queda el frame 0, una vista válida del sombrero.
+ * · `loading="lazy"` + está bajo el fold → no toca el LCP.
+ * · `.no-reveal` porque el reveal global de Base.astro anima `transform` y pisaría el
+ *   desplazamiento del sprite.
+ */
+interface Props {
+  /** Clases del contenedor: define el ancho (el alto sale del aspect-ratio). */
+  class?: string;
+  /** Vueltas completas mientras la pieza cruza el viewport. */
+  turns?: number;
+}
+
+const { class: className = '', turns = 1 } = Astro.props;
+
+// Geometría del sheet generado (ver public/3d/). Debe coincidir con el CSS/JS.
+const FRAME_W = 480;
+const FRAME_H = 308;
+const COLS = 6;
+const ROWS = 6;
+---
+
+<div
+  class:list={['sombrero-3d', className]}
+  style={`--cols:${COLS};--rows:${ROWS};aspect-ratio:${FRAME_W}/${FRAME_H};`}
+  data-turns={turns}
+  data-frames={COLS * ROWS}
+  aria-hidden="true"
+>
+  <picture>
+    <source srcset="/3d/sombrero-sprite.avif" type="image/avif" />
+    <img
+      src="/3d/sombrero-sprite.webp"
+      alt=""
+      width={FRAME_W * COLS}
+      height={FRAME_H * ROWS}
+      loading="lazy"
+      decoding="async"
+      class="no-reveal"
+    />
+  </picture>
+</div>
+
+<style>
+  .sombrero-3d {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* El sheet mide `cols` veces el ancho del marco; se desplaza una celda por frame.
+     Sin JS, --c/--r valen 0 → se ve el primer frame. */
+  .sombrero-3d img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(var(--cols) * 100%);
+    max-width: none;
+    height: auto;
+    transform: translate3d(
+      calc(var(--c, 0) * -100% / var(--cols)),
+      calc(var(--r, 0) * -100% / var(--rows)),
+      0
+    );
+  }
+</style>
+
+<script>
+  // Rotación ligada al scroll. Solo mientras la pieza está en viewport.
+  const hosts = Array.from(document.querySelectorAll<HTMLElement>('.sombrero-3d'));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (hosts.length && !reduce && 'IntersectionObserver' in window) {
+    const active = new Set<HTMLElement>();
+    let ticking = false;
+
+    const paint = () => {
+      ticking = false;
+      const vh = window.innerHeight;
+      for (const el of active) {
+        const r = el.getBoundingClientRect();
+        const frames = Number(el.dataset.frames) || 36;
+        const turns = Number(el.dataset.turns) || 1;
+        const cols = Number(getComputedStyle(el).getPropertyValue('--cols')) || 6;
+        // 0 cuando el borde superior entra por abajo, 1 cuando el inferior sale por arriba.
+        const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
+        const f = Math.round(p * turns * frames) % frames;
+        el.style.setProperty('--c', String(f % cols));
+        el.style.setProperty('--r', String(Math.floor(f / cols)));
+      }
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(paint);
+      }
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) active.add(e.target as HTMLElement);
+          else active.delete(e.target as HTMLElement);
+        }
+        if (active.size) {
+          window.addEventListener('scroll', onScroll, { passive: true });
+          window.addEventListener('resize', onScroll, { passive: true });
+          paint();
+        } else {
+          window.removeEventListener('scroll', onScroll);
+          window.removeEventListener('resize', onScroll);
+        }
+      },
+      { rootMargin: '15% 0px' },
+    );
+
+    hosts.forEach((el) => io.observe(el));
+  }
+</script>
