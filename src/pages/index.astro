@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import HeroCarousel from '../components/sections/HeroCarousel.astro';
 import LeafDivider from '../components/layout/LeafDivider.astro';
 import Faq from '../components/sections/Faq.astro';
+import NotifyDialog from '../components/ui/NotifyDialog.astro';
 import { visit, wa, social } from '../lib/site';
 import pdfMenu from '../assets/images/villa-planes/Menu_Villa_Juan_Sin_Precios.pdf?url';
 import fuenteCaballos from '../assets/images/home/fuente_caballos.jpg';
@@ -408,17 +409,20 @@ const galInit = galeria.map((_, i) =>
               class="h-64 w-full rounded-[1.5rem] object-cover sm:h-72"
             />
           </div>
+          <!-- Sin JS: enlace directo a WhatsApp. Con JS: abre el modal (NotifyDialog). -->
           <a
-            href="#notificarme"
+            href={wa('Quiero que me avisen la apertura del Museo del Caballo')}
+            data-notify-open
             class="absolute bottom-0 left-1/2 inline-flex -translate-x-1/2 items-center justify-center rounded-full bg-brand-strong px-8 py-3 font-display text-xl text-white shadow-lg ring-1 ring-white/30 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             Notificarme Apertura
           </a>
-          <!-- TODO: "Notificarme" abre un popup que capta Nombre, WhatsApp y Correo al mail de Villa Juan. -->
         </div>
       </div>
     </div>
   </section>
+
+  <NotifyDialog />
 
   <!-- CRÓNICAS DE LA TIERRA — blog destacado (panel naranja + caballo recostado arriba). -->
   <section class="mx-auto max-w-5xl px-4 pb-8 pt-36 sm:pt-44 md:pt-52">
@@ -463,7 +467,7 @@ const galInit = galeria.map((_, i) =>
               <p class="mt-2 grow px-2 text-sm text-ink/70">{p.excerpt}</p>
               <a
                 href={p.href}
-                class="mx-2 mt-4 inline-flex items-center justify-center rounded-full bg-cta-strong px-6 py-2.5 font-display text-lg text-white transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"
+                class="mx-2 mt-4 inline-flex items-center justify-center rounded-full bg-cta-strong px-7 py-3 font-display text-2xl text-white transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"
               >
                 Leer más
               </a>

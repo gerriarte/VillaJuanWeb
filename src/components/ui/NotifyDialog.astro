@@ -1,0 +1,138 @@
+---
+/**
+ * NotifyDialog — captura de leads para el Museo del Caballo ("Notificarme Apertura").
+ * <dialog> nativo (Esc, foco atrapado y backdrop gratis) + script mínimo (invariante #4).
+ * Se abre desde cualquier elemento con [data-notify-open]; sin JS ese elemento sigue
+ * siendo un enlace directo a WhatsApp, así la conversión nunca depende del island.
+ * Envío: compone el mensaje y abre WhatsApp.
+ * TODO(post-scaffold): postear a Directus / email de Villa Juan además del WhatsApp.
+ */
+import { contact } from '../../lib/site';
+
+// Teléfono en crudo (sin "tel:+") para construir el enlace de WhatsApp desde el script.
+const waPhone = contact.phoneHref.replace('tel:+', '');
+
+const field =
+  'w-full rounded-xl border border-line bg-white px-4 py-2.5 text-ink placeholder:text-ink/40 transition focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30';
+const labelCls = 'block text-sm font-semibold text-ink';
+---
+
+<dialog
+  id="notify-dialog"
+  aria-labelledby="notify-title"
+  class="m-auto w-[min(30rem,92vw)] rounded-2xl bg-surface p-0 text-ink shadow-2xl backdrop:bg-black/60"
+>
+  <div class="relative p-6 sm:p-8">
+    <button
+      type="button"
+      data-notify-close
+      aria-label="Cerrar"
+      class="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-ink/60 transition hover:bg-ink/5 hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+    >
+      <span aria-hidden="true" class="text-2xl leading-none">×</span>
+    </button>
+
+    <h2 id="notify-title" class="card-title pr-10">Te avisamos de la apertura</h2>
+    <p class="mt-2 text-sm text-ink/70">
+      Déjanos tus datos y serás de los primeros en conocer la apertura del
+      <strong>Museo del Caballo</strong>.
+    </p>
+
+    <form id="notify-form" data-wa-phone={waPhone} class="mt-6 space-y-4" novalidate>
+      <div>
+        <label for="nd-nombre" class={labelCls}>Nombre <span class="text-cta">*</span></label>
+        <input
+          id="nd-nombre"
+          name="nombre"
+          type="text"
+          required
+          autocomplete="name"
+          placeholder="Tu nombre completo"
+          class={`mt-1.5 ${field}`}
+        />
+      </div>
+
+      <div>
+        <label for="nd-tel" class={labelCls}>Número / WhatsApp <span class="text-cta">*</span></label>
+        <input
+          id="nd-tel"
+          name="telefono"
+          type="tel"
+          required
+          autocomplete="tel"
+          inputmode="tel"
+          placeholder="+57 300 000 0000"
+          class={`mt-1.5 ${field}`}
+        />
+      </div>
+
+      <div>
+        <label for="nd-email" class={labelCls}>Correo electrónico <span class="text-cta">*</span></label>
+        <input
+          id="nd-email"
+          name="email"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="tucorreo@ejemplo.com"
+          class={`mt-1.5 ${field}`}
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="inline-flex w-full items-center justify-center rounded-full bg-cta-strong px-8 py-3.5 font-display text-2xl text-white shadow-lg ring-1 ring-white/20 transition hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta-strong"
+      >
+        Notificarme
+      </button>
+
+      <p class="text-center text-xs text-ink/50">
+        Los campos con <span class="text-cta">*</span> son obligatorios.
+      </p>
+    </form>
+  </div>
+</dialog>
+
+<script>
+  const dlg = document.getElementById('notify-dialog') as HTMLDialogElement | null;
+  const form = document.getElementById('notify-form') as HTMLFormElement | null;
+
+  if (dlg && form) {
+    // Los disparadores son enlaces a WhatsApp sin JS; aquí se convierten en abre-modal.
+    document.querySelectorAll<HTMLElement>('[data-notify-open]').forEach((el) => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        dlg.showModal();
+      });
+    });
+
+    const close = () => dlg.close();
+    dlg.querySelector<HTMLElement>('[data-notify-close]')?.addEventListener('click', close);
+    // Clic fuera de la tarjeta (área del backdrop) cierra.
+    dlg.addEventListener('click', (e) => {
+      if (e.target === dlg) close();
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const fd = new FormData(form);
+      const val = (k: string) => ((fd.get(k) as string) || '').trim();
+
+      const lines = [
+        '¡Hola! Quiero que me avisen la apertura del Museo del Caballo.',
+        '',
+        `Nombre: ${val('nombre')}`,
+        `Número/WhatsApp: ${val('telefono')}`,
+        `Correo: ${val('email')}`,
+      ];
+
+      const phone = form.dataset.waPhone ?? '';
+      const url = `https://api.whatsapp.com/send?phone=+${phone}&text=${encodeURIComponent(lines.join('\n'))}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+      form.reset();
+      close();
+    });
+  }
+</script>
