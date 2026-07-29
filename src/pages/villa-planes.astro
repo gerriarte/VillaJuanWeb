@@ -19,7 +19,9 @@ import contactanos from '../assets/images/home/contactanos.png';
 import troteGalope from '../assets/images/villa-planes/Trote_Galope.webp';
 import trochaGalope from '../assets/images/villa-planes/Trocha_Galope.webp';
 import pasoFino from '../assets/images/villa-planes/Paso_Fino.webp';
-import tronco from '../assets/images/villa-planes/Tronco_fondo.webp';
+// Tronco recortado a la madera pura (el original trae ~33% de transparente arriba y abajo,
+// lo que hacía que el borde superior de la madera se moviera con el ancho del viewport).
+import tronco from '../assets/images/villa-planes/Tronco_fondo_madera.webp';
 import cartel from '../assets/images/villa-planes/Cartel_Villa_Planes.webp';
 import pdfTrote from '../assets/images/villa-planes/Villa_Plan_Trote_y_Galope.pdf?url';
 import pdfTrocha from '../assets/images/villa-planes/Villa_Plan_Trocha_y_Galope.pdf?url';
@@ -128,7 +130,7 @@ const barrilSteps = await getCards('villaplanes-barril', [
           format="webp"
           quality={72}
           loading="lazy"
-          class="relative z-10 w-full -mb-6 md:-mb-24 md:self-end md:order-first"
+          class="relative z-10 order-last -mb-[2%] w-full md:order-first md:self-end"
         />
         <div>
           <p class="text-center font-bold text-on-green md:text-right">
@@ -166,12 +168,12 @@ const barrilSteps = await getCards('villaplanes-barril', [
   </section>
 
   <!-- BANNER — cartel "¡Villa Planes!" sobre tronco de madera full-bleed. -->
-  <section class="relative mt-[20px] flex items-center justify-center overflow-hidden">
+  <section class="relative flex items-center justify-center overflow-hidden">
     <img
       src={tronco.src}
       alt=""
       aria-hidden="true"
-      class="pointer-events-none absolute top-1/2 left-1/2 -z-10 w-full max-w-none -translate-x-1/2 -translate-y-1/2"
+      class="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
     />
     <Image
       src={cartel}
