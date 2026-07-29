@@ -11,8 +11,11 @@ import h5 from '../../assets/images/Hoja_5.png';
 import h7 from '../../assets/images/Hoja_7.png';
 import h9 from '../../assets/images/Hoja_9.png';
 
+// Mismo width/quality que SiteBackground a propósito: genera la MISMA URL y el navegador
+// descarga cada hoja una sola vez (con 260 px había un segundo juego duplicado).
+// Las hojas se muestran a 3–5,2rem, así que 240 px sobra.
 const srcs = await Promise.all(
-  [h2, h4, h5, h7, h9].map((s) => getImage({ src: s, format: 'webp', width: 260, quality: 66 })),
+  [h2, h4, h5, h7, h9].map((s) => getImage({ src: s, format: 'webp', width: 240, quality: 66 })),
 );
 
 type L = { i: number; x: number; size: number; dur: number; delay: number; drift: number; spin: number; op: number };

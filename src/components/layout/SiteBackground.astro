@@ -2,15 +2,20 @@
 /**
  * SiteBackground — fondo continuo del sitio (una sola capa, detrás de todo).
  * Capas (atrás → adelante):
- *   1. Degradé horizontal #99C43D → #0CBD35 (fondo base de todas las páginas).
- *   2. Fondo_repetitivo.png (PNG transparente, bordes verde acuarela) tileado repeat-y.
+ *   1. Degradé horizontal #99C43D → #0CBD35 (fondo base y fallback si el tile no carga).
+ *   2. Tile de bordes verde acuarela, repeat-y. Lleva el degradé YA HORNEADO (por eso no
+ *      tiene alpha): el WebP guarda el alpha sin pérdida y con transparencia este mismo
+ *      tile pesaba 875 KB — el asset más pesado del sitio. Aplanado son 29 KB, con una
+ *      diferencia visual de 1,3/255. Se regenera con design/flatten-background.mjs.
  *   3. Hojas dispersas por toda la página, tamaños/rotaciones variados (orgánico).
  * Es `absolute inset-0` sobre <body> (position: relative) → cubre todo el alto del
  * documento y SCROLLEA con el contenido (no fixed). aria-hidden + pointer-events-none.
  * Optimizado con astro:assets → WebP (invariante #5). Cero JS.
  */
 import { getImage } from 'astro:assets';
-import fondoImg from '../../assets/images/Fondo_repetitivo.png';
+// `?url`: ya está comprimido a su medida por el script; pasarlo por getImage lo
+// recomprimiría una segunda vez sin ganar nada.
+import fondoUrl from '../../assets/images/Fondo_repetitivo_plano.webp?url';
 import h1 from '../../assets/images/Hoja_1.png';
 import h2 from '../../assets/images/Hoja_2.png';
 import h3 from '../../assets/images/Hoja_3.png';
@@ -22,7 +27,8 @@ import h8 from '../../assets/images/Hoja_8.png';
 import h9 from '../../assets/images/Hoja_9.png';
 import h10 from '../../assets/images/Hoja_10.png';
 
-const fondo = await getImage({ src: fondoImg, format: 'webp', width: 1440, quality: 52 });
+// Mismo width/quality que LeafRain: así las hojas compartidas generan la MISMA URL y se
+// descargan una sola vez por visita (antes había dos juegos, 240 y 260 px).
 const hojas = await Promise.all(
   [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10].map((s) =>
     getImage({ src: s, format: 'webp', width: 240, quality: 66 }),
@@ -59,7 +65,7 @@ const leaves: Leaf[] = [
 >
   <div
     class="absolute inset-0"
-    style={`background-image:url('${fondo.src}');background-repeat:repeat-y;background-size:100% auto;background-position:top center;`}
+    style={`background-image:url('${fondoUrl}');background-repeat:repeat-y;background-size:100% auto;background-position:top center;`}
   >
   </div>
   {

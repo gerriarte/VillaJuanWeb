@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import AlphaImage from '../ui/AlphaImage.astro';
 import LeafDivider from './LeafDivider.astro';
 import { footerNav as nav, contact, social, visit } from '../../lib/site';
 import horseFooter from '../../assets/images/home/horse_footer.png';
@@ -43,14 +43,12 @@ const socials = [
 
   <!-- Don Juan reclinado: descansa sobre el borde superior del footer y asoma hacia arriba.
        Decorativo (aria-hidden), no interactivo. -->
-  <Image
+  <AlphaImage
     src={horseFooter}
     alt=""
-    aria-hidden="true"
+    ariaHidden
     widths={[480, 736, 1000]}
     sizes="(min-width: 768px) 46rem, 92vw"
-    format="webp"
-    quality={78}
     loading="lazy"
     class="pointer-events-none absolute bottom-full left-1/2 w-[22rem] max-w-[92vw] -translate-x-1/2 translate-y-[50%] [filter:drop-shadow(0_10px_16px_rgba(0,0,0,0.35))] sm:w-[34rem] md:w-[46rem]"
   />

@@ -1,0 +1,71 @@
+---
+/**
+ * AlphaImage — imagen CON TRANSPARENCIA servida como AVIF con respaldo WebP.
+ *
+ * Por qué existe: el WebP guarda el canal alpha SIN pérdida, así que en assets
+ * transparentes pesa 2–2,4× más que el AVIF a calidad equivalente (el tile del fondo
+ * llegaba a 875 KB por eso mismo). Y `<Picture>` de astro:assets no sirve aquí porque
+ * aplica UNA sola `quality` a todos los formatos: las escalas no son comparables
+ * (AVIF q48 ≈ WebP q72), y con un número único o se infla el AVIF o se degrada el WebP.
+ * Este componente pide cada formato con su propia calidad.
+ *
+ * Para fotos SIN transparencia no aporta: ahí el WebP ya es el óptimo. Usá <Image>.
+ */
+import { getImage } from 'astro:assets';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  /** Anchos a generar, de menor a mayor. El mayor es el del <img> de respaldo. */
+  widths: number[];
+  sizes: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  ariaHidden?: boolean;
+  avifQuality?: number;
+  webpQuality?: number;
+}
+
+const {
+  src,
+  alt,
+  widths,
+  sizes,
+  class: className = '',
+  loading = 'lazy',
+  ariaHidden = false,
+  avifQuality = 48,
+  webpQuality = 72,
+} = Astro.props;
+
+const srcSetFor = async (format: 'avif' | 'webp', quality: number) => {
+  const variants = await Promise.all(
+    widths.map((width) => getImage({ src, format, width, quality })),
+  );
+  return variants.map((v, i) => `${v.src} ${widths[i]}w`).join(', ');
+};
+
+const avif = await srcSetFor('avif', avifQuality);
+const webp = await srcSetFor('webp', webpQuality);
+
+// Respaldo para navegadores sin <picture>/AVIF ni WebP en srcset.
+const widest = widths[widths.length - 1];
+const fallback = await getImage({ src, format: 'webp', width: widest, quality: webpQuality });
+// width/height explícitos: reservan el hueco y evitan CLS.
+const height = Math.round((src.height * widest) / src.width);
+---
+
+<picture>
+  <source type="image/avif" srcset={avif} sizes={sizes} />
+  <source type="image/webp" srcset={webp} sizes={sizes} />
+  <img
+    src={fallback.src}
+    alt={alt}
+    aria-hidden={ariaHidden ? 'true' : undefined}
+    width={widest}
+    height={height}
+    loading={loading}
+    decoding="async"
+    class={className}
+  />
+</picture>

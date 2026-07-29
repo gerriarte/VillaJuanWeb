@@ -5,8 +5,11 @@
  * Aspecto NATURAL (h-auto, sin recorte) → las hojas se ven completas y se apoyan sobre
  * la línea de color. El posicionamiento lo define quien lo usa vía `class` (normalmente
  * con la base de la banda sobre la costura).
+ *
+ * Va por AlphaImage (AVIF + WebP): es transparente y aparece en todas las páginas, así
+ * que era el segundo asset más pesado del sitio (127 KB en WebP).
  */
-import { Image } from 'astro:assets';
+import AlphaImage from '../ui/AlphaImage.astro';
 import hojas from '../../assets/images/Hojas_Footer.png';
 
 interface Props {
@@ -16,14 +19,12 @@ interface Props {
 const { class: className = '' } = Astro.props;
 ---
 
-<Image
+<AlphaImage
   src={hojas}
   alt=""
-  aria-hidden="true"
-  widths={[768, 1280, 2000]}
+  ariaHidden
+  widths={[768, 1120, 1440, 2000]}
   sizes="100vw"
-  format="webp"
-  quality={82}
   loading="lazy"
   class:list={['no-reveal pointer-events-none select-none h-auto w-full', className]}
 />
