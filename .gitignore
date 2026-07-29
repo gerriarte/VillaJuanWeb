@@ -46,3 +46,18 @@ design/home-sources/
 # Originales sin optimizar del carrusel (~194MB). Las versiones optimizadas viven en
 # src/assets/images/home/carrusel/ y son las que importan las páginas.
 src/assets/images/home/Carrusel_home/
+
+# Originales del Taller de Liderazgo con Caballos (51 fotos, ~329MB) + su zip de Drive.
+# La selección optimizada vive en src/assets/images/empresas/coaching/ y es la que
+# importa la página. Regenerable con design/optimize-coaching-photos.mjs.
+src/assets/images/empresas/Fotos Taller Liderazgo con Caballos-*/
+src/assets/images/empresas/Fotos Taller Liderazgo con Caballos-*.zip
+
+# Modelos 3D fuente (~20MB c/u) y artefactos del pipeline offline de design/3d/.
+# El sitio NO sirve el .glb: sirve el sprite sheet ya optimizado de public/3d/.
+# Los scripts del pipeline (render/sprite/verify) SÍ se versionan.
+design/3d/*.glb
+design/3d/frames/
+design/3d/verify/
+design/3d/out/
+design/3d/node_modules/
