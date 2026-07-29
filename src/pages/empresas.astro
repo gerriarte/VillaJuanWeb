@@ -1,7 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
+// AlphaImage (AVIF + WebP) SOLO para assets con transparencia: ahí el WebP guarda el
+// alpha sin pérdida y pesa ~2× más. En las fotos opacas el WebP ya es el óptimo.
+import AlphaImage from '../components/ui/AlphaImage.astro';
 import LeafDivider from '../components/layout/LeafDivider.astro';
+import MediaGallery from '../components/sections/MediaGallery.astro';
 import { getCards } from '../lib/content';
 import { assetUrl } from '../lib/directus';
 import { wa } from '../lib/site';
@@ -25,9 +29,19 @@ import imgCaminatas from '../assets/images/empresas/Caminatas_de_observación.pn
 import imgTalleres from '../assets/images/empresas/Talleres_de_siembra.png';
 import imgFormacion from '../assets/images/empresas/Formacion_asistida.jpg';
 import imgSiembra from '../assets/images/empresas/Jornada_siembra.jpg';
-import gal1 from '../assets/images/empresas/gal1.webp';
-import gal2 from '../assets/images/empresas/gal2.webp';
-import gal3 from '../assets/images/empresas/gal3.webp';
+import galCirculo from '../assets/images/empresas/coaching/taller-01-circulo-inicial.jpg';
+import galFacilitador from '../assets/images/empresas/coaching/taller-02-facilitador-escultura.jpg';
+import galEscultura from '../assets/images/empresas/coaching/taller-03-escultura-herraduras.jpg';
+import galEncuentro from '../assets/images/empresas/coaching/taller-04-primer-encuentro.jpg';
+import galEquipo from '../assets/images/empresas/coaching/taller-05-equipo-caballo.jpg';
+import galManos from '../assets/images/empresas/coaching/taller-06-manos-confianza.jpg';
+import galContacto from '../assets/images/empresas/coaching/taller-07-contacto-grupo.jpg';
+import galConduciendo from '../assets/images/empresas/coaching/taller-08-conduciendo.jpg';
+import galCuerda from '../assets/images/empresas/coaching/taller-09-liderando-cuerda.jpg';
+import galAntifaz from '../assets/images/empresas/coaching/taller-10-dinamica-antifaz.jpg';
+import galCierre from '../assets/images/empresas/coaching/taller-11-facilitador-cierre.jpg';
+import galRetrato from '../assets/images/empresas/coaching/taller-12-retrato-caballo.jpg';
+import galVideoPoster from '../assets/images/empresas/coaching/video-poster.jpg';
 import cronica1 from '../assets/images/home/hero_home_empresariales.jpg';
 import cronica2 from '../assets/images/home/hero_home_coaching.jpg';
 import cronica3 from '../assets/images/home/hero_home_restaurante.jpg';
@@ -80,11 +94,31 @@ const programas = [
   { icon: icono05, label: 'Trabajo Individual Modelo Vivencial Conversacional' },
 ];
 
+// Galería del Taller de Liderazgo con Caballos: sigue el recorrido real del taller
+// (llegada → dinámicas con la escultura → trabajo con el caballo → cierre).
+// Masters en src/assets/images/empresas/coaching/ (ver design/optimize-coaching-photos.mjs).
 const galeria = [
-  { img: gal1, alt: 'Sesión de coaching con caballos en Villa Juan' },
-  { img: gal2, alt: 'Grupo en una dinámica de coaching asistido con caballos' },
-  { img: gal3, alt: 'Equipo trabajando con los caballos en Villa Juan' },
+  { img: galCirculo, alt: 'Equipo en círculo durante la charla inicial del taller' },
+  { img: galFacilitador, alt: 'El facilitador explica la dinámica junto a la escultura de caballo' },
+  { img: galEscultura, alt: 'Participante sobre la escultura de caballo hecha con herraduras' },
+  { img: galEncuentro, alt: 'Primer acercamiento del grupo al caballo en el picadero' },
+  { img: galEquipo, alt: 'Equipo acariciando al caballo durante la dinámica' },
+  { img: galManos, alt: 'Manos de los participantes sobre el caballo en un ejercicio de confianza' },
+  { img: galContacto, alt: 'Varios participantes en contacto con el caballo' },
+  { img: galConduciendo, alt: 'Participantes conduciendo al caballo por el picadero' },
+  { img: galCuerda, alt: 'Participante liderando al caballo con la cuerda' },
+  { img: galAntifaz, alt: 'Dinámica de confianza con los ojos vendados junto al caballo' },
+  { img: galCierre, alt: 'El facilitador con el caballo al cierre del taller' },
+  { img: galRetrato, alt: 'Retrato de uno de los caballos de Villa Juan' },
 ];
+
+// El video ES de este taller: "Coaching con Caballos para Empresas" del canal de la
+// Ecogranja. El póster es una foto del propio taller (no un frame del video).
+const videoCoaching = {
+  id: '_elpP9hMND8',
+  title: 'Coaching con Caballos para Empresas · Liderazgo y Trabajo en Equipo',
+  poster: galVideoPoster,
+};
 
 // href apunta al slug real de cada post en el blog (posts en Directus).
 const cronicas = [
@@ -105,7 +139,7 @@ const cronicas = [
     <Image
       src={heroImg}
       alt="Vista aérea de un evento corporativo bajo carpa en la Ecogranja Villa Juan"
-      widths={[768, 1280, 1920]}
+      widths={[768, 1280, 1440, 1920]}
       sizes="100vw"
       format="webp"
       quality={72}
@@ -185,7 +219,7 @@ const cronicas = [
       <!-- Badge Solicitar Propuesta Corporativa -->
       <div class="mt-12 text-center">
         <a href={wa('Quiero solicitar una propuesta corporativa')} target="_blank" rel="noopener noreferrer" aria-label="Solicitar propuesta corporativa" class="inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
-          <Image src={badgeCorp} alt="Solicitar propuesta corporativa" widths={[288, 384, 576]} sizes="(min-width: 640px) 24rem, 18rem" format="webp" quality={80} loading="lazy" class="mx-auto w-72 [filter:drop-shadow(0_8px_16px_rgba(0,0,0,0.25))] sm:w-96" />
+          <AlphaImage src={badgeCorp} alt="Solicitar propuesta corporativa" widths={[288, 384, 576]} sizes="(min-width: 640px) 24rem, 18rem" class="mx-auto w-72 [filter:drop-shadow(0_8px_16px_rgba(0,0,0,0.25))] sm:w-96" />
         </a>
       </div>
     </div>
@@ -216,8 +250,11 @@ const cronicas = [
         {
           beneficios.map((b) => (
             <div class="text-center">
+              {/* Estas tarjetas mezclan PNG recortados (con alpha → AVIF) y fotos JPEG (WebP). */}
               {b.image.kind === 'directus' ? (
                 <img src={assetUrl(b.image.id, { width: 320 })} alt={b.image.alt} loading="lazy" class="mx-auto w-40 [filter:drop-shadow(0_6px_12px_rgba(0,0,0,0.3))]" />
+              ) : b.image.asset.format === 'png' ? (
+                <AlphaImage src={b.image.asset} alt={b.image.alt} widths={[160, 320]} sizes="10rem" class="mx-auto w-40 [filter:drop-shadow(0_6px_12px_rgba(0,0,0,0.3))]" />
               ) : (
                 <Image src={b.image.asset} alt={b.image.alt} widths={[160, 320]} sizes="10rem" format="webp" quality={78} loading="lazy" class="mx-auto w-40 [filter:drop-shadow(0_6px_12px_rgba(0,0,0,0.3))]" />
               )}
@@ -249,6 +286,8 @@ const cronicas = [
             <article class="grid gap-5 rounded-[2rem] bg-surface p-4 shadow-xl sm:p-6 md:grid-cols-2 md:items-center md:gap-8">
               {c.image.kind === 'directus' ? (
                 <img src={assetUrl(c.image.id, { width: 760 })} alt={c.image.alt} loading="lazy" class:list={['h-52 w-full rounded-[1.5rem] object-cover sm:h-64', c.imageRight && 'md:order-last']} />
+              ) : c.image.asset.format === 'png' ? (
+                <AlphaImage src={c.image.asset} alt={c.image.alt} widths={[360, 560, 760]} sizes="(min-width: 768px) 24rem, 90vw" class:list={['h-52 w-full rounded-[1.5rem] object-cover sm:h-64', c.imageRight && 'md:order-last']} />
               ) : (
                 <Image src={c.image.asset} alt={c.image.alt} widths={[360, 560, 760]} sizes="(min-width: 768px) 24rem, 90vw" format="webp" quality={72} loading="lazy" class:list={['h-52 w-full rounded-[1.5rem] object-cover sm:h-64', c.imageRight && 'md:order-last']} />
               )}
@@ -273,7 +312,8 @@ const cronicas = [
           {
             programas.map((p) => (
               <li class="flex flex-col items-center text-center">
-                <img src={p.icon.src} alt="" aria-hidden="true" width={p.icon.width} height={p.icon.height} loading="lazy" class="h-20 w-20 object-contain sm:h-24 sm:w-24" />
+                {/* Se muestran a 80/96 px: los PNG de 182 px se servían crudos (~42 KB los cinco). */}
+                <Image src={p.icon} alt="" aria-hidden="true" widths={[96, 192]} sizes="(min-width: 640px) 6rem, 5rem" format="webp" quality={72} loading="lazy" class="h-20 w-20 object-contain sm:h-24 sm:w-24" />
                 <span class="mt-3 font-display text-base leading-snug tracking-[0.5pt] [text-shadow:0_1px_2px_rgba(0,0,0,0.25)] sm:text-lg">{p.label}</span>
               </li>
             ))
@@ -299,20 +339,20 @@ const cronicas = [
           absoluta que se traduce directamente en mayor asertividad y productividad para tu empresa.
         </p>
         <a href={wa('Quiero cotizar el coaching asistido con caballos')} target="_blank" rel="noopener noreferrer" aria-label="Cotizar coaching" class="inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
-          <img src={cotizarCoaching.src} alt="Cotizar coaching" width={cotizarCoaching.width} height={cotizarCoaching.height} loading="lazy" class="mx-auto w-64 [filter:drop-shadow(0_8px_16px_rgba(0,0,0,0.3))] sm:w-72" />
+          {/* Antes era el PNG crudo: 115 KB para mostrarse a 288 px. */}
+          <AlphaImage src={cotizarCoaching} alt="Cotizar coaching" widths={[288, 576]} sizes="(min-width: 640px) 18rem, 16rem" class="mx-auto w-64 [filter:drop-shadow(0_8px_16px_rgba(0,0,0,0.3))] sm:w-72" />
         </a>
       </div>
 
-      <!-- Galería de coaching -->
+      <!-- Galería de coaching: video del taller + fotos (lightbox) -->
       <h3 class="mt-14 text-center font-display text-3xl text-[#FFF200] [text-shadow:0_2px_4px_rgba(0,0,0,0.35)] sm:text-4xl">
         Galería de Coaching
       </h3>
-      <div class="mt-8 grid gap-4 sm:grid-cols-3">
-        {
-          galeria.map((g) => (
-            <Image src={g.img} alt={g.alt} widths={[320, 480, 640]} sizes="(min-width: 640px) 20rem, 90vw" format="webp" quality={74} loading="lazy" class="h-52 w-full rounded-2xl object-cover shadow-lg [text-shadow:none]" />
-          ))
-        }
+      <p class="mt-3 text-center text-sm text-white/80">
+        Un taller real, de principio a fin. Toca una foto para verla en grande.
+      </p>
+      <div class="mt-8">
+        <MediaGallery id="galeria-coaching" photos={galeria} video={videoCoaching} />
       </div>
     </div>
   </section>
