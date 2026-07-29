@@ -1,0 +1,85 @@
+# Auto-despliegue a Coolify.
+#
+# Cada push a `main` compila el sitio (mismo Node/pnpm que produccion) y, solo si el
+# build pasa, dispara el deploy del recurso del sitio en Coolify. Asi un error de
+# compilacion nunca llega a produccion.
+#
+# Requisito unico: el secret COOLIFY_TOKEN del repositorio (Coolify -> Keys & Tokens ->
+# API Tokens, con permiso de deploy). Sin ese secret el job de deploy se salta con un
+# aviso, no falla.
+#
+# force=true => rebuild SIN cache. Es a proposito: el sitio es SSG y lee Directus en
+# build-time, y un deploy cacheado no vuelve a leer el CMS.
+
+name: Deploy a Coolify
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # permite dispararlo a mano desde la pestana Actions
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: true
+
+env:
+  COOLIFY_URL: https://panel.abralatam.com
+  COOLIFY_APP_UUID: ne8h2tqgc4341bzb79ydeug3
+
+jobs:
+  build:
+    name: Build del sitio
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm build
+
+  deploy:
+    name: Deploy en Coolify
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disparar el deploy
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+        run: |
+          if [ -z "$COOLIFY_TOKEN" ]; then
+            echo "::warning::Falta el secret COOLIFY_TOKEN, no se dispara el deploy."
+            echo "Crealo en Coolify (Keys & Tokens -> API Tokens) y agregalo con:"
+            echo "  gh secret set COOLIFY_TOKEN --repo ${{ github.repository }}"
+            exit 0
+          fi
+
+          url="$COOLIFY_URL/api/v1/deploy?uuid=$COOLIFY_APP_UUID&force=true"
+
+          # Coolify expone el deploy por GET; algunas versiones aceptan POST.
+          # Se intenta GET y, si responde 404/405, se reintenta con POST.
+          code=$(curl -sS -o response.json -w '%{http_code}' \
+            -H "Authorization: Bearer $COOLIFY_TOKEN" "$url")
+          echo "GET -> HTTP $code"
+
+          if [ "$code" = "404" ] || [ "$code" = "405" ]; then
+            code=$(curl -sS -o response.json -w '%{http_code}' -X POST \
+              -H "Authorization: Bearer $COOLIFY_TOKEN" "$url")
+            echo "POST -> HTTP $code"
+          fi
+
+          cat response.json
+          echo
+
+          if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
+            echo "::error::Coolify respondio $code al pedir el deploy."
+            exit 1
+          fi
+
+          echo "Deploy encolado. Seguilo en $COOLIFY_URL"
