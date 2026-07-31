@@ -29,7 +29,7 @@ import pdfPasoFino from '../assets/images/villa-planes/Villa_Plan_Paso_Fino.pdf?
 import pdfMenu from '../assets/images/villa-planes/Menu_Villa_Juan_Sin_Precios.pdf?url';
 
 // Planes como gráficos de texto (Sunrise, por color). Orden del mockup: Trote, Trocha, Paso Fino.
-// TODO(post-scaffold): apuntar a la descarga real del PDF (Villa_Plan_*.pdf) con `download`.
+// Los PDFs abren en pestaña nueva (visor del navegador), no se fuerza descarga.
 const planes = [
   { title: 'Trote y Galope', img: troteGalope, pdf: pdfTrote, grad: 'linear-gradient(90deg,#4ba82b 0%,#00811e 100%)' },
   { title: 'Trocha y Galope', img: trochaGalope, pdf: pdfTrocha, grad: 'linear-gradient(90deg,#e0431f 0%,#c0360d 100%)' },
@@ -134,7 +134,7 @@ const barrilSteps = await getCards('villaplanes-barril', [
         />
         <div>
           <p class="text-center font-bold text-on-green md:text-right">
-            Descarga el <span class="text-cta-strong">.pdf</span> de tu Villa Plan favorito*
+            Mira el <span class="text-cta-strong">.pdf</span> de tu Villa Plan favorito*
           </p>
           <ul class="mx-auto mt-5 flex max-w-xs flex-col gap-3 md:mx-0 md:ml-auto">
             {
@@ -142,8 +142,9 @@ const barrilSteps = await getCards('villaplanes-barril', [
                 <li>
                   <a
                     href={p.pdf}
-                    download={`Villa Plan ${p.title}.pdf`}
-                    aria-label={`Descargar el Villa Plan ${p.title} (PDF)`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Ver el Villa Plan ${p.title} (PDF)`}
                     style={`background-image:${p.grad};`}
                     class="flex w-full items-center justify-center rounded-full px-6 py-3 shadow-lg ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
