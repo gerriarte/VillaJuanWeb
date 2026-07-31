@@ -36,8 +36,9 @@ const hojas = await Promise.all(
 );
 
 // Dispersión de hojas por todo el alto (top %), lados alternados, tamaños/rotaciones/opacidad variados.
-// OP_FACTOR atenúa la opacidad de TODAS las hojas laterales (0.8 = 20% más transparentes).
-const OP_FACTOR = 0.5;
+// OP_FACTOR atenúa la opacidad de TODAS las hojas laterales: es un multiplicador sobre el
+// `op` de cada una (0.25 → las deja al 25% de su opacidad de diseño).
+const OP_FACTOR = 0.25;
 type Leaf = { h: number; top: number; side: 'left' | 'right'; off: number; w: number; rot: number; op: number };
 const leaves: Leaf[] = [
   { h: 0, top: 3, side: 'left', off: -2, w: 9, rot: 14, op: 0.85 },
@@ -63,9 +64,12 @@ const leaves: Leaf[] = [
   class="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
   style="background-image: linear-gradient(90deg, #99c43d 0%, #0cbd35 100%);"
 >
+  <!-- El tile lleva el degradé horneado y debajo va ESE MISMO degradé (capa 1): bajarle
+       la opacidad lo funde hacia el verde plano, sin huecos ni cambio de tono. Solo
+       atenúa los bordes de acuarela. -->
   <div
     class="absolute inset-0"
-    style={`background-image:url('${fondoUrl}');background-repeat:repeat-y;background-size:100% auto;background-position:top center;`}
+    style={`background-image:url('${fondoUrl}');background-repeat:repeat-y;background-size:100% auto;background-position:top center;opacity:0.4;`}
   >
   </div>
   {
