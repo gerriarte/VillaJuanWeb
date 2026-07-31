@@ -89,7 +89,7 @@ const localBusiness = {
     <meta name="twitter:image" content={ogImage} />
 
     <!-- Datos estructurados del negocio -->
-    <script type="application/ld+json" set:html={JSON.stringify(localBusiness)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(localBusiness)} />
 
     <Font cssVariable="--font-sunrise" preload />
 

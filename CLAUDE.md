@@ -67,7 +67,11 @@ Colegios, Gastronomía. Museo del Caballo = "próximamente".
 - `site` debe estar seteado en `astro.config.mjs` (lo exige `@astrojs/sitemap`).
 
 ## Comandos
-- `pnpm dev` · `pnpm build` · `pnpm preview`.
+- `pnpm dev` · `pnpm build` · `pnpm preview` · `pnpm check`.
+- `pnpm build` = `astro check && astro build`: el build de Astro NO tipa los `.astro`,
+  el check sí. Un error de tipos frena el despliegue (esa es la intención).
+- **TypeScript fijado en 6.x**: `astro check` usa la API programática de `tsc` que el
+  compilador nativo (TS 7+) todavía no expone. No subir a 7 hasta que la soporte.
 - Dev en background: `astro dev --background` (`astro dev stop|status|logs`).
 
 ## Estructura

@@ -8,8 +8,8 @@ import { createRequire } from 'node:module';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 // sharp ya es dependencia del sitio (Astro): lo tomamos de ahí en vez de duplicarlo.
-const require = createRequire(path.join(HERE, '../../package.json'));
-const sharp = require('sharp');
+const req = createRequire(path.join(HERE, '../../package.json'));
+const sharp = req('sharp');
 const arg = (n, d) => {
   const i = process.argv.indexOf(`--${n}`);
   return i === -1 ? d : process.argv[i + 1];

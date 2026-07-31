@@ -130,7 +130,14 @@ Preservar estas tradiciones no es mirar al pasado, sino darle raíces al futuro.
 ];
 
 // ── Directus → Post ───────────────────────────────────────────────────
-function mapPost(dp: DirectusPost): Post {
+// Solo el subconjunto de campos que pide getPosts(): el SDK tipa la respuesta
+// según `fields`, así que exigir DirectusPost entero no compila.
+type PostRow = Pick<
+  DirectusPost,
+  'slug' | 'title' | 'excerpt' | 'categories' | 'date' | 'cover' | 'body'
+>;
+
+function mapPost(dp: PostRow): Post {
   return {
     slug: dp.slug,
     title: dp.title,
