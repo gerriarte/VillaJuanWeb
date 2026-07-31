@@ -54,13 +54,16 @@ const socials = [
   />
 
   <div class="mx-auto grid max-w-6xl gap-10 px-4 pt-32 pb-12 sm:pt-44 md:grid-cols-3 md:pt-60">
-    <!-- Izquierda: Menú (misma tipografía que el menú del header: Sunrise amarilla). -->
+    <!-- Izquierda: Menú en texto corrido blanco (font-body), a juego con el bloque de
+         contacto de la derecha. El text-shadow hace de scrim sobre el naranja. -->
     <nav aria-label="Navegación del pie">
-      <ul class="flex flex-col gap-1 font-display text-2xl text-[#FFF200] [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">
+      <ul
+        class="flex flex-col gap-2 font-body text-lg font-semibold text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.4)] sm:text-xl"
+      >
         {
           nav.map((item) => (
             <li>
-              <a href={item.href} class="transition hover:text-white">
+              <a href={item.href} class="transition hover:text-accent">
                 {item.label}
               </a>
             </li>
@@ -101,21 +104,26 @@ const socials = [
         height={logoVillaJuan.height}
         class="h-auto w-44 [filter:drop-shadow(0_2px_6px_rgba(0,0,0,0.3))] sm:w-56"
       />
-      <address class="flex flex-col gap-1.5 text-sm text-white/90 not-italic">
-        <span>{visit.address}</span>
+      <!-- Solo ciudad, teléfono y correo (la dirección detallada vive en la página de
+           contacto). Dos puntos más que el resto y en bold: es la info de conversión. -->
+      <address
+        class="flex flex-col gap-1.5 text-base font-bold text-white not-italic [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]"
+      >
         <span>{visit.city}</span>
-        <a href={contact.phoneHref} class="font-semibold transition-colors hover:text-white">
+        <a href={contact.phoneHref} class="transition-colors hover:text-accent">
           {contact.phone}
         </a>
-        <a href={`mailto:${contact.email}`} class="transition-colors hover:text-white">
+        <a href={`mailto:${contact.email}`} class="transition-colors hover:text-accent">
           {contact.email}
         </a>
       </address>
     </div>
   </div>
 
-  <div class="border-t border-white/15">
-    <p class="mx-auto max-w-6xl px-4 py-4 text-center text-xs text-white/70">
+  <!-- Subfooter: verde plano de marca. NO `.scene-green` (arranca en lima #99c43d y el
+       blanco falla AA); `brand-strong` da 5:1 con blanco puro (invariante #2). -->
+  <div class="bg-brand-strong">
+    <p class="mx-auto max-w-6xl px-4 py-4 text-center text-xs text-white">
       © {year} Villa Juan Ecogranja. Todos los derechos reservados. · Diseño y desarrollo: MTM
       Marca tu Marca
     </p>
