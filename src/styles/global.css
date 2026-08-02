@@ -194,3 +194,42 @@
     filter: brightness(1.06);
   }
 }
+
+/* ============================================================
+   Botones — movimiento al pasar el cursor (CSS puro, invariante de animación).
+   Alcance: TODOS los botones del sitio son pills `<a>`/`<button>` con
+   `rounded-full`; `.btn-fx` queda como opt-in para cualquier botón que no lo sea.
+   · Se anima `transform`, NO `translate`: las utilidades de posicionado de
+     Tailwind v4 (`-translate-y-1/2` de las flechas del carrusel) compilan a la
+     propiedad `translate` y así quedan intactas al hacer hover.
+   · No se declara `transition` acá para no pisar la de Tailwind (su utilidad
+     `transition` ya incluye transform, color, filter y sombra); solo se afina
+     la curva y la duración del movimiento.
+   ============================================================ */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  a[class~="rounded-full"],
+  button[class~="rounded-full"],
+  .btn-fx {
+    transition-duration: 0.28s;
+    transition-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  /* Opt-in: puede no traer la utilidad `transition` de Tailwind. */
+  .btn-fx {
+    transition-property: transform;
+  }
+  a[class~="rounded-full"]:hover,
+  a[class~="rounded-full"]:focus-visible,
+  button[class~="rounded-full"]:hover,
+  button[class~="rounded-full"]:focus-visible,
+  .btn-fx:hover,
+  .btn-fx:focus-visible {
+    transform: translateY(-3px) scale(1.03);
+  }
+  /* Feedback de pulsación: el botón "baja" antes de navegar. */
+  a[class~="rounded-full"]:active,
+  button[class~="rounded-full"]:active,
+  .btn-fx:active {
+    transform: translateY(-1px) scale(0.98);
+    transition-duration: 0.08s;
+  }
+}

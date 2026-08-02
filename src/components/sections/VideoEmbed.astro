@@ -1,0 +1,79 @@
+---
+/**
+ * VideoEmbed — video de YouTube con FACHADA (patrón lite-embed).
+ *
+ * Por defecto NO se carga nada de YouTube: solo el poster local (optimizado por
+ * astro:assets) y un botón de play. El <iframe> del player se inserta recién al
+ * hacer clic, así el home no arrastra el ~1 MB de JS de terceros del player ni
+ * pega requests a Google antes de que el usuario los pida (invariantes #4 y #6).
+ *
+ * Dominio: youtube-nocookie.com (sin cookies de tracking hasta la reproducción).
+ */
+import { Image } from 'astro:assets';
+
+interface Props {
+  /** ID del video de YouTube (el `v=` de la URL). */
+  id: string;
+  /** Título real del video: va en el aria-label del play y en el title del iframe. */
+  title: string;
+  /** Poster local (frame del video), servido en WebP responsive. */
+  poster: ImageMetadata;
+}
+
+const { id, title, poster } = Astro.props;
+---
+
+<div
+  class="yt-facade relative aspect-video w-full overflow-hidden rounded-3xl bg-black shadow-2xl ring-4 ring-white/30"
+  data-yt={id}
+  data-yt-title={title}
+>
+  <button
+    type="button"
+    class="group absolute inset-0 block h-full w-full cursor-pointer focus-visible:outline-4 focus-visible:-outline-offset-4 focus-visible:outline-white"
+    aria-label={`Reproducir video: ${title}`}
+  >
+    <!-- no-reveal: el poster no entra en el reveal por scroll (se movería dentro
+         del marco recortado). El play sí tiene su micro-interacción en hover. -->
+    <Image
+      src={poster}
+      alt=""
+      widths={[640, 960, 1280]}
+      sizes="(min-width: 1024px) 56rem, 100vw"
+      loading="lazy"
+      class="no-reveal h-full w-full object-cover"
+    />
+    <span
+      class="pointer-events-none absolute inset-0 bg-black/25 transition group-hover:bg-black/10"
+      aria-hidden="true"></span>
+    <span
+      class="pointer-events-none absolute top-1/2 left-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-cta-strong/95 shadow-xl ring-4 ring-white/70 transition duration-300 group-hover:scale-110 sm:h-24 sm:w-24"
+      aria-hidden="true"
+    >
+      <svg class="ml-1 h-9 w-9 sm:h-11 sm:w-11" viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true">
+        <path d="M8 5v14l11-7z"></path>
+      </svg>
+    </span>
+  </button>
+</div>
+
+<script>
+  // Al primer clic se reemplaza la fachada por el player real (autoplay, porque
+  // el clic ya fue la intención del usuario). `once`: después no hay más JS vivo.
+  for (const box of document.querySelectorAll<HTMLElement>('.yt-facade[data-yt]')) {
+    box.querySelector('button')?.addEventListener(
+      'click',
+      () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${box.dataset.yt}?autoplay=1&rel=0`;
+        iframe.title = box.dataset.ytTitle ?? 'Video';
+        iframe.allow =
+          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.allowFullscreen = true;
+        iframe.className = 'absolute inset-0 h-full w-full';
+        box.replaceChildren(iframe);
+      },
+      { once: true },
+    );
+  }
+</script>

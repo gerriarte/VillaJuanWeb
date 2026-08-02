@@ -14,6 +14,14 @@ import barril2 from '../assets/images/villa-planes/Sazonado_Artesanal.jpg';
 import barril3 from '../assets/images/villa-planes/Cocción_al_barril.jpg';
 import barril4 from '../assets/images/villa-planes/Espectaculo_en_vivo.jpg';
 import tallerImg from '../assets/images/villa-planes/taller.webp';
+// Platos de la carta (mini galería sobre "El Arte de nuestra Carne al Barril").
+// Originales: PNG de 5472×3648 (~35 MB c/u); acá entran ya reducidos a 1600px WebP.
+import comidaChurrasco from '../assets/images/villa-planes/comida/churrasco.webp';
+import comidaEmpanaditas from '../assets/images/villa-planes/comida/empanaditas.webp';
+import comidaChicharroncitos from '../assets/images/villa-planes/comida/chicharroncitos.webp';
+import comidaPatacon from '../assets/images/villa-planes/comida/patacon-ahogado.webp';
+import comidaPatacon2 from '../assets/images/villa-planes/comida/patacon-ahogado-2.webp';
+import comidaFiambre from '../assets/images/villa-planes/comida/fiambre.webp';
 import selfieAnimales from '../assets/images/villa-planes/Selfie.webp';
 import contactanos from '../assets/images/home/contactanos.png';
 // Tronco recortado a la madera pura (el original trae ~33% de transparente arriba y abajo,
@@ -56,6 +64,16 @@ const barrilSteps = await getCards('villaplanes-barril', [
   { title: 'Espectáculo en Vivo', imageRight: false, image: { kind: 'local', asset: barril4, alt: 'Espectáculo en Vivo' },
     body: 'La preparación final se realiza frente a tus ojos. Más que una cena, es un show gastronómico donde la suavidad y el aroma del ahumado son los protagonistas de tu evento.' },
 ]);
+
+// Mini galería de platos, arriba de "El Arte de nuestra Carne al Barril".
+const comidaGaleria = [
+  { asset: comidaChurrasco, alt: 'Churrasco con papas a la francesa servido en tabla de madera' },
+  { asset: comidaEmpanaditas, alt: 'Canasta de empanaditas con ají picado' },
+  { asset: comidaChicharroncitos, alt: 'Chicharroncitos crocantes con guacamole' },
+  { asset: comidaPatacon2, alt: 'Patacones con salsa de ahogado' },
+  { asset: comidaPatacon, alt: 'Patacón con ahogado servido en la mesa campestre' },
+  { asset: comidaFiambre, alt: 'Fiambre campesino servido sobre hoja de plátano' },
+];
 ---
 
 <Base
@@ -133,7 +151,7 @@ const barrilSteps = await getCards('villaplanes-barril', [
                     href={p.href}
                     aria-label={`Ver el Villa Plan ${p.title} (PDF)`}
                     style={`background-image:${p.grad};`}
-                    class="flex w-full items-center justify-center rounded-full px-6 py-3 shadow-lg ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    class="flex w-full items-center justify-center rounded-full px-6 py-3 shadow-lg ring-1 ring-black/10 transition hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
                     <Image
                       src={p.img}
@@ -293,6 +311,27 @@ const barrilSteps = await getCards('villaplanes-barril', [
     </div>
 
     <div class="mx-auto max-w-6xl px-4 pt-8 pb-16 text-center">
+      <!-- Mini galería de platos: tira de fotos, cero JS (el zoom al hover es CSS puro y
+           usa `scale`, que no choca con el `transform` del reveal por scroll). -->
+      <ul class="mb-12 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+        {
+          comidaGaleria.map((f) => (
+            <li class="overflow-hidden rounded-2xl shadow-lg ring-2 ring-white/40">
+              <Image
+                src={f.asset}
+                alt={f.alt}
+                widths={[240, 360, 480]}
+                sizes="(min-width: 1024px) 11rem, (min-width: 640px) 30vw, 45vw"
+                format="webp"
+                quality={72}
+                loading="lazy"
+                class="aspect-[3/2] w-full object-cover transition duration-300 hover:scale-105"
+              />
+            </li>
+          ))
+        }
+      </ul>
+
       <h2 class="font-display text-4xl text-[#FFF200] [text-shadow:0_2px_4px_rgba(0,0,0,0.35)] sm:text-5xl">
         El Arte de nuestra Carne al Barril
       </h2>

@@ -6,6 +6,7 @@ import { Image } from 'astro:assets';
 import AlphaImage from '../components/ui/AlphaImage.astro';
 import LeafDivider from '../components/layout/LeafDivider.astro';
 import MediaGallery from '../components/sections/MediaGallery.astro';
+import HeroVideo from '../components/sections/HeroVideo.astro';
 import { getCards } from '../lib/content';
 import { assetUrl } from '../lib/directus';
 import { wa } from '../lib/site';
@@ -133,19 +134,15 @@ const cronicas = [
   title="Empresas · Eventos corporativos y coaching con caballos en Tenjo | Ecogranja Villa Juan"
   description="Eventos corporativos, integración, bienestar y coaching asistido con caballos en 38.000 m² de naturaleza cerca de Bogotá. Desde 10 hasta 2.000 asistentes."
 >
-  <!-- HERO — las hojas van DETRÁS del banner (-z-10, contexto raíz) y asoman por debajo,
-       por detrás de la sección siguiente. -->
+  <!-- HERO — video institucional en loop mudo sobre la foto (que es el LCP y el
+       fallback). Las hojas van DETRÁS del banner (-z-10, contexto raíz) y asoman
+       por debajo, por detrás de la sección siguiente. -->
   <section class="relative">
-    <Image
-      src={heroImg}
+    <HeroVideo
+      id="MvDTCsv4uak"
+      title="Eco Granja Villa Juan · Eventos"
+      poster={heroImg}
       alt="Vista aérea de un evento corporativo bajo carpa en la Ecogranja Villa Juan"
-      widths={[768, 1280, 1440, 1920]}
-      sizes="100vw"
-      format="webp"
-      quality={72}
-      loading="eager"
-      fetchpriority="high"
-      class="h-[80dvh] w-full object-cover sm:h-dvh"
     />
     <LeafDivider class="absolute inset-x-0 bottom-0 -z-10 translate-y-[50%]" />
   </section>

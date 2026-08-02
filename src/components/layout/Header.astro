@@ -3,7 +3,11 @@ import { nav } from '../../lib/site';
 import logo from '../../assets/images/home/Logo-villajuan-blanco.svg';
 
 interface Props {
-  /** true = header transparente encima del hero (degradé verde→transparente). */
+  /**
+   * true = header transparente encima del hero (degradé verde→transparente).
+   * En ambos modos el header queda SIEMPRE a la vista al hacer scroll:
+   * overlay → `fixed` (flota sobre el hero full-bleed), resto → `sticky`.
+   */
   overlay?: boolean;
 }
 
@@ -18,16 +22,17 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
 
 <header
   class:list={[
-    'w-full',
-    overlay ? 'absolute inset-x-0 top-0 z-50' : 'relative bg-brand-strong',
+    'site-header w-full',
+    overlay ? 'fixed inset-x-0 top-0 z-50' : 'sticky top-0 z-50 bg-brand-strong',
   ]}
 >
   <div
+    class="header-bg"
     style={overlay
       ? 'background:linear-gradient(to bottom,#00560fF2 0%,#0a7d2a99 45%,transparent 100%);'
       : undefined}
   >
-    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4">
+    <div class="relative mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4">
       <a href="/" class="shrink-0" aria-label="Ecogranja Villa Juan · Inicio">
         <img src={logo.src} alt="Ecogranja Villa Juan" width="174" height="96" class="h-auto w-36 sm:w-44" />
       </a>
@@ -146,6 +151,36 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
 </header>
 
 <style>
+  /* ── Header pegado al viewport ────────────────────────────────────────────
+     El fondo verde sólido NO se pinta cambiando `background-image` (no es
+     animable): va en un ::before que sube de opacidad al hacer scroll, encima
+     del degradé del hero. El JS solo agrega/quita `.is-stuck`. */
+  .header-bg {
+    position: relative;
+  }
+  .header-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-brand-strong);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .site-header.is-stuck .header-bg::before {
+    opacity: 1;
+  }
+  .site-header.is-stuck .header-bg {
+    box-shadow: 0 6px 24px rgb(0 0 0 / 0.28);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .header-bg::before {
+      transition: opacity 0.35s ease;
+    }
+    .header-bg {
+      transition: box-shadow 0.35s ease;
+    }
+  }
+
   /* <details> como menú móvil: sin marcador nativo y swap de icono según estado. */
   .mobile-nav > summary {
     list-style: none;
@@ -165,6 +200,17 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
 </style>
 
 <script>
+  // Fondo verde sólido del header al hacer scroll. Listener pasivo con un
+  // `classList.toggle` idempotente: si el estado no cambia el navegador no
+  // recalcula estilos, así que no hace falta rAF ni throttle. Sin JS el header
+  // igual queda fijo: solo no cambia de fondo (degradación aceptable).
+  const header = document.querySelector<HTMLElement>('.site-header');
+  if (header) {
+    const sync = () => header.classList.toggle('is-stuck', window.scrollY > 24);
+    sync();
+    window.addEventListener('scroll', sync, { passive: true });
+  }
+
   // Progressive enhancement: cierra el menú móvil (<details>) al tocar fuera o con Escape.
   // Sin esto el menú igual funciona (se cierra con la ✕ o al navegar).
   const menu = document.querySelector<HTMLDetailsElement>('.mobile-nav');

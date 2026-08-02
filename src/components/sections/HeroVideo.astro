@@ -1,0 +1,123 @@
+---
+/**
+ * HeroVideo — hero full-bleed con video de YouTube en loop mudo.
+ *
+ * Estrategia (invariantes #4 y #6):
+ *   1. Pinta SOLO la foto (eager, fetchpriority high) → el LCP sigue siendo una
+ *      imagen optimizada, igual que antes. Nada de YouTube en la ruta crítica.
+ *   2. Terminada la carga de la página, en desktop se inserta el player en loop,
+ *      mudo y sin controles, que se funde encima de la foto. Si falla, queda la foto.
+ *   3. Móvil, `prefers-reduced-motion: reduce` o Save-Data → se queda la foto.
+ *      No es "sin video": el botón lo abre con sonido en cualquier viewport.
+ */
+import { Image } from 'astro:assets';
+
+interface Props {
+  /** ID del video de YouTube (el `v=` de la URL). */
+  id: string;
+  /** Título real del video (title del iframe). */
+  title: string;
+  /** Foto de fondo: primer pintado, LCP y fallback. */
+  poster: ImageMetadata;
+  /** Alt de la foto. */
+  alt: string;
+}
+
+const { id, title, poster, alt } = Astro.props;
+---
+
+<div
+  class="hero-video relative h-[80dvh] w-full overflow-hidden sm:h-dvh"
+  data-yt={id}
+  data-yt-title={title}
+>
+  <Image
+    src={poster}
+    alt={alt}
+    widths={[768, 1280, 1440, 1920]}
+    sizes="100vw"
+    format="webp"
+    quality={72}
+    loading="eager"
+    fetchpriority="high"
+    class="h-full w-full object-cover"
+  />
+
+  <!-- Hueco del player: se llena por JS. `w-[177.78vh] h-[56.25vw]` + min-full es el
+       truco de "object-cover" para un iframe 16:9 (siempre cubre, nunca deja franjas). -->
+  <div class="video-slot pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700"></div>
+
+  <button
+    type="button"
+    class="hero-video-cta absolute bottom-16 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-cta-strong px-6 py-3 font-display text-lg text-white shadow-lg ring-1 ring-white/30 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:bottom-24 sm:text-xl"
+  >
+    <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M8 5v14l11-7z"></path>
+    </svg>
+    <span class="cta-label">Ver el video</span>
+  </button>
+</div>
+
+<script>
+  type NavWithData = Navigator & { connection?: { saveData?: boolean } };
+
+  for (const box of document.querySelectorAll<HTMLElement>('.hero-video[data-yt]')) {
+    const slot = box.querySelector<HTMLElement>('.video-slot');
+    const btn = box.querySelector<HTMLButtonElement>('.hero-video-cta');
+    const label = box.querySelector<HTMLElement>('.cta-label');
+    const id = box.dataset.yt;
+    if (!slot || !id) continue;
+
+    const player = (params: string, decorative: boolean): HTMLIFrameElement => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${id}?${params}`;
+      iframe.title = box.dataset.ytTitle ?? 'Video';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      iframe.className =
+        'absolute top-1/2 left-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2';
+      if (decorative) {
+        // De fondo: decorativo, fuera del tab order y sin capturar clics.
+        iframe.tabIndex = -1;
+        iframe.setAttribute('aria-hidden', 'true');
+      }
+      return iframe;
+    };
+
+    const show = () => {
+      slot.classList.remove('opacity-0');
+      slot.classList.add('opacity-100');
+    };
+
+    // ── Loop mudo de fondo (solo desktop, sin reduce-motion, sin ahorro de datos).
+    const autoLoop =
+      window.matchMedia('(min-width: 768px)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+      !(navigator as NavWithData).connection?.saveData;
+
+    if (autoLoop) {
+      const start = () => {
+        const iframe = player(
+          `autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&playsinline=1&rel=0&disablekb=1`,
+          true,
+        );
+        // El fundido espera a que el player arranque de verdad: si no, se ve un
+        // frame negro de YouTube antes del primer cuadro del video.
+        iframe.addEventListener('load', () => setTimeout(show, 900), { once: true });
+        slot.replaceChildren(iframe);
+        if (label) label.textContent = 'Ver con sonido';
+      };
+      // Después del load: el hero ya pintó y el LCP ya se midió.
+      if (document.readyState === 'complete') setTimeout(start, 300);
+      else window.addEventListener('load', () => setTimeout(start, 300), { once: true });
+    }
+
+    // ── Botón: el video real, con sonido y controles.
+    btn?.addEventListener('click', () => {
+      slot.classList.remove('pointer-events-none');
+      show();
+      slot.replaceChildren(player('autoplay=1&rel=0&playsinline=1', false));
+      btn.remove();
+    });
+  }
+</script>
