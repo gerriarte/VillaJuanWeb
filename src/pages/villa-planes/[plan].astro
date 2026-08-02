@@ -1,0 +1,65 @@
+---
+/**
+ * Página de un Villa Plan: su PDF embebido dentro del sitio (header + footer del layout).
+ * Los botones de Villa Planes y de la home apuntan acá, NO al archivo suelto.
+ */
+import Base from '../../layouts/Base.astro';
+import { Image } from 'astro:assets';
+import PdfViewer from '../../components/sections/PdfViewer.astro';
+import { planPdfs } from '../../lib/pdfs';
+
+export function getStaticPaths() {
+  return planPdfs.map((plan) => ({
+    params: { plan: plan.slug },
+    props: { plan, others: planPdfs.filter((p) => p.slug !== plan.slug) },
+  }));
+}
+
+const { plan, others } = Astro.props;
+---
+
+<Base
+  title={`Villa Plan ${plan.title} · Pasadías en Tenjo | Ecogranja Villa Juan`}
+  description={plan.description}
+>
+  <PdfViewer
+    title={`Villa Plan ${plan.title}`}
+    file={plan.file}
+    filename={plan.filename}
+    description={plan.description}
+    backHref="/villa-planes"
+    backLabel="Villa Planes"
+    waText={plan.waText}
+    ctaLabel="Cotizar este plan"
+  >
+    <!-- Los otros planes: se comparan sin volver atrás. -->
+    <div class="mt-14">
+      <h2 class="text-center font-bold text-on-green">Mira también los otros Villa Planes</h2>
+      <ul class="mx-auto mt-5 flex max-w-xl flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
+        {
+          others.map((o) => (
+            <li class="sm:flex-1">
+              <a
+                href={o.href}
+                aria-label={`Ver el Villa Plan ${o.title}`}
+                style={`background-image:${o.grad};`}
+                class="flex h-full w-full items-center justify-center rounded-full px-6 py-3 shadow-lg ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                <Image
+                  src={o.img}
+                  alt={o.title}
+                  widths={[160, 240, 320]}
+                  sizes="10rem"
+                  format="webp"
+                  quality={85}
+                  loading="lazy"
+                  class="h-14 w-auto [filter:drop-shadow(0_2px_5px_rgba(0,0,0,0.45))]"
+                />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </PdfViewer>
+</Base>

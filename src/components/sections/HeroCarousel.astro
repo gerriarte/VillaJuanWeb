@@ -14,7 +14,7 @@ import s2 from '../../assets/images/home/hero_home_restaurante.jpg';
 import s3 from '../../assets/images/home/hero_home_coaching.jpg';
 import s4 from '../../assets/images/home/hero_home_empresariales.jpg';
 import tituloHero1 from '../../assets/images/home/Titulo_hero1.svg';
-import pdfMenu from '../../assets/images/villa-planes/Menu_Villa_Juan_Sin_Precios.pdf?url';
+import { menuPdf } from '../../lib/pdfs';
 
 interface Slide {
   img: ImageMetadata;
@@ -41,7 +41,7 @@ const slides: Slide[] = [
     alt: 'Restaurante campestre de Villa Juan',
     title: 'Restaurante Campestre',
     text: 'La mejor gastronomía local en un entorno natural único. Fusionamos ingredientes orgánicos de la granja con platos tradicionales perfectos para compartir.',
-    cta: { label: 'Ver menú', href: pdfMenu, newTab: true },
+    cta: { label: 'Ver menú', href: menuPdf.href },
   },
   {
     img: s3,

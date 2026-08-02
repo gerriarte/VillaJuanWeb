@@ -16,25 +16,14 @@ import barril4 from '../assets/images/villa-planes/Espectaculo_en_vivo.jpg';
 import tallerImg from '../assets/images/villa-planes/taller.webp';
 import selfieAnimales from '../assets/images/villa-planes/Selfie.webp';
 import contactanos from '../assets/images/home/contactanos.png';
-import troteGalope from '../assets/images/villa-planes/Trote_Galope.webp';
-import trochaGalope from '../assets/images/villa-planes/Trocha_Galope.webp';
-import pasoFino from '../assets/images/villa-planes/Paso_Fino.webp';
 // Tronco recortado a la madera pura (el original trae ~33% de transparente arriba y abajo,
 // lo que hacía que el borde superior de la madera se moviera con el ancho del viewport).
 import tronco from '../assets/images/villa-planes/Tronco_fondo_madera.webp';
 import cartel from '../assets/images/villa-planes/Cartel_Villa_Planes.webp';
-import pdfTrote from '../assets/images/villa-planes/Villa_Plan_Trote_y_Galope.pdf?url';
-import pdfTrocha from '../assets/images/villa-planes/Villa_Plan_Trocha_y_Galope.pdf?url';
-import pdfPasoFino from '../assets/images/villa-planes/Villa_Plan_Paso_Fino.pdf?url';
-import pdfMenu from '../assets/images/villa-planes/Menu_Villa_Juan_Sin_Precios.pdf?url';
-
 // Planes como gráficos de texto (Sunrise, por color). Orden del mockup: Trote, Trocha, Paso Fino.
-// Los PDFs abren en pestaña nueva (visor del navegador), no se fuerza descarga.
-const planes = [
-  { title: 'Trote y Galope', img: troteGalope, pdf: pdfTrote, grad: 'linear-gradient(90deg,#4ba82b 0%,#00811e 100%)' },
-  { title: 'Trocha y Galope', img: trochaGalope, pdf: pdfTrocha, grad: 'linear-gradient(90deg,#e0431f 0%,#c0360d 100%)' },
-  { title: 'Paso Fino', img: pasoFino, pdf: pdfPasoFino, grad: 'linear-gradient(90deg,#f2c14e 0%,#d99323 100%)' },
-];
+// Cada botón lleva a la página del plan, donde el PDF se ve EMBEBIDO con header y footer
+// (no se enlaza el archivo suelto: el visitante vuelve y sigue navegando).
+import { planPdfs, menuPdf } from '../lib/pdfs';
 
 // Tabla comparativa. Marcas coloreadas por columna (verde / rojo / dorado).
 // Colores OSCURECIDOS para contraste AA sobre celda clara (invariante #2): estos mismos
@@ -138,12 +127,10 @@ const barrilSteps = await getCards('villaplanes-barril', [
           </p>
           <ul class="mx-auto mt-5 flex max-w-xs flex-col gap-3 md:mx-0 md:ml-auto">
             {
-              planes.map((p) => (
+              planPdfs.map((p) => (
                 <li>
                   <a
-                    href={p.pdf}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={p.href}
                     aria-label={`Ver el Villa Plan ${p.title} (PDF)`}
                     style={`background-image:${p.grad};`}
                     class="flex w-full items-center justify-center rounded-full px-6 py-3 shadow-lg ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -290,9 +277,7 @@ const barrilSteps = await getCards('villaplanes-barril', [
       </p>
 
       <a
-        href={pdfMenu}
-        target="_blank"
-        rel="noopener noreferrer"
+        href={menuPdf.href}
         aria-label="Ver el menú (PDF)"
         class="mt-8 inline-block transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
       >

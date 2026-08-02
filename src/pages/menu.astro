@@ -1,0 +1,25 @@
+---
+/**
+ * Menú del restaurante: el PDF embebido dentro del sitio (header + footer del layout).
+ * Los botones "Ver menú" del home, del carrusel y de Villa Planes apuntan acá.
+ */
+import Base from '../layouts/Base.astro';
+import PdfViewer from '../components/sections/PdfViewer.astro';
+import { menuPdf } from '../lib/pdfs';
+---
+
+<Base
+  title="Menú del restaurante campestre | Ecogranja Villa Juan"
+  description={menuPdf.description}
+>
+  <PdfViewer
+    title={menuPdf.title}
+    file={menuPdf.file}
+    filename={menuPdf.filename}
+    description={menuPdf.description}
+    backHref="/villa-planes"
+    backLabel="Villa Planes"
+    waText={menuPdf.waText}
+    ctaLabel="Reservar mesa por WhatsApp"
+  />
+</Base>
