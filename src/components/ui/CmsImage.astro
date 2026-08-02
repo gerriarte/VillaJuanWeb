@@ -1,0 +1,83 @@
+---
+/**
+ * CmsImage — pinta una imagen que puede venir del repo o del CMS.
+ *
+ * · `local`   → <Image> de astro:assets: se optimiza en el build (webp + srcset).
+ * · `directus`→ <img> apuntando a /assets/<id> con transformación on-the-fly del CMS
+ *               (?format=webp&width=…), con el mismo srcset/sizes. Se pasan width/height
+ *               reales del archivo (los devuelve Directus) para no generar CLS.
+ *
+ * Así una galería editable desde Directus se ve igual que la semilla local, y si el
+ * CMS no responde el build cae a la semilla sin cambiar el marcado.
+ */
+import { Image } from 'astro:assets';
+import { assetUrl, assetSrcSet, assetRaw } from '../../lib/directus';
+import type { Media } from '../../lib/content';
+
+interface Props {
+  image: Media;
+  /** Anchos del srcset. El mayor es también el `src` de fallback. */
+  widths: number[];
+  sizes: string;
+  quality?: number;
+  loading?: 'eager' | 'lazy';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  /**
+   * Asset crudo, sin pasar por ningún optimizador. Obligatorio para SVG:
+   * astro:assets no los procesa y Directus tampoco los transforma.
+   */
+  raw?: boolean;
+  class?: string;
+}
+
+const {
+  image,
+  widths,
+  sizes,
+  quality = 72,
+  loading = 'lazy',
+  fetchpriority,
+  raw = false,
+  class: klass,
+} = Astro.props;
+
+const maxWidth = Math.max(...widths);
+---
+
+{
+  raw ? (
+    <img
+      src={image.kind === 'local' ? image.asset.src : assetRaw(image.id)}
+      alt={image.alt}
+      width={image.kind === 'local' ? image.asset.width : image.width}
+      height={image.kind === 'local' ? image.asset.height : image.height}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      class={klass}
+    />
+  ) : image.kind === 'local' ? (
+    <Image
+      src={image.asset}
+      alt={image.alt}
+      widths={widths}
+      sizes={sizes}
+      format="webp"
+      quality={quality}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      class={klass}
+    />
+  ) : (
+    <img
+      src={assetUrl(image.id, { width: maxWidth, quality })}
+      srcset={assetSrcSet(image.id, widths, quality)}
+      sizes={sizes}
+      alt={image.alt}
+      width={image.width}
+      height={image.height}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      class={klass}
+    />
+  )
+}

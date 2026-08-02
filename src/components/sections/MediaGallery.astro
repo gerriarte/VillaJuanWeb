@@ -12,33 +12,47 @@
  *   Base.astro anima `transform`/`opacity` y competiría con el hover del grid.
  */
 import { Image, getImage } from 'astro:assets';
-
-interface Photo {
-  img: ImageMetadata;
-  alt: string;
-}
+import CmsImage from '../ui/CmsImage.astro';
+import type { Photo } from '../../lib/content';
+import { assetUrl } from '../../lib/directus';
 
 interface Props {
   photos: Photo[];
   video?: { id: string; title: string; poster: ImageMetadata };
   /** Prefijo de ids: permite más de una galería en la misma página. */
   id?: string;
+  /** Columnas del grid. Con pocas fotos conviene bajarlas para que se vean más grandes. */
+  gridClass?: string;
+  /** `sizes` de las miniaturas: acompaña a `gridClass`. */
+  sizes?: string;
 }
 
-const { photos, video, id = 'galeria' } = Astro.props;
+const {
+  photos,
+  video,
+  id = 'galeria',
+  gridClass = 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4',
+  sizes = '(min-width: 1024px) 16rem, (min-width: 640px) 30vw, 45vw',
+} = Astro.props;
 
 // Versión grande para el lightbox y para el `href` (lo que se abre sin JS).
 // Se limita el LADO MAYOR a 1280: fijando solo el ancho, una foto vertical saldría
 // 1280×1920 (el doble de píxeles que una horizontal) para verse igual en el visor.
+// Las del CMS se piden a Directus con la misma regla (transformación on-the-fly).
 const full = await Promise.all(
-  photos.map((p) =>
-    getImage({
-      src: p.img,
+  photos.map(async ({ image }) => {
+    if (image.kind === 'directus') {
+      const vertical = (image.height ?? 0) > (image.width ?? 0);
+      return assetUrl(image.id, { quality: 78, ...(vertical ? { height: 1280 } : { width: 1280 }) });
+    }
+    const out = await getImage({
+      src: image.asset,
       format: 'webp',
       quality: 78,
-      ...(p.img.height > p.img.width ? { height: 1280 } : { width: 1280 }),
-    }),
-  ),
+      ...(image.asset.height > image.asset.width ? { height: 1280 } : { width: 1280 }),
+    });
+    return out.src;
+  }),
 );
 ---
 
@@ -87,22 +101,20 @@ const full = await Promise.all(
     )
   }
 
-  <ul class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+  <ul class:list={['mt-8 grid gap-3 sm:gap-4', gridClass]}>
     {
       photos.map((p, i) => (
         <li>
           <a
-            href={full[i].src}
+            href={full[i]}
             data-lightbox={i}
-            aria-label={`Ampliar: ${p.alt}`}
+            aria-label={`Ampliar: ${p.image.alt}`}
             class="group block overflow-hidden rounded-2xl ring-1 ring-white/20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
           >
-            <Image
-              src={p.img}
-              alt={p.alt}
-              widths={[240, 360, 520]}
-              sizes="(min-width: 1024px) 16rem, (min-width: 640px) 30vw, 45vw"
-              format="webp"
+            <CmsImage
+              image={p.image}
+              widths={[320, 520, 760]}
+              sizes={sizes}
               quality={74}
               loading="lazy"
               class="no-reveal aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105 group-hover:brightness-110"

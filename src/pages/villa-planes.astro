@@ -3,9 +3,11 @@ import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import LeafDivider from '../components/layout/LeafDivider.astro';
 import { wa } from '../lib/site';
-import { getCards } from '../lib/content';
+import { getCards, getGallery, type Photo } from '../lib/content';
+import MediaGallery from '../components/sections/MediaGallery.astro';
 import { assetUrl } from '../lib/directus';
-import heroImg from '../assets/images/villa-planes/Villa_Planes_Resturante.jpg';
+// Hero: picada al barril vista desde arriba (original PNG de 4992×3328, 36 MB → 2400px WebP).
+import heroImg from '../assets/images/villa-planes/hero_comida_al_barril.webp';
 import tituloVP from '../assets/images/villa-planes/Conoce_Villa_Planes.webp';
 import verMenu from '../assets/images/villa-planes/vermenu.png';
 import reservaYa from '../assets/images/villa-planes/Reserva.webp';
@@ -66,14 +68,16 @@ const barrilSteps = await getCards('villaplanes-barril', [
 ]);
 
 // Mini galería de platos, arriba de "El Arte de nuestra Carne al Barril".
-const comidaGaleria = [
-  { asset: comidaChurrasco, alt: 'Churrasco con papas a la francesa servido en tabla de madera' },
-  { asset: comidaEmpanaditas, alt: 'Canasta de empanaditas con ají picado' },
-  { asset: comidaChicharroncitos, alt: 'Chicharroncitos crocantes con guacamole' },
-  { asset: comidaPatacon2, alt: 'Patacones con salsa de ahogado' },
-  { asset: comidaPatacon, alt: 'Patacón con ahogado servido en la mesa campestre' },
-  { asset: comidaFiambre, alt: 'Fiambre campesino servido sobre hoja de plátano' },
+// Editable en Directus: colección `gallery`, section `villaplanes-comida`. Semilla local.
+const comidaSeed: Photo[] = [
+  { image: { kind: 'local', asset: comidaChurrasco, alt: 'Churrasco con papas a la francesa servido en tabla de madera' } },
+  { image: { kind: 'local', asset: comidaEmpanaditas, alt: 'Canasta de empanaditas con ají picado' } },
+  { image: { kind: 'local', asset: comidaChicharroncitos, alt: 'Chicharroncitos crocantes con guacamole' } },
+  { image: { kind: 'local', asset: comidaPatacon2, alt: 'Patacones con salsa de ahogado' } },
+  { image: { kind: 'local', asset: comidaPatacon, alt: 'Patacón con ahogado servido en la mesa campestre' } },
+  { image: { kind: 'local', asset: comidaFiambre, alt: 'Fiambre campesino servido sobre hoja de plátano' } },
 ];
+const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
 ---
 
 <Base
@@ -86,8 +90,8 @@ const comidaGaleria = [
   <section class="relative">
     <Image
       src={heroImg}
-      alt="Delicias fritas y al barril servidas en la Ecogranja Villa Juan"
-      widths={[768, 1248]}
+      alt="Manos compartiendo una picada de empanadas, patacones, chorizo y salsas en la mesa de madera de la Ecogranja Villa Juan"
+      widths={[768, 1280, 1920, 2400]}
       sizes="100vw"
       format="webp"
       quality={82}
@@ -311,26 +315,16 @@ const comidaGaleria = [
     </div>
 
     <div class="mx-auto max-w-6xl px-4 pt-8 pb-16 text-center">
-      <!-- Mini galería de platos: tira de fotos, cero JS (el zoom al hover es CSS puro y
-           usa `scale`, que no choca con el `transform` del reveal por scroll). -->
-      <ul class="mb-12 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
-        {
-          comidaGaleria.map((f) => (
-            <li class="overflow-hidden rounded-2xl shadow-lg ring-2 ring-white/40">
-              <Image
-                src={f.asset}
-                alt={f.alt}
-                widths={[240, 360, 480]}
-                sizes="(min-width: 1024px) 11rem, (min-width: 640px) 30vw, 45vw"
-                format="webp"
-                quality={72}
-                loading="lazy"
-                class="aspect-[3/2] w-full object-cover transition duration-300 hover:scale-105"
-              />
-            </li>
-          ))
-        }
-      </ul>
+      <!-- Galería de platos: 3 columnas (fotos grandes) y clic para ampliar en el lightbox.
+           Sin JS cada foto es un link a su versión grande, así que se amplía igual. -->
+      <div class="mb-12">
+        <MediaGallery
+          id="galeria-comida"
+          photos={comidaGaleria}
+          gridClass="grid-cols-2 sm:grid-cols-3"
+          sizes="(min-width: 1024px) 22rem, (min-width: 640px) 30vw, 45vw"
+        />
+      </div>
 
       <h2 class="font-display text-4xl text-[#FFF200] [text-shadow:0_2px_4px_rgba(0,0,0,0.35)] sm:text-5xl">
         El Arte de nuestra Carne al Barril

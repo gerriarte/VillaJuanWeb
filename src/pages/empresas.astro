@@ -7,7 +7,7 @@ import AlphaImage from '../components/ui/AlphaImage.astro';
 import LeafDivider from '../components/layout/LeafDivider.astro';
 import MediaGallery from '../components/sections/MediaGallery.astro';
 import HeroVideo from '../components/sections/HeroVideo.astro';
-import { getCards } from '../lib/content';
+import { getCards, getGallery, type Photo } from '../lib/content';
 import { assetUrl } from '../lib/directus';
 import { wa } from '../lib/site';
 import heroImg from '../assets/images/empresas/hero.webp';
@@ -98,20 +98,22 @@ const programas = [
 // Galería del Taller de Liderazgo con Caballos: sigue el recorrido real del taller
 // (llegada → dinámicas con la escultura → trabajo con el caballo → cierre).
 // Masters en src/assets/images/empresas/coaching/ (ver design/optimize-coaching-photos.mjs).
-const galeria = [
-  { img: galCirculo, alt: 'Equipo en círculo durante la charla inicial del taller' },
-  { img: galFacilitador, alt: 'El facilitador explica la dinámica junto a la escultura de caballo' },
-  { img: galEscultura, alt: 'Participante sobre la escultura de caballo hecha con herraduras' },
-  { img: galEncuentro, alt: 'Primer acercamiento del grupo al caballo en el picadero' },
-  { img: galEquipo, alt: 'Equipo acariciando al caballo durante la dinámica' },
-  { img: galManos, alt: 'Manos de los participantes sobre el caballo en un ejercicio de confianza' },
-  { img: galContacto, alt: 'Varios participantes en contacto con el caballo' },
-  { img: galConduciendo, alt: 'Participantes conduciendo al caballo por el picadero' },
-  { img: galCuerda, alt: 'Participante liderando al caballo con la cuerda' },
-  { img: galAntifaz, alt: 'Dinámica de confianza con los ojos vendados junto al caballo' },
-  { img: galCierre, alt: 'El facilitador con el caballo al cierre del taller' },
-  { img: galRetrato, alt: 'Retrato de uno de los caballos de Villa Juan' },
+// Editable en Directus: colección `gallery`, section `empresas-coaching`. Semilla local.
+const galeriaSeed: Photo[] = [
+  { image: { kind: 'local', asset: galCirculo, alt: 'Equipo en círculo durante la charla inicial del taller' } },
+  { image: { kind: 'local', asset: galFacilitador, alt: 'El facilitador explica la dinámica junto a la escultura de caballo' } },
+  { image: { kind: 'local', asset: galEscultura, alt: 'Participante sobre la escultura de caballo hecha con herraduras' } },
+  { image: { kind: 'local', asset: galEncuentro, alt: 'Primer acercamiento del grupo al caballo en el picadero' } },
+  { image: { kind: 'local', asset: galEquipo, alt: 'Equipo acariciando al caballo durante la dinámica' } },
+  { image: { kind: 'local', asset: galManos, alt: 'Manos de los participantes sobre el caballo en un ejercicio de confianza' } },
+  { image: { kind: 'local', asset: galContacto, alt: 'Varios participantes en contacto con el caballo' } },
+  { image: { kind: 'local', asset: galConduciendo, alt: 'Participantes conduciendo al caballo por el picadero' } },
+  { image: { kind: 'local', asset: galCuerda, alt: 'Participante liderando al caballo con la cuerda' } },
+  { image: { kind: 'local', asset: galAntifaz, alt: 'Dinámica de confianza con los ojos vendados junto al caballo' } },
+  { image: { kind: 'local', asset: galCierre, alt: 'El facilitador con el caballo al cierre del taller' } },
+  { image: { kind: 'local', asset: galRetrato, alt: 'Retrato de uno de los caballos de Villa Juan' } },
 ];
+const galeria = await getGallery('empresas-coaching', galeriaSeed);
 
 // El video ES de este taller: "Coaching con Caballos para Empresas" del canal de la
 // Ecogranja. El póster es una foto del propio taller (no un frame del video).

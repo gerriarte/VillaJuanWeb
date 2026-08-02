@@ -7,6 +7,8 @@ import Faq from '../components/sections/Faq.astro';
 import NotifyDialog from '../components/ui/NotifyDialog.astro';
 import VideoEmbed from '../components/sections/VideoEmbed.astro';
 import SombreroTurntable from '../components/ui/SombreroTurntable.astro';
+import CmsImage from '../components/ui/CmsImage.astro';
+import { getGallery, type Photo } from '../lib/content';
 import { visit, wa, social } from '../lib/site';
 import { planPdfs, menuPdf } from '../lib/pdfs';
 import fuenteCaballos from '../assets/images/home/fuente_caballos.jpg';
@@ -118,21 +120,24 @@ const llegar: {
 
 // Galería — carrusel "coverflow": las fotos rotan por 3 posiciones (centro al frente +
 // laterales detrás, como el mockup). Estilos base (también sirven de fallback sin JS).
-const galeria = [
-  { img: car05, alt: 'Vista panorámica de las zonas verdes de la Ecogranja Villa Juan en Tenjo, con montañas de fondo' },
-  { img: car08, alt: 'Visitante riendo junto a una llama en la Ecogranja Villa Juan' },
-  { img: car02, alt: 'El equipo de la Ecogranja Villa Juan celebrando el Granja Fest junto al jeep Willys' },
-  { img: car06, alt: 'Familia disfrutando un día de campo con sus mascotas en la Ecogranja Villa Juan' },
-  { img: car09, alt: 'Visitante disfrutando un paseo a caballo entre las carpas de camping de Villa Juan' },
-  { img: car07, alt: 'Visitante abrazando a un burro en las praderas de la Ecogranja Villa Juan' },
-  { img: car11, alt: 'Caballos ensillados listos para la cabalgata en la Ecogranja Villa Juan' },
-  { img: car01, alt: 'Mesa y bancas campestres bajo un cenador circular en las zonas verdes de Villa Juan' },
-  { img: car04, alt: 'Gallina de la granja asomándose en el gallinero de la Ecogranja Villa Juan' },
-  { img: car10, alt: 'Perro con arnés de colores paseando por las zonas verdes de la Ecogranja Villa Juan' },
-  { img: car12, alt: 'Dos caballos ensillados en las praderas verdes de la Ecogranja Villa Juan al atardecer' },
-  { img: car13, alt: 'Visitante en cuatrimoto frente a la sede de la Ecogranja Villa Juan' },
-  { img: car03, alt: 'Anfitriones de Villa Juan dando la bienvenida en la entrada del Granja Fest' },
+// Editable en Directus: colección `gallery`, section `home-galeria`. Esta lista es la
+// semilla (lo que se ve si el CMS está vacío o no responde).
+const galeriaSeed: Photo[] = [
+  { image: { kind: 'local', asset: car05, alt: 'Vista panorámica de las zonas verdes de la Ecogranja Villa Juan en Tenjo, con montañas de fondo' } },
+  { image: { kind: 'local', asset: car08, alt: 'Visitante riendo junto a una llama en la Ecogranja Villa Juan' } },
+  { image: { kind: 'local', asset: car02, alt: 'El equipo de la Ecogranja Villa Juan celebrando el Granja Fest junto al jeep Willys' } },
+  { image: { kind: 'local', asset: car06, alt: 'Familia disfrutando un día de campo con sus mascotas en la Ecogranja Villa Juan' } },
+  { image: { kind: 'local', asset: car09, alt: 'Visitante disfrutando un paseo a caballo entre las carpas de camping de Villa Juan' } },
+  { image: { kind: 'local', asset: car07, alt: 'Visitante abrazando a un burro en las praderas de la Ecogranja Villa Juan' } },
+  { image: { kind: 'local', asset: car11, alt: 'Caballos ensillados listos para la cabalgata en la Ecogranja Villa Juan' } },
+  { image: { kind: 'local', asset: car01, alt: 'Mesa y bancas campestres bajo un cenador circular en las zonas verdes de Villa Juan' } },
+  { image: { kind: 'local', asset: car04, alt: 'Gallina de la granja asomándose en el gallinero de la Ecogranja Villa Juan' } },
+  { image: { kind: 'local', asset: car10, alt: 'Perro con arnés de colores paseando por las zonas verdes de la Ecogranja Villa Juan' } },
+  { image: { kind: 'local', asset: car12, alt: 'Dos caballos ensillados en las praderas verdes de la Ecogranja Villa Juan al atardecer' } },
+  { image: { kind: 'local', asset: car13, alt: 'Visitante en cuatrimoto frente a la sede de la Ecogranja Villa Juan' } },
+  { image: { kind: 'local', asset: car03, alt: 'Anfitriones de Villa Juan dando la bienvenida en la entrada del Granja Fest' } },
 ];
+const galeria = await getGallery('home-galeria', galeriaSeed);
 const galPos = {
   center: 'transform:translate(-50%,-50%) scale(1);z-index:30;opacity:1;filter:none;',
   right: 'transform:translate(-6%,-50%) scale(0.82) rotateY(-18deg);z-index:20;opacity:0.78;filter:brightness(0.82);',
@@ -631,12 +636,10 @@ const galInit = galeria.map((_, i) =>
             aria-roledescription="slide"
             aria-label={`${i + 1} de ${galeria.length}`}
           >
-            <Image
-              src={g.img}
-              alt={g.alt}
+            <CmsImage
+              image={g.image}
               widths={[480, 768, 1100]}
               sizes="(min-width: 640px) 34rem, 80vw"
-              format="webp"
               quality={72}
               loading="lazy"
               class="no-reveal aspect-[3/2] w-full rounded-[1.6rem] object-cover"

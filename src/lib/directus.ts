@@ -33,9 +33,47 @@ export interface DirectusCard {
   image_right: boolean | null;
 }
 
+/** Archivo de Directus tal como llega al pedir `image.id`, `image.width`… */
+export interface DirectusFile {
+  id: string;
+  width: number | null;
+  height: number | null;
+}
+
+/** Foto de una galería/carrusel de fotos (home, coaching, platos). */
+export interface DirectusPhoto {
+  id: number;
+  status: string;
+  section: string;
+  sort: number | null;
+  alt: string;
+  image: DirectusFile;
+}
+
+/** Slide del carrusel del hero: imagen + título + copy + CTA. */
+export interface DirectusSlide {
+  id: number;
+  status: string;
+  section: string;
+  sort: number | null;
+  alt: string;
+  title: string;
+  text: string | null;
+  image: DirectusFile;
+  title_image: string | null; // id del archivo (gráfico de título, normalmente SVG)
+  cta_label: string | null;
+  cta_href: string | null;
+  cta_new_tab: boolean | null;
+}
+
 interface Schema {
   posts: DirectusPost[];
   cards: DirectusCard[];
+  gallery: DirectusPhoto[];
+  slides: DirectusSlide[];
+  // Declarada para que el SDK reconozca `image` como relación y acepte pedir sus
+  // campos anidados ({ image: ['id', 'width', 'height'] }).
+  directus_files: DirectusFile[];
 }
 
 export const directus = !directusEnabled
@@ -47,12 +85,28 @@ export const directus = !directusEnabled
 /** URL de un asset de Directus con transformación on-the-fly (webp + ancho + calidad). */
 export function assetUrl(
   id: string | null | undefined,
-  opts: { width?: number; quality?: number } = {},
+  opts: { width?: number; height?: number; quality?: number } = {},
 ): string {
   if (!id || !DIRECTUS_URL) return '';
   const p = new URLSearchParams({ format: 'webp', quality: String(opts.quality ?? 72) });
   if (opts.width) p.set('width', String(opts.width));
+  if (opts.height) p.set('height', String(opts.height));
   return `${DIRECTUS_URL}/assets/${id}?${p.toString()}`;
+}
+
+/** `srcset` responsive del mismo asset (Directus transforma on-the-fly y cachea). */
+export function assetSrcSet(
+  id: string | null | undefined,
+  widths: number[],
+  quality?: number,
+): string | undefined {
+  if (!id || !DIRECTUS_URL) return undefined;
+  return widths.map((w) => `${assetUrl(id, { width: w, quality })} ${w}w`).join(', ');
+}
+
+/** Asset SIN transformar. Para SVG/PNG con alpha: Directus no los rasteriza a webp. */
+export function assetRaw(id: string | null | undefined): string {
+  return id && DIRECTUS_URL ? `${DIRECTUS_URL}/assets/${id}` : '';
 }
 
 export { readItems };
