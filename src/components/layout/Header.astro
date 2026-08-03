@@ -1,5 +1,6 @@
 ---
 import { nav } from '../../lib/site';
+import { menuPdf } from '../../lib/pdfs';
 import logo from '../../assets/images/home/Logo-villajuan-blanco.svg';
 
 interface Props {
@@ -90,6 +91,17 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
                 </li>
               ))
             }
+
+            <!-- CTA diferenciada: naranja sólido, cierra el bloque de navegación. -->
+            <li class="mt-2 border-t border-white/25 pt-3">
+              <a
+                href={menuPdf.href}
+                aria-current={isActive(menuPdf.href) ? 'page' : undefined}
+                class="block rounded-xl bg-cta-strong px-3 py-2 text-center text-white transition hover:bg-cta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                Ver Menú
+              </a>
+            </li>
           </ul>
         </details>
 
@@ -144,6 +156,17 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
               ),
             )
           }
+
+          <!-- CTA diferenciada: naranja sólido, último ítem del nav. -->
+          <li class="[text-shadow:none]">
+            <a
+              href={menuPdf.href}
+              aria-current={isActive(menuPdf.href) ? 'page' : undefined}
+              class="inline-flex items-center rounded-full bg-cta-strong px-5 py-1.5 text-[20pt] leading-tight text-white shadow-md transition hover:bg-cta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Ver Menú
+            </a>
+          </li>
         </ul>
       </nav>
     </div>
