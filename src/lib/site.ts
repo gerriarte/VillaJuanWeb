@@ -3,32 +3,15 @@
 export interface NavItem {
   label: string;
   href: string;
-  children?: NavItem[];
 }
 
 export interface Vertical extends NavItem {
   blurb: string;
 }
 
-// Nav principal. "Villa Planes" (marca), NO "Pasadías" (queda como keyword SEO).
-// Empresas es un menú con submenú: Corporativo (/empresas) y Colegios (/colegios).
+// Nav principal, plano (sin submenús). "Villa Planes" (marca), NO "Pasadías"
+// (queda como keyword SEO). Empresas y Colegios son ítems hermanos de primer nivel.
 export const nav: NavItem[] = [
-  { label: 'Inicio', href: '/' },
-  { label: 'Villa Planes', href: '/villa-planes' },
-  { label: 'Celebraciones', href: '/celebraciones' },
-  {
-    label: 'Empresas',
-    href: '/empresas',
-    children: [
-      { label: 'Corporativo', href: '/empresas' },
-      { label: 'Colegios', href: '/colegios' },
-    ],
-  },
-  { label: 'Blog', href: '/blog' },
-];
-
-// Nav plano para el footer (sin submenús).
-export const footerNav: NavItem[] = [
   { label: 'Inicio', href: '/' },
   { label: 'Villa Planes', href: '/villa-planes' },
   { label: 'Celebraciones', href: '/celebraciones' },

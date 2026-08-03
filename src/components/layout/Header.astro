@@ -17,8 +17,6 @@ const { overlay = false } = Astro.props;
 const path = Astro.url.pathname;
 const isActive = (href: string): boolean =>
   href === '/' ? path === '/' : path.startsWith(href);
-const isBranchActive = (item: (typeof nav)[number]): boolean =>
-  isActive(item.href) || (item.children?.some((c) => isActive(c.href)) ?? false);
 ---
 
 <header
@@ -39,8 +37,8 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
       </a>
 
       <nav aria-label="Navegación principal" class="flex items-center">
-        <!-- Menú móvil (<md): disclosure nativo <details>, cero JS. Se cierra solo al navegar (MPA). -->
-        <details class="mobile-nav relative md:hidden">
+        <!-- Menú móvil y tablet (<lg): disclosure nativo <details>, cero JS. Se cierra solo al navegar (MPA). -->
+        <details class="mobile-nav relative lg:hidden">
           <summary
             class="flex cursor-pointer list-none items-center rounded-lg p-1 text-[#FFF200] [text-shadow:0_1px_3px_rgba(0,0,0,0.4)] transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             aria-label="Abrir menú de navegación"
@@ -56,7 +54,9 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
             </svg>
           </summary>
 
-          <ul class="absolute right-0 top-full z-50 mt-3 flex max-h-[80dvh] min-w-60 flex-col gap-1 overflow-y-auto rounded-2xl bg-brand-strong p-3 font-display text-[23pt] text-[#FFF200] shadow-xl ring-1 ring-black/10">
+          <!-- 6 ítems + CTA: el alto se limita al hueco real bajo el header (no 80dvh a ciegas)
+               y la lista scrollea si el teléfono es muy bajo. -->
+          <ul class="absolute right-0 top-full z-50 mt-3 flex max-h-[calc(100dvh-9rem)] min-w-60 flex-col gap-0.5 overflow-y-auto overscroll-contain rounded-2xl bg-brand-strong p-3 font-display text-[21pt] text-[#FFF200] shadow-xl ring-1 ring-black/10 sm:text-[23pt]">
             {
               nav.map((item) => (
                 <li>
@@ -64,40 +64,22 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
                     href={item.href}
                     aria-current={isActive(item.href) ? 'page' : undefined}
                     class:list={[
-                      'block rounded-xl px-3 py-2 transition hover:bg-white/10',
+                      'block rounded-xl px-3 py-1.5 transition hover:bg-white/10',
                       isActive(item.href) && 'underline underline-offset-4',
                     ]}
                   >
                     {item.label}
                   </a>
-                  {item.children && (
-                    <ul class="mt-1 mb-1 ml-3 flex flex-col gap-1 border-l border-white/25 pl-3 text-[20pt]">
-                      {item.children.map((c) => (
-                        <li>
-                          <a
-                            href={c.href}
-                            aria-current={isActive(c.href) ? 'page' : undefined}
-                            class:list={[
-                              'block rounded-xl px-3 py-1.5 transition hover:bg-white/10',
-                              isActive(c.href) && 'underline underline-offset-4',
-                            ]}
-                          >
-                            {c.label}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
                 </li>
               ))
             }
 
             <!-- CTA diferenciada: naranja sólido, cierra el bloque de navegación. -->
-            <li class="mt-2 border-t border-white/25 pt-3">
+            <li class="mt-1.5 border-t border-white/25 pt-2.5">
               <a
                 href={menuPdf.href}
                 aria-current={isActive(menuPdf.href) ? 'page' : undefined}
-                class="block rounded-xl bg-cta-strong px-3 py-2 text-center text-white transition hover:bg-cta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                class="block rounded-xl bg-cta-strong px-3 py-1.5 text-center text-white transition hover:bg-cta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 Ver Menú
               </a>
@@ -105,56 +87,23 @@ const isBranchActive = (item: (typeof nav)[number]): boolean =>
           </ul>
         </details>
 
-        <!-- Menú desktop (≥md): barra horizontal con flyout hover. -->
-        <ul class="hidden items-center gap-x-5 gap-y-1 font-display text-[23pt] text-[#FFF200] [text-shadow:0_1px_3px_rgba(0,0,0,0.4)] md:flex">
+        <!-- Menú desktop (≥lg): barra horizontal plana. A <lg no entran los 6 ítems + CTA. -->
+        <ul class="hidden items-center gap-x-4 gap-y-1 font-display text-[21pt] text-[#FFF200] [text-shadow:0_1px_3px_rgba(0,0,0,0.4)] lg:flex xl:gap-x-5 xl:text-[23pt]">
           {
-            nav.map((item) =>
-              item.children ? (
-                <li class="group relative">
-                  <a
-                    href={item.href}
-                    aria-haspopup="true"
-                    aria-current={isActive(item.href) ? 'page' : undefined}
-                    class:list={[
-                      'inline-flex items-center gap-1 transition hover:text-white',
-                      isBranchActive(item) && 'underline underline-offset-4',
-                    ]}
-                  >
-                    {item.label}
-                    <span aria-hidden="true" class="text-base">▾</span>
-                  </a>
-                  <ul class="invisible absolute left-0 top-full z-50 mt-2 min-w-44 rounded-2xl bg-brand-strong p-2 text-[20pt] opacity-0 shadow-xl ring-1 ring-black/10 transition duration-150 before:absolute before:inset-x-0 before:-top-2 before:h-2 before:content-[''] group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                    {item.children.map((c) => (
-                      <li>
-                        <a
-                          href={c.href}
-                          aria-current={isActive(c.href) ? 'page' : undefined}
-                          class:list={[
-                            'block rounded-xl px-3 py-1.5 text-[#FFF200] transition hover:bg-white/10',
-                            isActive(c.href) && 'underline underline-offset-4',
-                          ]}
-                        >
-                          {c.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ) : (
-                <li>
-                  <a
-                    href={item.href}
-                    aria-current={isActive(item.href) ? 'page' : undefined}
-                    class:list={[
-                      'transition hover:text-white',
-                      isActive(item.href) && 'underline underline-offset-4',
-                    ]}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ),
-            )
+            nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                  class:list={[
+                    'transition hover:text-white',
+                    isActive(item.href) && 'underline underline-offset-4',
+                  ]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
           }
 
           <!-- CTA diferenciada: naranja sólido, último ítem del nav. -->
