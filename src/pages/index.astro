@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import HeroCarousel from '../components/sections/HeroCarousel.astro';
 import LeafDivider from '../components/layout/LeafDivider.astro';
 import Faq from '../components/sections/Faq.astro';
+import MapEmbed from '../components/sections/MapEmbed.astro';
 import NotifyDialog from '../components/ui/NotifyDialog.astro';
 import VideoEmbed from '../components/sections/VideoEmbed.astro';
 import SombreroTurntable from '../components/ui/SombreroTurntable.astro';
@@ -198,11 +199,11 @@ const galInit = galeria.map((_, i) =>
     </div>
   </section>
 
-  <!-- VIDEO — comercial oficial. Fachada: el player de YouTube se carga al hacer clic. -->
+  <!-- VIDEO — Fachada: el player de YouTube se carga al hacer clic. -->
   <section class="mx-auto max-w-4xl px-4 pb-16">
     <VideoEmbed
-      id="Fw8_gVv9vhQ"
-      title="Turismo cerca a Bogotá · Ecogranja Villa Juan — comercial oficial"
+      id="rUnbtav3Nlo"
+      title="Turismo cerca a Bogotá · Ecogranja Villa Juan — parque agroturístico para familias"
       poster={videoPoster}
     />
   </section>
@@ -694,6 +695,9 @@ const galInit = galeria.map((_, i) =>
   </section>
 
   <Faq />
+
+  <!-- UBICACIÓN — fachada: el mapa de Google se carga al hacer clic. -->
+  <MapEmbed />
 </Base>
 
 <style>

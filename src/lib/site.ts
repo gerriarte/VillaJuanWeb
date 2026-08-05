@@ -56,4 +56,6 @@ export const visit = {
   city: 'Tenjo, Cundinamarca',
   note: 'A 30 minutos de Bogotá',
   maps: 'https://maps.app.goo.gl/crJs98Qo8znSkXNf9',
+  /** Coordenadas de la finca: mapa del home + `geo` del JSON-LD de LocalBusiness. */
+  coords: { lat: 4.8649082, lng: -74.1045587 },
 };

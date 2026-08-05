@@ -49,6 +49,11 @@ const localBusiness = {
     addressRegion: 'Cundinamarca',
     addressCountry: 'CO',
   },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: visit.coords.lat,
+    longitude: visit.coords.lng,
+  },
   hasMap: visit.maps,
   areaServed: { '@type': 'City', name: 'Bogotá' },
   openingHoursSpecification: [
