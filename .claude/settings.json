@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "SessionStart": [{
+      "hooks": [{
+        "type": "command",
+        "command": "cat ESTADO.md 2>/dev/null; echo '---'; git log --oneline -5 2>/dev/null"
+      }]
+    }]
+  }
+}
