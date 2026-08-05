@@ -4,7 +4,6 @@ import { Image } from 'astro:assets';
 import HeroCarousel from '../components/sections/HeroCarousel.astro';
 import LeafDivider from '../components/layout/LeafDivider.astro';
 import Faq from '../components/sections/Faq.astro';
-import MapEmbed from '../components/sections/MapEmbed.astro';
 import NotifyDialog from '../components/ui/NotifyDialog.astro';
 import VideoEmbed from '../components/sections/VideoEmbed.astro';
 import SombreroTurntable from '../components/ui/SombreroTurntable.astro';
@@ -694,10 +693,8 @@ const galInit = galeria.map((_, i) =>
     </div>
   </section>
 
+  <!-- El mapa de ubicación va DENTRO del FAQ, en la columna de las preguntas. -->
   <Faq />
-
-  <!-- UBICACIÓN — fachada: el mapa de Google se carga al hacer clic. -->
-  <MapEmbed />
 </Base>
 
 <style>

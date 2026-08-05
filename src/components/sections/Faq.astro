@@ -5,6 +5,7 @@
  * Al costado (desktop) va el formulario de contacto/cotización.
  */
 import LeadForm from './LeadForm.astro';
+import MapEmbed from './MapEmbed.astro';
 
 const faqs = [
   {
@@ -47,20 +48,30 @@ const faqJsonLd = {
 <section class="mx-auto max-w-6xl px-4 py-16">
   <h2 class="section-title text-center">Preguntas frecuentes</h2>
 
-  <!-- Desktop: FAQ a la izquierda, formulario al costado. Mobile: apilados. -->
-  <div class="mt-8 grid items-start gap-8 md:grid-cols-2 md:gap-10">
-    <div class="space-y-3">
-      {
-        faqs.map((f) => (
-          <details class="group rounded-2xl bg-surface p-5 shadow-sm ring-1 ring-black/5">
-            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-[18pt] text-cta-strong [&::-webkit-details-marker]:hidden">
-              {f.q}
-              <span class="shrink-0 text-2xl leading-none text-cta transition-transform group-open:rotate-45">+</span>
-            </summary>
-            <p class="mt-3 leading-relaxed text-ink/80">{f.a}</p>
-          </details>
-        ))
-      }
+  <!-- Desktop: FAQ + mapa a la izquierda, formulario al costado. Mobile: apilados.
+       Sin `items-start`: las columnas se estiran a la misma altura y el mapa (flex-1)
+       absorbe el sobrante, así el bloque cierra parejo en vez de dejar el hueco que
+       quedaba bajo las preguntas (el formulario es bastante más alto). -->
+  <div class="mt-8 grid gap-8 md:grid-cols-2 md:gap-10">
+    <div class="flex flex-col gap-3">
+      <div class="space-y-3">
+        {
+          faqs.map((f) => (
+            <details class="group rounded-2xl bg-surface p-5 shadow-sm ring-1 ring-black/5">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-[18pt] text-cta-strong [&::-webkit-details-marker]:hidden">
+                {f.q}
+                <span class="shrink-0 text-2xl leading-none text-cta transition-transform group-open:rotate-45">
+                  +
+                </span>
+              </summary>
+              <p class="mt-3 leading-relaxed text-ink/80">{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+
+      <!-- Llena el sobrante hasta emparejar con el formulario (ver comentario del grid). -->
+      <MapEmbed />
     </div>
 
     <LeadForm />

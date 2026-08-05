@@ -1,14 +1,22 @@
 ---
 /**
- * MapEmbed — ubicación de la finca con FACHADA (mismo patrón que VideoEmbed).
+ * MapEmbed — ubicación de la finca, con FACHADA (mismo patrón que VideoEmbed).
  *
  * Por defecto NO se carga nada de Google: solo un mapa estático local (optimizado por
  * astro:assets) y, al hacer clic, se inserta el iframe interactivo de Google Maps.
  * Un iframe de Maps pesa ~1 MB de JS de terceros y deja cookies apenas entra en pantalla;
  * la fachada lo evita (invariante #4: cero JS por defecto, y no romper el LCP).
  *
- * Sin JS la sección sigue completa: el póster es un enlace a Google Maps y los botones
- * de "Cómo llegar" / WhatsApp están siempre visibles.
+ * LAYOUT: es un PANEL, no una sección. Vive en la columna izquierda del FAQ, debajo de
+ * las preguntas, y en desktop CRECE (`flex-1`) hasta emparejar la altura del formulario
+ * del costado, que es más alto. Así las dos columnas cierran juntas en vez de dejar el
+ * hueco de ~470 px que quedaba bajo las preguntas. En mobile no hay nada que emparejar:
+ * vuelve a una relación de aspecto fija.
+ *
+ * Los botones van FUERA de la tarjeta a propósito: al hacer clic, el iframe reemplaza el
+ * contenido de la tarjeta, y si vivieran dentro desaparecerían con el swap.
+ *
+ * Sin JS la sección sigue completa: el póster es un enlace a Google Maps.
  *
  * El póster se generó con tiles de OpenStreetMap (atribución impresa en la imagen).
  */
@@ -23,21 +31,21 @@ const embedSrc = `https://www.google.com/maps?q=${lat},${lng}&z=16&hl=es&output=
 // "Cómo llegar": abre la app de mapas con la ruta ya trazada al destino.
 const directions = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
 
+// Contraste (invariante #2): estos botones van sobre el verde de la página, donde
+// `text-cta-strong` suelto da 2.2:1 y falla AA. El naranja solo se usa como FONDO
+// (blanco encima = 5.5:1) o sobre `surface` blanco (5.6:1), igual que en PdfViewer.
 const pill =
-  'inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 font-display text-xl transition focus-visible:outline-2 focus-visible:outline-offset-2';
+  'inline-flex flex-1 items-center justify-center rounded-full px-5 py-3 text-center font-display text-lg shadow-lg transition focus-visible:outline-2 focus-visible:outline-offset-2 sm:text-xl';
 ---
 
-<section class="mx-auto max-w-5xl px-4 py-16">
-  <h2 class="section-title text-center">Cómo llegar</h2>
-  <p class="mx-auto mt-3 max-w-2xl text-center leading-relaxed">
-    {visit.address} · {visit.city}. {visit.note}.
-  </p>
-  <p class="mt-1 text-center text-sm text-ink/70">
+<div class="flex flex-col gap-3 md:min-h-0 md:flex-1">
+  <p class="text-sm leading-snug text-ink/80">
+    <span class="font-bold">{visit.address}</span> · {visit.city}. {visit.note}.<br />
     {visit.hoursLabel}, {visit.hours}
   </p>
 
   <div
-    class="map-facade relative mt-8 aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-xl ring-1 ring-line sm:aspect-[16/9]"
+    class="map-facade relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5 md:aspect-auto md:min-h-56 md:flex-1"
     data-map-src={embedSrc}
   >
     <a
@@ -51,17 +59,17 @@ const pill =
         src={mapaPoster}
         alt="Mapa de la ubicación de Ecogranja Villa Juan en la Vereda Guangatá, Tenjo"
         widths={[640, 960, 1280]}
-        sizes="(min-width: 1024px) 64rem, 100vw"
+        sizes="(min-width: 768px) 34rem, 100vw"
         format="webp"
         quality={80}
         loading="lazy"
         class="no-reveal h-full w-full object-cover"
       />
       <span
-        class="absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-black/70 to-transparent p-4 sm:p-6"
+        class="absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-black/70 to-transparent p-4"
       >
         <span
-          class={`${pill} bg-cta-strong text-white shadow-lg ring-1 ring-white/30 group-hover:brightness-110`}
+          class="inline-flex items-center justify-center rounded-full bg-cta-strong px-6 py-2.5 font-display text-lg text-white shadow-lg ring-1 ring-white/30 transition group-hover:brightness-110"
         >
           Ver el mapa interactivo
         </span>
@@ -69,15 +77,12 @@ const pill =
     </a>
   </div>
 
-  <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-    {/* Contraste (invariante #2): estos botones van sobre el verde de la página, donde
-        `text-cta-strong` suelto da 2.2:1 y falla AA. El naranja solo se usa como FONDO
-        (blanco encima = 5.5:1) o sobre `surface` blanco (5.6:1), igual que en PdfViewer. */}
+  <div class="flex flex-wrap gap-3">
     <a
       href={directions}
       target="_blank"
       rel="noopener noreferrer"
-      class={`${pill} bg-cta-strong text-white shadow-lg outline-cta-strong hover:brightness-110`}
+      class={`${pill} bg-cta-strong text-white outline-cta-strong hover:brightness-110`}
     >
       Cómo llegar
     </a>
@@ -85,16 +90,16 @@ const pill =
       href={contact.whatsapp}
       target="_blank"
       rel="noopener noreferrer"
-      class={`${pill} bg-surface text-cta-strong shadow-lg outline-cta-strong hover:brightness-95`}
+      class={`${pill} bg-surface text-cta-strong outline-cta-strong hover:brightness-95`}
     >
       Escríbenos por WhatsApp
     </a>
   </div>
-</section>
+</div>
 
 <script>
-  // Al primer clic la fachada se reemplaza por el mapa real. `once` implícito: después
-  // del reemplazo el enlace ya no existe, así que no queda JS vivo.
+  // Al primer clic la fachada se reemplaza por el mapa real. No hace falta `once`: tras el
+  // reemplazo el enlace ya no existe, así que no queda JS vivo.
   for (const box of document.querySelectorAll<HTMLElement>('.map-facade[data-map-src]')) {
     box.querySelector('a')?.addEventListener('click', (e) => {
       e.preventDefault();
