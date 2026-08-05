@@ -39,7 +39,11 @@ const pill =
 ---
 
 <div class="flex flex-col gap-3 md:min-h-0 md:flex-1">
-  <p class="text-sm leading-snug text-ink/80">
+  {/* Texto BLANCO, sobre `cta-strong` y no sobre el verde de la página: el verde da
+      2.2:1 contra el blanco y falla AA (invariante #2), mientras que este naranja da
+      5.5:1. Además es el mismo tratamiento de las tarjetas Horarios/Ubicación del home,
+      así que el bloque no inventa un estilo nuevo. */}
+  <p class="rounded-xl bg-cta-strong px-4 py-3 text-sm leading-snug text-white shadow-lg">
     <span class="font-bold">{visit.address}</span> · {visit.city}. {visit.note}.<br />
     {visit.hoursLabel}, {visit.hours}
   </p>
