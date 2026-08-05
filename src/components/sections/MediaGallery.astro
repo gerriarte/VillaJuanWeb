@@ -19,6 +19,8 @@ import { assetUrl } from '../../lib/directus';
 interface Props {
   photos: Photo[];
   video?: { id: string; title: string; poster: ImageMetadata };
+  /** Shorts de YouTube (9:16). Misma fachada que el video, en fila propia. */
+  shorts?: { id: string; title: string; poster: ImageMetadata }[];
   /** Prefijo de ids: permite más de una galería en la misma página. */
   id?: string;
   /** Columnas del grid. Con pocas fotos conviene bajarlas para que se vean más grandes. */
@@ -30,6 +32,7 @@ interface Props {
 const {
   photos,
   video,
+  shorts = [],
   id = 'galeria',
   gridClass = 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4',
   sizes = '(min-width: 1024px) 16rem, (min-width: 640px) 30vw, 45vw',
@@ -98,6 +101,51 @@ const full = await Promise.all(
           </span>
         </a>
       </div>
+    )
+  }
+
+  {
+    shorts.length > 0 && (
+      <ul class="mx-auto mt-6 grid max-w-2xl grid-cols-2 gap-3 sm:gap-4">
+        {shorts.map((s) => (
+          <li
+            class="relative aspect-[9/16] overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20"
+            data-video-id={s.id}
+            data-video-title={s.title}
+          >
+            <a
+              href={`https://www.youtube.com/shorts/${s.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group absolute inset-0 block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              aria-label={`Ver en YouTube: ${s.title}`}
+            >
+              <Image
+                src={s.poster}
+                alt=""
+                widths={[320, 480, 720]}
+                sizes="(min-width: 640px) 20rem, 45vw"
+                format="webp"
+                quality={78}
+                loading="lazy"
+                class="no-reveal h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+              />
+              <span class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <span
+                aria-hidden="true"
+                class="absolute top-1/2 left-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-cta-strong/95 shadow-xl ring-4 ring-white/70 transition group-hover:scale-110 sm:h-16 sm:w-16"
+              >
+                <svg viewBox="0 0 24 24" class="ml-0.5 h-7 w-7 fill-white sm:h-8 sm:w-8">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </span>
+              <span class="absolute inset-x-0 bottom-0 p-3 text-center text-sm leading-snug font-semibold text-white [text-shadow:0_2px_4px_rgba(0,0,0,0.6)] sm:p-4 sm:text-base">
+                {s.title}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
     )
   }
 
@@ -174,21 +222,24 @@ const full = await Promise.all(
 
 <script>
   for (const root of document.querySelectorAll<HTMLElement>('[data-gallery]')) {
-    // --- Video: el facade se sustituye por el iframe al primer clic ---
-    const box = root.querySelector<HTMLElement>('[data-video-id]');
-    const link = box?.querySelector('a');
-    link?.addEventListener('click', (e) => {
-      e.preventDefault();
-      const iframe = document.createElement('iframe');
-      // youtube-nocookie: sin cookies de tracking hasta que el usuario decide ver.
-      iframe.src = `https://www.youtube-nocookie.com/embed/${box!.dataset.videoId}?autoplay=1&rel=0`;
-      iframe.title = box!.dataset.videoTitle ?? 'Video';
-      iframe.allow =
-        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-      iframe.allowFullscreen = true;
-      iframe.className = 'absolute inset-0 h-full w-full border-0';
-      box!.replaceChildren(iframe);
-    });
+    // --- Videos: cada facade se sustituye por su iframe al primer clic.
+    // querySelectorAll (no querySelector): la galería puede llevar el video
+    // destacado y varios shorts, y todos tienen que responder.
+    for (const box of root.querySelectorAll<HTMLElement>('[data-video-id]')) {
+      const link = box.querySelector('a');
+      link?.addEventListener('click', (e) => {
+        e.preventDefault();
+        const iframe = document.createElement('iframe');
+        // youtube-nocookie: sin cookies de tracking hasta que el usuario decide ver.
+        iframe.src = `https://www.youtube-nocookie.com/embed/${box.dataset.videoId}?autoplay=1&rel=0`;
+        iframe.title = box.dataset.videoTitle ?? 'Video';
+        iframe.allow =
+          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.allowFullscreen = true;
+        iframe.className = 'absolute inset-0 h-full w-full border-0';
+        box.replaceChildren(iframe);
+      });
+    }
 
     // --- Lightbox ---
     const dlg = root.querySelector<HTMLDialogElement>('[data-lightbox-dialog]');

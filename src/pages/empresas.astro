@@ -43,6 +43,8 @@ import galAntifaz from '../assets/images/empresas/coaching/taller-10-dinamica-an
 import galCierre from '../assets/images/empresas/coaching/taller-11-facilitador-cierre.jpg';
 import galRetrato from '../assets/images/empresas/coaching/taller-12-retrato-caballo.jpg';
 import galVideoPoster from '../assets/images/empresas/coaching/video-poster.jpg';
+import shortFinDeSemana from '../assets/images/empresas/coaching/short-fin-de-semana.jpg';
+import shortVillaPlanes from '../assets/images/empresas/coaching/short-villa-planes.jpg';
 import cronica1 from '../assets/images/home/hero_home_empresariales.jpg';
 import cronica2 from '../assets/images/home/hero_home_coaching.jpg';
 import cronica3 from '../assets/images/home/hero_home_restaurante.jpg';
@@ -122,6 +124,22 @@ const videoCoaching = {
   title: 'Coaching con Caballos para Empresas · Liderazgo y Trabajo en Equipo',
   poster: galVideoPoster,
 };
+
+// Shorts del canal de la Ecogranja (9:16). NO son del taller de coaching: muestran la
+// granja y la gastronomía, así que van debajo del video del taller, no en su lugar.
+// Póster local = frame vertical del propio short (la fachada no llama a YouTube).
+const shortsCoaching = [
+  {
+    id: 'xHZjVMr5sNg',
+    title: 'El mejor plan de fin de semana',
+    poster: shortFinDeSemana,
+  },
+  {
+    id: 'Y5raiVfRIjs',
+    title: 'Así son los Villa Planes',
+    poster: shortVillaPlanes,
+  },
+];
 
 // href apunta al slug real de cada post en el blog (posts en Directus).
 const cronicas = [
@@ -351,7 +369,12 @@ const cronicas = [
         Un taller real, de principio a fin. Toca una foto para verla en grande.
       </p>
       <div class="mt-8">
-        <MediaGallery id="galeria-coaching" photos={galeria} video={videoCoaching} />
+        <MediaGallery
+          id="galeria-coaching"
+          photos={galeria}
+          video={videoCoaching}
+          shorts={shortsCoaching}
+        />
       </div>
     </div>
   </section>
