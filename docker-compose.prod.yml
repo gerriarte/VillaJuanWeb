@@ -2,12 +2,12 @@
 #
 # En Coolify: New Resource → Docker Compose → pegar/usar este archivo.
 # Coolify inyecta el dominio + SSL (Let's Encrypt) vía la variable mágica
-# SERVICE_FQDN_DIRECTUS (setéala en la UI, p.ej.  cms.villa-juan.com ).
+# SERVICE_FQDN_DIRECTUS (setéala en la UI, p.ej.  admin.villa-juan.com ).
 # El resto de secretos (DB_PASSWORD, DIRECTUS_SECRET, ADMIN_*) se cargan como
 # variables de entorno del recurso en la propia UI de Coolify — NUNCA en git.
 #
 # Tras el primer arranque, sembrar esquema + contenido una sola vez:
-#   DIRECTUS_URL=https://cms.villa-juan.com \
+#   DIRECTUS_URL=https://admin.villa-juan.com \
 #   DIRECTUS_ADMIN_EMAIL=... DIRECTUS_ADMIN_PASSWORD=... \
 #   node cms/bootstrap.mjs
 services:
@@ -35,7 +35,7 @@ services:
       database:
         condition: service_healthy
     environment:
-      # Coolify: setéala en la UI como  cms.villa-juan.com  (gestiona dominio + SSL).
+      # Coolify: setéala en la UI como  admin.villa-juan.com  (gestiona dominio + SSL).
       SERVICE_FQDN_DIRECTUS: ${SERVICE_FQDN_DIRECTUS}
       PUBLIC_URL: ${SERVICE_FQDN_DIRECTUS}
       SECRET: ${DIRECTUS_SECRET}

@@ -27,7 +27,7 @@ const {
   heroHeader = false,
 } = Astro.props;
 
-const siteUrl = Astro.site?.href ?? 'https://www.villa-juan.com/';
+const siteUrl = Astro.site?.href ?? 'https://villa-juan.com/';
 const canonical = new URL(Astro.url.pathname, siteUrl).href;
 const ogImage = new URL(image, siteUrl).href;
 

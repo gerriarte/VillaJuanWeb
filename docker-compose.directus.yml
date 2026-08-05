@@ -5,7 +5,7 @@
 # DB_HOST = hostname interno del Postgres managed (lo da Coolify).
 # SERVICE_FQDN_DIRECTUS_8055 = dominio → enruta al puerto 8055 de Directus.
 #   Dejalo vacío en el 1er deploy para que Coolify genere un dominio temporal
-#   (sirve mientras el DNS no apunte al VPS); luego seteá cms.villa-juan.com.
+#   (sirve mientras el DNS no apunte al VPS); luego seteá admin.villa-juan.com.
 # PUBLIC_URL = URL pública COMPLETA (con https://), debe coincidir con el dominio.
 services:
   directus:

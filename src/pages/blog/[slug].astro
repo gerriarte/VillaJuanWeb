@@ -21,7 +21,7 @@ export async function getStaticPaths() {
 const { post, related } = Astro.props;
 const bodyHtml = marked.parse(post.bodyMarkdown);
 
-const siteUrl = Astro.site?.href ?? 'https://www.villa-juan.com/';
+const siteUrl = Astro.site?.href ?? 'https://villa-juan.com/';
 const coverUrl =
   post.image.kind === 'directus'
     ? assetUrl(post.image.id, { width: 1200 })

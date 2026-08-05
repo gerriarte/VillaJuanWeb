@@ -12,9 +12,9 @@ Son **3 recursos** en Coolify + dominios + 1 webhook de rebuild.
 ## 0. Requisitos previos
 
 - VPS con Coolify. Recomendado **≥ 4 GB RAM** (Directus + Postgres + los builds con `sharp`).
-- DNS apuntando al VPS:
-  - `www.villa-juan.com` (+ `villa-juan.com` → redirect) → **sitio**
-  - `cms.villa-juan.com` → **Directus**
+- DNS apuntando al VPS (`13.140.179.23`), registros A:
+  - `villa-juan.com` (apex, dominio principal) + `www` → redirect al apex → **sitio**
+  - `admin.villa-juan.com` → **Directus**
 - Los secretos de producción (genéralos nuevos, no reutilices los de dev):
   ```
   node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"   # DIRECTUS_SECRET
@@ -37,16 +37,16 @@ Variables de entorno del recurso (en la UI de Coolify):
 
 | Variable | Valor |
 |---|---|
-| `SERVICE_FQDN_DIRECTUS` | `cms.villa-juan.com` |
+| `SERVICE_FQDN_DIRECTUS` | `admin.villa-juan.com` |
 | `DIRECTUS_SECRET` | *(hex nuevo)* |
 | `DB_USER` | `directus` |
 | `DB_PASSWORD` | *(clave nueva)* |
 | `DB_DATABASE` | `villajuan` |
 | `DIRECTUS_ADMIN_EMAIL` | `admin@villa-juan.com` |
 | `DIRECTUS_ADMIN_PASSWORD` | *(clave nueva)* |
-| `SITE_ORIGIN` | `https://www.villa-juan.com` |
+| `SITE_ORIGIN` | `https://villa-juan.com` |
 
-Coolify configura dominio + SSL automáticamente. Verifica que arranca en `https://cms.villa-juan.com`.
+Coolify configura dominio + SSL automáticamente. Verifica que arranca en `https://admin.villa-juan.com`.
 
 ### 2.1 Sembrar esquema + contenido (una sola vez)
 
@@ -54,7 +54,7 @@ Coolify configura dominio + SSL automáticamente. Verifica que arranca en `https
 de lectura, bookmarks por sección y siembra el contenido inicial. Ejecútalo apuntando a prod:
 
 ```bash
-DIRECTUS_URL=https://cms.villa-juan.com \
+DIRECTUS_URL=https://admin.villa-juan.com \
 DIRECTUS_ADMIN_EMAIL=admin@villa-juan.com \
 DIRECTUS_ADMIN_PASSWORD='<clave-admin-prod>' \
 node cms/bootstrap.mjs
@@ -71,8 +71,8 @@ node cms/bootstrap.mjs
 - **Install:** `pnpm install --frozen-lockfile`
 - **Build:** `pnpm build`
 - **Output / Publish directory:** `dist`
-- **Variable de entorno (build-time):** `DIRECTUS_URL = https://cms.villa-juan.com`
-- **Dominio:** `www.villa-juan.com` (agrega también `villa-juan.com` con redirect).
+- **Variable de entorno (build-time):** `DIRECTUS_URL = https://admin.villa-juan.com`
+- **Dominio:** `villa-juan.com` (agrega también `www.villa-juan.com` con redirect al apex).
 
 El primer deploy generará el sitio leyendo el CMS de prod. Si el CMS aún no está sembrado,
 el build cae a la semilla local y funciona igual (luego se reconstruye).
@@ -97,5 +97,5 @@ Como es SSG, el sitio queda estático hasta que se reconstruya. Automatízalo:
 - **Lectura pública:** el CMS expone `posts`, `cards` y `directus_files` en solo-lectura
   (sitio y navegador leen sin token). Para cerrarlo, crea un token de solo-lectura y setéalo
   como `DIRECTUS_TOKEN` en el recurso del sitio.
-- **CDN (opcional):** Cloudflare delante de `www.villa-juan.com` (contemplado en CLAUDE.md).
+- **CDN (opcional):** Cloudflare delante de `villa-juan.com` (contemplado en CLAUDE.md).
 - **`docker-compose.yml`** (raíz) es solo para **dev local**; en prod se usa `docker-compose.prod.yml`.

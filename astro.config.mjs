@@ -6,8 +6,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO: confirmar dominio de producción real (lo requiere @astrojs/sitemap).
-  site: 'https://www.villa-juan.com',
+  // Dominio de producción (lo requiere @astrojs/sitemap). `www` redirige al apex.
+  site: 'https://villa-juan.com',
 
   // Fonts API estable (Astro 7). Sunrise = SOLO display/headings/acentos.
   fonts: [
