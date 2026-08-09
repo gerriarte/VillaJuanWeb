@@ -12,6 +12,8 @@ import { readFile } from 'node:fs/promises';
 const URL = process.env.DIRECTUS_URL || 'http://localhost:8055';
 const EMAIL = process.env.DIRECTUS_ADMIN_EMAIL;
 const PASSWORD = process.env.DIRECTUS_ADMIN_PASSWORD;
+// Alternativa al login: token estático de admin (útil contra prod, sin exponer la clave).
+const STATIC_TOKEN = process.env.DIRECTUS_ADMIN_TOKEN;
 const SEED = !process.argv.includes('--seed=false');
 
 let token = '';
@@ -30,6 +32,10 @@ async function api(path, { method = 'GET', body, form } = {}) {
 }
 
 async function login() {
+  if (STATIC_TOKEN) {
+    token = STATIC_TOKEN;
+    return;
+  }
   const res = await fetch(`${URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -65,6 +71,8 @@ async function uploadImage(relPath, title) {
 const GALLERY_SECTIONS = [
   { text: 'Home · Galería', value: 'home-galeria' },
   { text: 'Empresas · Coaching', value: 'empresas-coaching' },
+  { text: 'Empresas · Eventos', value: 'empresas-eventos' },
+  { text: 'Colegios · Galería', value: 'colegios-galeria' },
   { text: 'Villa Planes · Platos', value: 'villaplanes-comida' },
 ];
 const SLIDE_SECTIONS = [{ text: 'Home · Carrusel del hero', value: 'home-hero' }];
@@ -158,6 +166,8 @@ const BOOKMARKS = [
   { name: 'Home · Carrusel', collection: 'slides', icon: 'view_carousel', section: 'home-hero' },
   { name: 'Home · Galería', collection: 'gallery', icon: 'photo_library', section: 'home-galeria' },
   { name: 'Empresas · Galería coaching', collection: 'gallery', icon: 'groups', section: 'empresas-coaching' },
+  { name: 'Empresas · Galería eventos', collection: 'gallery', icon: 'celebration', section: 'empresas-eventos' },
+  { name: 'Colegios · Galería', collection: 'gallery', icon: 'school', section: 'colegios-galeria' },
   { name: 'Villa Planes · Platos', collection: 'gallery', icon: 'restaurant', section: 'villaplanes-comida' },
 ];
 
@@ -180,6 +190,8 @@ async function ensureBookmarks() {
 // ── Semilla: exactamente las fotos que hoy están en el código, en el mismo orden ──
 const H = 'src/assets/images/home';
 const E = 'src/assets/images/empresas/coaching';
+const EV = 'src/assets/images/empresas/eventos';
+const C = 'src/assets/images/colegios/galeria';
 const V = 'src/assets/images/villa-planes/comida';
 
 const PHOTOS = [
@@ -210,6 +222,18 @@ const PHOTOS = [
   ['empresas-coaching', `${E}/taller-11-facilitador-cierre.jpg`, 'El facilitador con el caballo al cierre del taller'],
   ['empresas-coaching', `${E}/taller-12-retrato-caballo.jpg`, 'Retrato de uno de los caballos de Villa Juan'],
 
+  ['empresas-eventos', `${EV}/evento-01-carpa-panoramica.jpg`, 'Carpa panorámica montada en las praderas de Villa Juan durante un evento empresarial'],
+  ['empresas-eventos', `${EV}/evento-02-carpas-refrigerio.jpg`, 'Carreta y carpas de refrigerio en un día de familia empresarial en Villa Juan'],
+  ['empresas-eventos', `${EV}/evento-03-taller-parrilla.jpg`, 'Taller de parrilla Asados Juan Barril montado para un evento corporativo'],
+  ['empresas-eventos', `${EV}/evento-04-jeep-willys.jpg`, 'Jeep Willys rojo decorado bajo la carpa del evento en Villa Juan'],
+  ['empresas-eventos', `${EV}/evento-05-show-tarima.jpg`, 'Show en vivo sobre la tarima mientras los asistentes disfrutan sentados en pacas de heno'],
+  ['empresas-eventos', `${EV}/evento-06-atardecer-banderines.jpg`, 'Atardecer sobre las carpas y los banderines del evento en la Ecogranja Villa Juan'],
+
+  ['colegios-galeria', `${C}/colegios-taller-pintura-mesa.jpg`, 'Estudiantes pintando figuras de cerámica en las mesas de la Ecogranja Villa Juan'],
+  ['colegios-galeria', `${C}/colegios-taller-pintura-grupo.jpg`, 'Grupo de estudiantes y acompañantes durante el taller de pintura en Villa Juan'],
+  ['colegios-galeria', `${C}/colegios-taller-pintura-detalle.jpg`, 'Estudiante pintando con pincel una figura de cerámica en el taller'],
+  ['colegios-galeria', `${C}/colegios-paseo-jeep-willys.jpg`, 'Dos estudiantes con sombrero en la parte trasera del jeep Willys de Villa Juan'],
+
   ['villaplanes-comida', `${V}/churrasco.webp`, 'Churrasco con papas a la francesa servido en tabla de madera'],
   ['villaplanes-comida', `${V}/empanaditas.webp`, 'Canasta de empanaditas con ají picado'],
   ['villaplanes-comida', `${V}/chicharroncitos.webp`, 'Chicharroncitos crocantes con guacamole'],
@@ -222,23 +246,23 @@ const PHOTOS = [
 const WA = (text) => `https://api.whatsapp.com/send?phone=+573208689681&text=${encodeURIComponent(text)}`;
 
 const SLIDES = [
-  { image: `${H}/hero_home01.jpg`, titleImage: `${H}/Titulo_hero1.svg`,
-    alt: 'Familia disfrutando un día de campo en la Ecogranja Villa Juan',
+  { image: `${H}/hero_home_evento_paisaje.jpg`, titleImage: `${H}/Titulo_hero1.svg`,
+    alt: 'Atardecer sobre las carpas y los banderines de un evento campestre en la Ecogranja Villa Juan',
     title: 'Ecogranja Villa Juan · Tu escape natural en la Sabana de Bogotá',
     text: 'Un espacio campestre único donde la naturaleza, la diversión y los negocios se encuentran. El lugar perfecto para conectar con lo que realmente importa.',
     ctaLabel: 'Planear mi visita', ctaHref: WA('Quiero planear mi visita Villa Juan'), newTab: false },
-  { image: `${H}/hero_home_restaurante.jpg`,
-    alt: 'Restaurante campestre de Villa Juan',
+  { image: `${H}/hero_home_evento_parrilla.jpg`,
+    alt: 'Taller de parrilla Asados Juan Barril montado en las praderas de Villa Juan',
     title: 'Restaurante Campestre',
     text: 'La mejor gastronomía local en un entorno natural único. Fusionamos ingredientes orgánicos de la granja con platos tradicionales perfectos para compartir.',
     ctaLabel: 'Ver menú', ctaHref: '/menu', newTab: false },
-  { image: `${H}/hero_home_coaching.jpg`,
-    alt: 'Sesión de coaching asistido con caballos',
+  { image: `${H}/hero_home_evento_carpas.jpg`,
+    alt: 'Carpas de refrigerio y carreta durante un evento en la Ecogranja Villa Juan',
     title: 'Coaching con Caballos',
     text: 'Impulsa el liderazgo empresarial con sesiones de coaching asistido con caballos cerca de Bogotá. Una experiencia transformadora para conectar equipos.',
     ctaLabel: 'Descubrir coaching', ctaHref: '/empresas', newTab: false },
-  { image: `${H}/hero_home_empresariales.jpg`,
-    alt: 'Evento empresarial al aire libre en la ecogranja',
+  { image: `${H}/hero_home_evento_tarima.jpg`,
+    alt: 'Show en vivo sobre la tarima durante un evento empresarial en Villa Juan',
     title: 'Eventos Empresariales',
     text: 'El escenario ideal para el Día de la Familia, fiestas de fin de año y team building. Un espacio campestre exclusivo con logística integral.',
     ctaLabel: 'Cotizar evento corporativo', ctaHref: WA('Quiero cotizar un evento corporativo en Villa Juan'), newTab: false },
