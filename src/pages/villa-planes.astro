@@ -200,7 +200,13 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
   <!-- TABLA COMPARATIVA de planes. -->
   <section>
     <div class="mx-auto max-w-4xl px-4 pb-12">
-      <div class="overflow-x-auto">
+      <!-- `relative` NO es decorativo: las celdas llevan <span class="sr-only">, que es
+           `position:absolute`. Sin un ancestro posicionado su bloque contenedor es el
+           <body>, así que se escapan del scroll horizontal de este div, aterrizan a la
+           altura del borde derecho de la tabla (544px) y estiran el scroll de TODA la
+           página. En mobile eso daba 145px de desplazamiento lateral y el header
+           —que mide el ancho del viewport— dejaba de acompañar al contenido. -->
+      <div class="relative overflow-x-auto">
         <table class="w-full min-w-[34rem] border-separate border-spacing-1.5 text-center">
           <thead>
             <tr>
