@@ -23,6 +23,7 @@ import icono04 from '../assets/images/empresas/icono04.png';
 import icono05 from '../assets/images/empresas/icono05.png';
 import imgDiaFamilia from '../assets/images/empresas/dia_de_la_familia.jpg';
 import imgFinAno from '../assets/images/empresas/Fiestas_de_fin.jpg';
+import imgDespedidaAno from '../assets/images/empresas/Despedidas_fin_de_ano.jpg';
 import imgHalloween from '../assets/images/empresas/Fiestas_de_Halloween.jpg';
 import imgCometas from '../assets/images/empresas/Festival_de_cometas.jpg';
 import imgBici from '../assets/images/empresas/Bicipaseos_Villa_Juan.png';
@@ -45,6 +46,12 @@ import galRetrato from '../assets/images/empresas/coaching/taller-12-retrato-cab
 import galVideoPoster from '../assets/images/empresas/coaching/video-poster.jpg';
 import shortFinDeSemana from '../assets/images/empresas/coaching/short-fin-de-semana.jpg';
 import shortVillaPlanes from '../assets/images/empresas/coaching/short-villa-planes.jpg';
+import evento1 from '../assets/images/empresas/eventos/evento-01-carpa-panoramica.jpg';
+import evento2 from '../assets/images/empresas/eventos/evento-02-carpas-refrigerio.jpg';
+import evento3 from '../assets/images/empresas/eventos/evento-03-taller-parrilla.jpg';
+import evento4 from '../assets/images/empresas/eventos/evento-04-jeep-willys.jpg';
+import evento5 from '../assets/images/empresas/eventos/evento-05-show-tarima.jpg';
+import evento6 from '../assets/images/empresas/eventos/evento-06-atardecer-banderines.jpg';
 import cronica1 from '../assets/images/home/hero_home_empresariales.jpg';
 import cronica2 from '../assets/images/home/hero_home_coaching.jpg';
 import cronica3 from '../assets/images/home/hero_home_restaurante.jpg';
@@ -64,10 +71,23 @@ const celebraciones = await getCards('empresas-celebraciones', [
 
 const experiencias = await getCards('empresas-experiencias', [
   { title: 'Bicipaseos Villa Juan', imageRight: false, image: { kind: 'local', asset: imgBici, alt: 'Ciclistas recorriendo los senderos de Villa Juan' }, body: 'Recorre senderos diseñados para disfrutar de la brisa y el paisaje de la granja. Una actividad ideal para fomentar la actividad física y el compañerismo mientras exploramos cada rincón de nuestra infraestructura natural.' },
-  { title: 'Despedidas Fin de Año', imageRight: false, image: { kind: 'local', asset: imgFinAno, alt: 'Brindis de despedida de año en Villa Juan' }, body: 'Cierra el año junto a tu equipo en un entorno campestre exclusivo. Brindis, integración y espacios al aire libre para celebrar juntos los logros y despedir el año a lo grande.' },
+  { title: 'Despedidas Fin de Año', imageRight: false, image: { kind: 'local', asset: imgDespedidaAno, alt: 'Despedida de año al atardecer en Villa Juan' }, body: 'Cierra el año junto a tu equipo en un entorno campestre exclusivo. Brindis, integración y espacios al aire libre para celebrar juntos los logros y despedir el año a lo grande.' },
   { title: 'Caminatas de Observación', imageRight: false, image: { kind: 'local', asset: imgCaminatas, alt: 'Caminata de observación por la reserva de Villa Juan' }, body: 'Más que caminar, se trata de ver. Acompañados de guías, los participantes recorren nuestras zonas de reserva para identificar flora local y fauna, fomentando la curiosidad y el respeto por el ecosistema.' },
   { title: 'Talleres de Siembra y Huerta', imageRight: false, image: { kind: 'local', asset: imgTalleres, alt: 'Manos sembrando en la huerta de Villa Juan' }, body: "Una experiencia de 'manos en la tierra'. Aprende los ciclos de la vida vegetal, la importancia de la seguridad alimentaria y llévate la satisfacción de haber plantado vida. Un retorno a nuestras raíces campesinas." },
 ]);
+
+// Galería de un día de familia empresarial real, en orden de recorrido: llegada y
+// montaje → estaciones (parrilla, jeep) → show en tarima → cierre al atardecer.
+// Editable en Directus: colección `gallery`, section `empresas-eventos`. Semilla local.
+const eventosSeed: Photo[] = [
+  { image: { kind: 'local', asset: evento1, alt: 'Carpa panorámica montada en las praderas de Villa Juan durante un evento empresarial' } },
+  { image: { kind: 'local', asset: evento2, alt: 'Carreta y carpas de refrigerio en un día de familia empresarial en Villa Juan' } },
+  { image: { kind: 'local', asset: evento3, alt: 'Taller de parrilla Asados Juan Barril montado para un evento corporativo' } },
+  { image: { kind: 'local', asset: evento4, alt: 'Jeep Willys rojo decorado bajo la carpa del evento en Villa Juan' } },
+  { image: { kind: 'local', asset: evento5, alt: 'Show en vivo sobre la tarima mientras los asistentes disfrutan sentados en pacas de heno' } },
+  { image: { kind: 'local', asset: evento6, alt: 'Atardecer sobre las carpas y los banderines del evento en la Ecogranja Villa Juan' } },
+];
+const eventos = await getGallery('empresas-eventos', eventosSeed);
 
 const beneficios = await getCards('empresas-beneficios', [
   { title: 'Liderazgo y Confianza', imageRight: false, image: { kind: 'local', asset: ventana1, alt: 'Liderazgo y Confianza' }, body: 'Actividades diseñadas para identificar y potenciar líderes.' },
@@ -125,10 +145,10 @@ const videoCoaching = {
   poster: galVideoPoster,
 };
 
-// Shorts del canal de la Ecogranja (9:16). NO son del taller de coaching: muestran la
-// granja y la gastronomía, así que van debajo del video del taller, no en su lugar.
-// Póster local = frame vertical del propio short (la fachada no llama a YouTube).
-const shortsCoaching = [
+// Shorts del canal de la Ecogranja (9:16). No son del taller de coaching —muestran la
+// granja y la gastronomía—, así que acompañan a la galería de eventos y no a la del
+// taller. Póster local = frame vertical del propio short (la fachada no llama a YouTube).
+const shortsEventos = [
   {
     id: 'xHZjVMr5sNg',
     title: 'El mejor plan de fin de semana',
@@ -199,6 +219,23 @@ const cronicas = [
             </article>
           ))
         }
+      </div>
+
+      <!-- Galería de un evento real: la prueba de que las celebraciones de arriba
+           existen. Grid de 3 para que 6 fotos llenen dos filas parejas. -->
+      <h2 class="mt-16 text-center section-title">Así se vive un día de familia</h2>
+      <p class="mt-3 text-center text-lg text-on-green">
+        Un evento real, de principio a fin. Toca una foto para verla en grande.
+      </p>
+      <div class="mt-8">
+        <MediaGallery
+          id="galeria-eventos"
+          photos={eventos}
+          shorts={shortsEventos}
+          shortsTitle="Más de la Ecogranja"
+          gridClass="grid-cols-2 sm:grid-cols-3"
+          sizes="(min-width: 640px) 22rem, 45vw"
+        />
       </div>
     </div>
   </section>
@@ -373,7 +410,6 @@ const cronicas = [
           id="galeria-coaching"
           photos={galeria}
           video={videoCoaching}
-          shorts={shortsCoaching}
         />
       </div>
     </div>

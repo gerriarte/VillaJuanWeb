@@ -19,8 +19,13 @@ import { assetUrl } from '../../lib/directus';
 interface Props {
   photos: Photo[];
   video?: { id: string; title: string; poster: ImageMetadata };
-  /** Shorts de YouTube (9:16). Misma fachada que el video, en fila propia. */
+  /**
+   * Shorts de YouTube (9:16). Misma fachada que el video, en fila propia DEBAJO de las
+   * fotos: son material complementario y no deben desplazar a la galería.
+   */
   shorts?: { id: string; title: string; poster: ImageMetadata }[];
+  /** Encabezado de la fila de shorts. Úsalo cuando no sean del mismo tema que las fotos. */
+  shortsTitle?: string;
   /** Prefijo de ids: permite más de una galería en la misma página. */
   id?: string;
   /** Columnas del grid. Con pocas fotos conviene bajarlas para que se vean más grandes. */
@@ -33,6 +38,7 @@ const {
   photos,
   video,
   shorts = [],
+  shortsTitle,
   id = 'galeria',
   gridClass = 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4',
   sizes = '(min-width: 1024px) 16rem, (min-width: 640px) 30vw, 45vw',
@@ -104,51 +110,6 @@ const full = await Promise.all(
     )
   }
 
-  {
-    shorts.length > 0 && (
-      <ul class="mx-auto mt-6 grid max-w-2xl grid-cols-2 gap-3 sm:gap-4">
-        {shorts.map((s) => (
-          <li
-            class="relative aspect-[9/16] overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20"
-            data-video-id={s.id}
-            data-video-title={s.title}
-          >
-            <a
-              href={`https://www.youtube.com/shorts/${s.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group absolute inset-0 block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-              aria-label={`Ver en YouTube: ${s.title}`}
-            >
-              <Image
-                src={s.poster}
-                alt=""
-                widths={[320, 480, 720]}
-                sizes="(min-width: 640px) 20rem, 45vw"
-                format="webp"
-                quality={78}
-                loading="lazy"
-                class="no-reveal h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-              />
-              <span class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <span
-                aria-hidden="true"
-                class="absolute top-1/2 left-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-cta-strong/95 shadow-xl ring-4 ring-white/70 transition group-hover:scale-110 sm:h-16 sm:w-16"
-              >
-                <svg viewBox="0 0 24 24" class="ml-0.5 h-7 w-7 fill-white sm:h-8 sm:w-8">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </span>
-              <span class="absolute inset-x-0 bottom-0 p-3 text-center text-sm leading-snug font-semibold text-white [text-shadow:0_2px_4px_rgba(0,0,0,0.6)] sm:p-4 sm:text-base">
-                {s.title}
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    )
-  }
-
   <ul class:list={['mt-8 grid gap-3 sm:gap-4', gridClass]}>
     {
       photos.map((p, i) => (
@@ -172,6 +133,56 @@ const full = await Promise.all(
       ))
     }
   </ul>
+
+  {
+    shorts.length > 0 && (
+      <>
+        {shortsTitle && (
+          <p class="mt-10 text-center font-display text-3xl text-on-green">{shortsTitle}</p>
+        )}
+        <ul class="mx-auto mt-6 grid max-w-2xl grid-cols-2 gap-3 sm:gap-4">
+          {shorts.map((s) => (
+            <li
+              class="relative aspect-[9/16] overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20"
+              data-video-id={s.id}
+              data-video-title={s.title}
+            >
+              <a
+                href={`https://www.youtube.com/shorts/${s.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group absolute inset-0 block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                aria-label={`Ver en YouTube: ${s.title}`}
+              >
+                <Image
+                  src={s.poster}
+                  alt=""
+                  widths={[320, 480, 720]}
+                  sizes="(min-width: 640px) 20rem, 45vw"
+                  format="webp"
+                  quality={78}
+                  loading="lazy"
+                  class="no-reveal h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                />
+                <span class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                <span
+                  aria-hidden="true"
+                  class="absolute top-1/2 left-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-cta-strong/95 shadow-xl ring-4 ring-white/70 transition group-hover:scale-110 sm:h-16 sm:w-16"
+                >
+                  <svg viewBox="0 0 24 24" class="ml-0.5 h-7 w-7 fill-white sm:h-8 sm:w-8">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </span>
+                <span class="absolute inset-x-0 bottom-0 p-3 text-center text-sm leading-snug font-semibold text-white [text-shadow:0_2px_4px_rgba(0,0,0,0.6)] sm:p-4 sm:text-base">
+                  {s.title}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
 
   {/* Lightbox. Vacío hasta que el script lo usa; sin JS nunca se abre. */}
   <dialog

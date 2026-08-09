@@ -255,7 +255,7 @@ const CARDS = [
     image: 'src/assets/images/empresas/Bicipaseos_Villa_Juan.png',
     body: 'Recorre senderos diseñados para disfrutar de la brisa y el paisaje de la granja. Una actividad ideal para fomentar la actividad física y el compañerismo mientras exploramos cada rincón de nuestra infraestructura natural.' },
   { section: 'empresas-experiencias', title: 'Despedidas Fin de Año', imageRight: false,
-    image: 'src/assets/images/empresas/Fiestas_de_fin.jpg',
+    image: 'src/assets/images/empresas/Despedidas_fin_de_ano.jpg',
     body: 'Cierra el año junto a tu equipo en un entorno campestre exclusivo. Brindis, integración y espacios al aire libre para celebrar juntos los logros y despedir el año a lo grande.' },
   { section: 'empresas-experiencias', title: 'Caminatas de Observación', imageRight: false,
     image: 'src/assets/images/empresas/Caminatas_de_observación.png',
