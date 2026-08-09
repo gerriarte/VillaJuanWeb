@@ -183,12 +183,17 @@ const galInit = galeria.map((_, i) =>
         class="mx-auto w-48 sm:w-64 md:w-full md:max-w-sm md:translate-x-[20%]"
       />
 
-      <!-- Globo de diálogo (imagen de fondo estirada) + texto blanco centrado dentro. -->
+      <!-- Globo de diálogo (imagen de fondo estirada) + texto blanco centrado dentro.
+           `background-size:100% 100%` solo estira de verdad porque el SVG declara
+           `preserveAspectRatio="none"`. Sin eso vuelve al default (`xMidYMid meet`):
+           el globo conserva su 1.97:1, se centra, y en mobile —caja alta y angosta—
+           el texto se sale por arriba y por abajo. Si se re-exporta el SVG desde el
+           diseño, hay que volver a agregarle ese atributo. -->
       <div
         class="flex items-center justify-center px-8 py-8 sm:px-12 sm:py-10"
         style={`background-image:url('${globoImg.src}');background-size:100% 100%;background-repeat:no-repeat;`}
       >
-        <p class="w-[70%] text-center font-['Segoe_UI',system-ui,sans-serif] text-sm leading-relaxed text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.5)] sm:text-base">
+        <p class="w-full text-center font-['Segoe_UI',system-ui,sans-serif] text-sm leading-relaxed text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.5)] sm:w-[70%] sm:text-base">
           Te invitamos a conocer la Ecogranja Villa Juan, un lugar increíble para salir de la rutina
           y reconectar con lo natural. Comparte con nuestros animales, aprende sobre el mundo equino y
           disfruta de los quehaceres reales del campo. Y no te puedes perder el sabor único de nuestro
