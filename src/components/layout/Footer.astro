@@ -53,16 +53,19 @@ const socials = [
     class="pointer-events-none absolute bottom-full left-1/2 w-[22rem] max-w-[92vw] -translate-x-1/2 translate-y-[50%] [filter:drop-shadow(0_10px_16px_rgba(0,0,0,0.35))] sm:w-[34rem] md:w-[46rem]"
   />
 
-  <!-- El orden del DOM es el de MOBILE (menú + logo en la misma fila, luego redes y
-       contacto a lo ancho). Desktop no depende de ese orden: cada bloque declara su
-       celda con col-start/row-start, así que la grilla de 3 columnas queda igual que
-       siempre (menú | redes al pie | logo sobre contacto). -->
+  <!-- El orden del DOM es el de MOBILE: menú y bloque de marca (logo + contacto) en la
+       misma fila, redes a lo ancho debajo. Desktop no depende de ese orden —las redes
+       declaran su celda con col-start—, así que la grilla de 3 columnas queda igual que
+       siempre: menú | redes al pie | logo sobre contacto.
+       En mobile las columnas NO son mitad y mitad: el menú toma solo el ancho de su
+       ítem más largo y el resto va al bloque de marca, que lo necesita para que
+       `gerencia@villa-juan.com` entre en una línea. -->
   <div
-    class="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-10 px-4 pt-32 pb-12 sm:pt-44 md:grid-cols-3 md:gap-x-10 md:gap-y-4 md:pt-60"
+    class="mx-auto grid max-w-6xl grid-cols-[auto_1fr] gap-x-6 gap-y-10 px-4 pt-32 pb-12 sm:pt-44 md:grid-cols-3 md:gap-x-10 md:pt-60"
   >
     <!-- Menú en texto corrido blanco (font-body), a juego con el bloque de contacto.
          El text-shadow hace de scrim sobre el naranja. -->
-    <nav aria-label="Navegación del pie" class="md:col-start-1 md:row-span-2 md:row-start-1">
+    <nav aria-label="Navegación del pie" class="md:col-start-1 md:row-start-1">
       <ul
         class="flex flex-col gap-2 font-body text-lg font-semibold text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.4)] sm:text-xl"
       >
@@ -78,9 +81,9 @@ const socials = [
       </ul>
     </nav>
 
-    <!-- Logo: comparte fila con el menú en mobile, centrado contra la lista.
-         En desktop vuelve arriba a la derecha, sobre el contacto. -->
-    <div class="flex items-center justify-end md:col-start-3 md:row-start-1 md:items-start">
+    <!-- Bloque de marca: logo grande + ciudad, teléfono y correo. Comparte fila con el
+         menú en mobile y vuelve a la derecha en desktop. -->
+    <div class="flex flex-col items-end gap-4 text-right md:col-start-3 md:row-start-1">
       <img
         src={logoVillaJuan.src}
         alt="Ecogranja Villa Juan"
@@ -88,12 +91,25 @@ const socials = [
         height={logoVillaJuan.height}
         class="h-auto w-32 [filter:drop-shadow(0_2px_6px_rgba(0,0,0,0.3))] sm:w-44 md:w-56"
       />
+      <!-- Solo ciudad, teléfono y correo (la dirección detallada vive en la página de
+           contacto). En bold: es la info de conversión. -->
+      <address
+        class="flex flex-col gap-1.5 text-sm font-bold text-white not-italic [text-shadow:0_1px_3px_rgba(0,0,0,0.4)] sm:text-base"
+      >
+        <span>{visit.city}</span>
+        <a href={contact.phoneHref} class="transition-colors hover:text-accent">
+          {contact.phone}
+        </a>
+        <a href={`mailto:${contact.email}`} class="transition-colors hover:text-accent">
+          {contact.email}
+        </a>
+      </address>
     </div>
 
     <!-- Redes sociales: a lo ancho bajo el menú en mobile; en desktop, columna del
          medio alineada a la base. -->
     <div
-      class="col-span-2 flex flex-col items-center justify-end md:col-span-1 md:col-start-2 md:row-span-2 md:row-start-1"
+      class="col-span-2 flex flex-col items-center justify-end md:col-span-1 md:col-start-2 md:row-start-1"
     >
       <ul class="flex flex-wrap items-center justify-center gap-4">
         {
@@ -115,21 +131,6 @@ const socials = [
         }
       </ul>
     </div>
-
-    <!-- Solo ciudad, teléfono y correo (la dirección detallada vive en la página de
-         contacto). Dos puntos más que el resto y en bold: es la info de conversión.
-         A lo ancho en mobile: el correo no entra en media columna. -->
-    <address
-      class="col-span-2 flex flex-col gap-1.5 text-base font-bold text-white not-italic [text-shadow:0_1px_3px_rgba(0,0,0,0.4)] md:col-span-1 md:col-start-3 md:row-start-2 md:items-end md:text-right"
-    >
-      <span>{visit.city}</span>
-      <a href={contact.phoneHref} class="transition-colors hover:text-accent">
-        {contact.phone}
-      </a>
-      <a href={`mailto:${contact.email}`} class="transition-colors hover:text-accent">
-        {contact.email}
-      </a>
-    </address>
   </div>
 
   <!-- Subfooter: verde plano de marca. NO `.scene-green` (arranca en lima #99c43d y el
