@@ -7,7 +7,8 @@ import { wa } from '../lib/site';
 import bannerColegios from '../assets/images/colegios/Banner_Colegios.jpg';
 import badgeColegios from '../assets/images/colegios/Colegios.webp';
 import { img } from '../lib/images';
-import { getCards, type Card } from '../lib/content';
+import MediaGallery from '../components/sections/MediaGallery.astro';
+import { getCards, getGallery, type Card, type Photo } from '../lib/content';
 import { assetUrl } from '../lib/directus';
 
 // Semilla local (fallback). En Directus: colección `cards`, section=colegios-talleres.
@@ -26,6 +27,18 @@ const seed: Card[] = [
     body: 'Los estudiantes se convierten en guardianes del medio ambiente descubriendo acciones concretas para proteger los recursos naturales: reciclaje, conservación, biodiversidad y prácticas sostenibles que pueden aplicar en su vida cotidiana. Un taller que inspira una nueva generación comprometida con el planeta.' },
 ];
 const talleres = await getCards('colegios-talleres', seed);
+
+// Fotos de una salida real: el taller de pintura (plano general → grupo → detalle) y
+// el paseo en el jeep. Tres son verticales: el grid recorta la miniatura al centro y
+// el lightbox muestra el encuadre completo.
+// Editable en Directus: colección `gallery`, section `colegios-galeria`. Semilla local.
+const galeriaSeed: Photo[] = [
+  { image: { kind: 'local', asset: img('colegios-taller-pintura-mesa')!, alt: 'Estudiantes pintando figuras de cerámica en las mesas de la Ecogranja Villa Juan' } },
+  { image: { kind: 'local', asset: img('colegios-taller-pintura-grupo')!, alt: 'Grupo de estudiantes y acompañantes durante el taller de pintura en Villa Juan' } },
+  { image: { kind: 'local', asset: img('colegios-taller-pintura-detalle')!, alt: 'Estudiante pintando con pincel una figura de cerámica en el taller' } },
+  { image: { kind: 'local', asset: img('colegios-paseo-jeep-willys')!, alt: 'Dos estudiantes con sombrero en la parte trasera del jeep Willys de Villa Juan' } },
+];
+const galeria = await getGallery('colegios-galeria', galeriaSeed);
 ---
 
 <Base
@@ -90,6 +103,24 @@ const talleres = await getCards('colegios-talleres', seed);
           />
         ))
       }
+    </div>
+  </section>
+
+  <!-- GALERÍA — la prueba de los talleres de arriba. Son 4 fotos: en 2×2 se ven
+       grandes; en una fila de 4 quedarían en franja. Lightbox con teclado; sin JS
+       cada foto abre en grande. -->
+  <section class="mx-auto max-w-5xl px-4 pt-8 pb-4">
+    <h2 class="section-title text-center">Así se vive una salida</h2>
+    <p class="mt-3 text-center text-lg text-on-green">
+      Un día de taller en la granja. Toca una foto para verla en grande.
+    </p>
+    <div class="mx-auto mt-8 max-w-3xl">
+      <MediaGallery
+        id="galeria-colegios"
+        photos={galeria}
+        gridClass="grid-cols-2"
+        sizes="(min-width: 640px) 22rem, 45vw"
+      />
     </div>
   </section>
 
