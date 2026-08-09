@@ -9,10 +9,12 @@
 import CmsImage from '../ui/CmsImage.astro';
 import { getSlides, type Slide } from '../../lib/content';
 import { wa } from '../../lib/site';
-import s1 from '../../assets/images/home/hero_home01.jpg';
-import s2 from '../../assets/images/home/hero_home_restaurante.jpg';
-import s3 from '../../assets/images/home/hero_home_coaching.jpg';
-import s4 from '../../assets/images/home/hero_home_empresariales.jpg';
+// Fotos de un evento real en la granja. Los hero_home_* anteriores siguen en uso como
+// portadas del blog y miniaturas de Crónicas, por eso estos son archivos aparte.
+import s1 from '../../assets/images/home/hero_home_evento_paisaje.jpg';
+import s2 from '../../assets/images/home/hero_home_evento_parrilla.jpg';
+import s3 from '../../assets/images/home/hero_home_evento_carpas.jpg';
+import s4 from '../../assets/images/home/hero_home_evento_tarima.jpg';
 import tituloHero1 from '../../assets/images/home/Titulo_hero1.svg';
 import { menuPdf } from '../../lib/pdfs';
 
@@ -20,26 +22,26 @@ import { menuPdf } from '../../lib/pdfs';
 // colección `slides`, section `home-hero` (imagen, título, copy y CTA por slide).
 const seed: Slide[] = [
   {
-    image: { kind: 'local', asset: s1, alt: 'Familia disfrutando un día de campo en la Ecogranja Villa Juan' },
+    image: { kind: 'local', asset: s1, alt: 'Atardecer sobre las carpas y los banderines de un evento campestre en la Ecogranja Villa Juan' },
     title: 'Ecogranja Villa Juan · Tu escape natural en la Sabana de Bogotá',
     titleImage: { kind: 'local', asset: tituloHero1, alt: 'Ecogranja Villa Juan' },
     text: 'Un espacio campestre único donde la naturaleza, la diversión y los negocios se encuentran. El lugar perfecto para conectar con lo que realmente importa.',
     cta: { label: 'Planear mi visita', href: wa('Quiero planear mi visita Villa Juan') },
   },
   {
-    image: { kind: 'local', asset: s2, alt: 'Restaurante campestre de Villa Juan' },
+    image: { kind: 'local', asset: s2, alt: 'Taller de parrilla Asados Juan Barril montado en las praderas de Villa Juan' },
     title: 'Restaurante Campestre',
     text: 'La mejor gastronomía local en un entorno natural único. Fusionamos ingredientes orgánicos de la granja con platos tradicionales perfectos para compartir.',
     cta: { label: 'Ver menú', href: menuPdf.href },
   },
   {
-    image: { kind: 'local', asset: s3, alt: 'Sesión de coaching asistido con caballos' },
+    image: { kind: 'local', asset: s3, alt: 'Carpas de refrigerio y carreta durante un evento en la Ecogranja Villa Juan' },
     title: 'Coaching con Caballos',
     text: 'Impulsa el liderazgo empresarial con sesiones de coaching asistido con caballos cerca de Bogotá. Una experiencia transformadora para conectar equipos.',
     cta: { label: 'Descubrir coaching', href: '/empresas' },
   },
   {
-    image: { kind: 'local', asset: s4, alt: 'Evento empresarial al aire libre en la ecogranja' },
+    image: { kind: 'local', asset: s4, alt: 'Show en vivo sobre la tarima durante un evento empresarial en Villa Juan' },
     title: 'Eventos Empresariales',
     text: 'El escenario ideal para el Día de la Familia, fiestas de fin de año y team building. Un espacio campestre exclusivo con logística integral.',
     cta: { label: 'Cotizar evento corporativo', href: wa('Quiero cotizar un evento corporativo en Villa Juan') },
