@@ -33,8 +33,9 @@
    blanco como halo detrás. Fallback sin text-stroke: naranja + sombra.
    · .title-outline → look base (hero/carrusel; conserva su propio tamaño).
    · .section-title → título de SECCIÓN canónico y normalizado: Sunrise + naranja
-     + borde blanco + 35pt. Tamaño fluido que topa EXACTO en 35pt en desktop y
-     baja en móvil (invariante #1: se genera responsive, no se copia el desktop). */
+     + borde blanco + 37pt. Tamaño fluido que topa EXACTO en 37pt en desktop y
+     baja en móvil (invariante #1: se genera responsive, no se copia el desktop).
+     (Era 35pt / 1.75rem; +2pt en ambos extremos a pedido del cliente, VJW-5.) */
 .title-outline,
 .section-title {
   color: var(--color-cta);
@@ -44,7 +45,7 @@
 }
 .section-title {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 6vw, 35pt);
+  font-size: clamp(calc(1.75rem + 2pt), 6vw, 37pt);
   line-height: 1.05;
 }
 
