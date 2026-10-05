@@ -106,7 +106,7 @@ const BANNER_SECTIONS = [
     alt: 'Manos compartiendo una picada de empanadas, patacones, chorizo y salsas en la mesa de madera de la Ecogranja Villa Juan' },
   { text: 'Blog · Banner principal', value: 'blog-hero', seed: 'src/assets/images/blog/Blog.jpg',
     alt: 'Recorriendo la Ecogranja Villa Juan en cuatrimoto' },
-  { text: 'Home · Foto del Museo del Caballo', value: 'home-museo', seed: 'src/assets/images/home/fuente_caballos.jpg',
+  { text: 'Inicio · Foto del Museo del Caballo', value: 'home-museo', seed: 'src/assets/images/home/fuente_caballos.jpg',
     alt: 'Monumento a los caballos en la Ecogranja Villa Juan' },
 ];
 

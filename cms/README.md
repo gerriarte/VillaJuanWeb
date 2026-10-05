@@ -100,6 +100,17 @@ Los PDF del CMS se copian al sitio en el build (`src/pages/pdf/[name].ts` → `/
 visor los embebe desde el mismo origen. El script también deja el Flow de rebuild escuchando
 todas las colecciones de contenido (`create`, `update` y `delete`).
 
+## Panel ordenado para el cliente — `cms/navegacion.mjs`
+
+```bash
+node --env-file=.env cms/navegacion.mjs  # carpetas del menú, nombres en español, íconos y etiquetas de campos
+```
+
+Solo metadatos de presentación (no toca datos). Menú resultante: **Inicio** (carrusel) ·
+**Contenido por página** (banners, tarjetas, galerías, videos — dentro de cada uno, un marcador
+por página) · **Villa Planes y menú** (planes, servicios, PDFs) · **Blog**. Los marcadores usan
+el prefijo de la página ("Inicio · Galería", "Empresas · Banner principal"…).
+
 ## Producción (futuro)
 
 En el VPS (Coolify) se levanta el mismo `docker-compose`, se apunta `DIRECTUS_URL` a la

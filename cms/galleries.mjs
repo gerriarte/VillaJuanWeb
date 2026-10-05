@@ -69,13 +69,13 @@ async function uploadImage(relPath, title) {
 
 // ── Secciones (deben coincidir con las que pide el sitio en src/lib/content.ts) ──
 const GALLERY_SECTIONS = [
-  { text: 'Home · Galería', value: 'home-galeria' },
+  { text: 'Inicio · Galería', value: 'home-galeria' },
   { text: 'Empresas · Coaching', value: 'empresas-coaching' },
   { text: 'Empresas · Eventos', value: 'empresas-eventos' },
   { text: 'Colegios · Galería', value: 'colegios-galeria' },
   { text: 'Villa Planes · Platos', value: 'villaplanes-comida' },
 ];
-const SLIDE_SECTIONS = [{ text: 'Home · Carrusel del hero', value: 'home-hero' }];
+const SLIDE_SECTIONS = [{ text: 'Inicio · Carrusel del hero', value: 'home-hero' }];
 
 const statusField = {
   field: 'status', type: 'string', schema: { default_value: 'published' },
@@ -163,8 +163,8 @@ async function publicRead() {
 }
 
 const BOOKMARKS = [
-  { name: 'Home · Carrusel', collection: 'slides', icon: 'view_carousel', section: 'home-hero' },
-  { name: 'Home · Galería', collection: 'gallery', icon: 'photo_library', section: 'home-galeria' },
+  { name: 'Inicio · Carrusel', collection: 'slides', icon: 'view_carousel', section: 'home-hero' },
+  { name: 'Inicio · Galería', collection: 'gallery', icon: 'photo_library', section: 'home-galeria' },
   { name: 'Empresas · Galería coaching', collection: 'gallery', icon: 'groups', section: 'empresas-coaching' },
   { name: 'Empresas · Galería eventos', collection: 'gallery', icon: 'celebration', section: 'empresas-eventos' },
   { name: 'Colegios · Galería', collection: 'gallery', icon: 'school', section: 'colegios-galeria' },

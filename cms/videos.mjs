@@ -43,7 +43,7 @@ async function login() {
 
 // ── Secciones (deben coincidir con las que pide el sitio vía getVideo() en src/lib/content.ts) ──
 const SECTIONS = [
-  { text: 'Home · Video', value: 'home-video' },
+  { text: 'Inicio · Video', value: 'home-video' },
   { text: 'Empresas · Video del banner principal', value: 'empresas-video' },
   { text: 'Empresas · Video de coaching (galería)', value: 'empresas-coaching-video' },
   { text: 'Villa Planes · Shorts (verticales)', value: 'villaplanes-short' },
