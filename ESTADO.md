@@ -1,60 +1,62 @@
 # ESTADO — Ecogranja Villa Juan (sitio web)
-_actualizado: 2026-08-08_
+_actualizado: 2026-10-05_
 
 ## Funcionando
 - Dominios con cert Let's Encrypt propio y `http` → `https` 302:
   - `https://villa-juan.com` (apex, principal) — vence 2026-11-03.
   - `https://www.villa-juan.com` — vence 2026-11-03. Mismo contenido; el `canonical` apunta al apex.
-  - `https://admin.villa-juan.com` — CMS (Directus 11), panel en `/admin`.
-- Auto-deploy: push a `origin/main` dispara el build en Coolify (~5-6 min). Último desplegado: `cb4f68b`.
-- Repo y producción SINCRONIZADOS. Árbol limpio.
-- 15 URLs del sitemap en 200. Imágenes del CMS servidas por `admin.villa-juan.com`, sin mixed content.
-- Contenido publicado en esta sesión:
-  - Hero del home: 4 fotos de un evento real, una por slide.
-  - Empresas: cards de fin de año con foto propia cada una; galería "Así se vive un día de familia"
-    (6 fotos, section `empresas-eventos`); crónica del barril con la foto del puesto de parrilla.
-  - Colegios: galería "Así se vive una salida" (4 fotos, section `colegios-galeria`).
-  - Footer: en mobile menú y bloque de marca (logo + contacto) en la misma fila, redes debajo.
-- Flujo de sesión versionado: `.claude/commands/{retomar,cierre}.md` + hook `SessionStart`.
+  - `https://admin.villa-juan.com` — CMS (Directus 11.17), panel en `/admin`.
+- Repo y producción SINCRONIZADOS en `04f80e4`. Árbol limpio.
+- **Deploy de código**: GitHub Actions `.github/workflows/deploy.yml` (push a `main` → `pnpm build` →
+  API de Coolify con `force=true`). NO es webhook de Coolify. Si "no sale": `gh run list`.
+- **Deploy de contenido**: Flow de Directus "Rebuild sitio en Coolify" — activo, con token real,
+  `force=true`, escucha posts, cards, gallery, slides, videos, banners, planes, plan_servicios,
+  documentos (create/update/delete). Probado: cambio en panel → build nuevo en ~5 min.
+- **Todo el contenido es editable en Directus** (fallback a la semilla del código si el CMS no responde):
+  banners de cada página + foto del Museo (`banners`), videos (`videos`: home, hero y coaching de
+  Empresas, shorts de Villa Planes, Museo), galería y video del Museo del Caballo (vacíos = no se
+  muestran), tabla de Villa Planes (`planes`, `plan_servicios`), PDFs de planes y menú (`documentos`;
+  se copian al sitio en build vía `src/pages/pdf/[name].ts`). Redirects de slugs viejos de planes en
+  `astro.config.mjs`.
+- Panel ordenado por carpetas y en español (`cms/navegacion.mjs`).
+- Accesos: `cm@mtmmarcatumarca.com` (Administrator, ya ingresó) y `admin@villa-juan.com` (Administrator).
+  El token estático comprometido fue borrado.
+- Plane (VJW): 22 subtareas en Hecho; tareas madre [1]–[6] en "Esperando cliente"; VJW-28 (guía de
+  uso de Directus + pendientes) en Backlog asignada a CM.
 
-## Herramientas del CMS
-- `cms/replace-image.mjs <fileId> <ruta> [título]` — reemplaza el binario conservando el id. Como el
-  HTML publicado ya pide esa URL, el cambio se ve SIN rebuildear. Sirve para cambiar una foto ya
-  publicada sin tocar relaciones.
-- `cms/galleries.mjs` y `replace-image.mjs` aceptan `DIRECTUS_ADMIN_TOKEN` además de email/clave.
-- Contra prod: `$env:DIRECTUS_URL = "https://admin.villa-juan.com"` antes de correrlos.
+## Herramientas del CMS (todas idempotentes; contra prod con `DIRECTUS_URL=https://admin.villa-juan.com`)
+- `cms/editable.mjs` — banners, planes, plan_servicios, documentos, sección museo-galeria, permisos,
+  marcadores, Flow. Correrlo de nuevo si se agrega un plan (arma las casillas de servicios).
+- `cms/videos.mjs` — colección `videos`, secciones, semillas, limpia marcadores obsoletos.
+- `cms/navegacion.mjs` — carpetas, nombres y etiquetas en español.
+- `cms/replace-image.mjs <fileId> <ruta>` — reemplaza una foto conservando su id (se ve sin deploy;
+  ojo: Directus cachea `/assets` 30 días en el navegador).
+- Documentación de todas las colecciones: `cms/README.md`.
 
 ## Roto / a medias
-- **Sin acceso al panel de Directus.** La clave de `admin@villa-juan.com` no se conoce. Está en las
-  Environment Variables del recurso de Directus en Coolify (`DIRECTUS_ADMIN_PASSWORD`), pero solo
-  sirve si nunca se cambió desde el panel. Si no, resetear desde la terminal del contenedor:
-  `npx directus users passwd --email admin@villa-juan.com --password '<nueva>'`.
-- **Token estático de admin activo y comprometido**: se pegó en un chat. Borrarlo en cuanto haya
-  acceso al panel (Usuarios → admin → Admin Options → vaciar Token → guardar).
-- Los temp URLs `sslip.io` (sitio y Directus) quedaron en 503. Es esperado — no usarlos.
-- `www` sirve contenido en vez de redirigir al apex. No afecta SEO (el `canonical` apunta al apex);
-  si se prefiere el 301, se activa en Coolify.
+- Nada roto en el sitio.
+- PDFs de los planes son la versión vieja (portada "Trote y Galope"/"Trocha y Galope"); Galope no tiene
+  PDF → sin botón ni página `/villa-planes/galope`. Lo carga CM desde el panel.
+- VJW-17 sigue titulada "Villa Planes: habilitar galería…" (es Museo del Caballo); el renombre por API
+  quedó bloqueado. Está en la lista de CM.
+- Directus no tiene email configurado: sin invitaciones ni "olvidé mi contraseña".
 
 ## Trampas conocidas (no revertir sin leer)
-- `src/assets/images/home/bienvenida_globo.svg` lleva `preserveAspectRatio="none"`. Sin ese atributo
-  el globo ignora el `background-size:100% 100%` y en mobile el texto se sale. **Si se re-exporta el
-  SVG desde el diseño, hay que volver a agregarlo.**
-- `villa-planes.astro:203` — el `div` de la tabla comparativa lleva `relative` y no es decorativo:
-  los `<span class="sr-only">` de las celdas son `position:absolute` y sin ancestro posicionado se
-  escapan del `overflow-x-auto`, estirando el scroll de toda la página (145px en mobile).
-- Los `hero_home_{01,restaurante,coaching,empresariales}.jpg` siguen en uso como portadas de blog y
-  miniaturas de Crónicas. El hero del carrusel usa archivos aparte (`hero_home_evento_*.jpg`).
+- `src/assets/images/home/bienvenida_globo.svg` lleva `preserveAspectRatio="none"`. Si se re-exporta el
+  SVG desde el diseño, hay que volver a agregarlo.
+- `villa-planes.astro`, tabla comparativa: el `div` con `relative overflow-x-auto` no es decorativo
+  (los `sr-only` de las celdas se escapan del scroll sin ancestro posicionado).
+- Guardar el Flow desde el panel con una pestaña vieja pisa cambios hechos por API (pasó: volvió a
+  `force=false` y quedó `Bearer8|…` sin espacio). Tras tocarlo, verificar URL y header por API.
+- La animación de ingreso (`global.css`) anima la imagen `fetchpriority="high"` SOLO con `transform`
+  (nunca opacidad) para no retrasar el LCP; `fill-mode: backwards` para no dejar transform en el header.
+- Las páginas de planes salen de `getPlanes()` (solo planes con PDF); cambiar un `slug` en el CMS cambia
+  la URL.
 
 ## Decisiones pendientes (no bloquean)
-- El slide "Coaching con Caballos" del hero muestra carpas de refrigerio: en el lote de fotos de
-  eventos no hay ninguna con caballos. Conseguir una, o devolverle su foto original.
-- La foto del puesto de parrilla aparece dos veces en `/empresas` (galería de eventos + crónica del
-  barril) y es además el slide 2 del hero.
-- El hero bajó de 2200 a 1872 px de ancho (resolución nativa de las fotos nuevas). Se nota en
-  monitores grandes.
-- La dirección aparece dos veces en el home: tarjetas Horarios/Ubicación de "¡A un pequeño galope de
-  la ciudad!" (`index.astro`) y la franja del bloque del mapa. Definir si se recorta una.
+- Crear para el cliente final un usuario con permisos solo de contenido (hoy solo hay admins).
+- El slide "Coaching con Caballos" del hero muestra carpas: falta una foto con caballos.
 
 ## Próximo paso (uno solo)
-- Recuperar el acceso al panel de Directus (leer `DIRECTUS_ADMIN_PASSWORD` en Coolify y, si no
-  sirve, resetear con `npx directus users passwd`) y, ya adentro, borrar el token estático de admin.
+- Cambiar la clave de `admin@villa-juan.com` (circuló en conversaciones y está en notas) desde el panel
+  de Directus → User Directory → admin → Password, y guardarla solo en el gestor de contraseñas.
