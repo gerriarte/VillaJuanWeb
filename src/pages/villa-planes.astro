@@ -34,25 +34,32 @@ import cartel from '../assets/images/villa-planes/Cartel_Villa_Planes.webp';
 // (no se enlaza el archivo suelto: el visitante vuelve y sigue navegando).
 import { planPdfs, menuPdf } from '../lib/pdfs';
 
-// Tabla comparativa. Marcas coloreadas por columna (verde / rojo / dorado).
+// Tabla comparativa. Marcas coloreadas por columna (verde / naranja / azul / dorado).
 // Colores OSCURECIDOS para contraste AA sobre celda clara (invariante #2): estos mismos
 // colores tiñen el título de columna y los íconos ✓/✗.
 const columns = [
-  { label: 'Trote y Galope', color: '#00811e' },
-  { label: 'Trocha y Galope', color: '#c0360d' },
-  { label: 'Paso Fino', color: '#9a6a0e' },
+  { label: 'Trote', hours: '11:00 a.m. – 6:00 p.m.', adult: '$ 100.000', child: '$ 90.000', color: '#00811e' },
+  { label: 'Trocha', hours: '11:00 a.m. – 6:00 p.m.', adult: '$ 120.000', child: '$ 110.000', color: '#c0360d' },
+  { label: 'Galope', hours: '9:30 a.m. – 6:00 p.m.', adult: '$ 130.000', child: '$ 120.000', color: '#1d5fa8' },
+  { label: 'Paso Fino', hours: '9:30 a.m. – 6:00 p.m.', adult: '$ 150.000', child: '$ 140.000', color: '#9a6a0e' },
 ];
-const rows: { name: string; v: boolean[] }[] = [
-  { name: 'Desayuno de la granja', v: [false, false, true] },
-  { name: 'Espacio exclusivo', v: [true, true, true] },
-  { name: 'Recorrido granja', v: [true, true, true] },
-  { name: 'Taller de ordeño', v: [true, true, true] },
-  { name: 'Almuerzo a la carta', v: [true, true, true] },
-  { name: 'GranjaFest', v: [true, true, true] },
-  { name: 'Feria de juegos tradicionales', v: [true, true, true] },
-  { name: 'Show Villa Juan', v: [true, true, true] },
-  { name: 'Paseo a caballo o Paseo a cuatrimoto', v: [false, true, true] },
+const rows: { name: string; note?: string; v: boolean[] }[] = [
+  { name: 'Desayuno de la granja', v: [false, false, false, true] },
+  { name: 'Refrigerio incluido', v: [false, false, true, true] },
+  { name: 'Espacio exclusivo', v: [true, true, true, true] },
+  { name: 'Recorrido granja', note: '1 hora con guía', v: [true, true, true, true] },
+  { name: 'Taller de ordeño', v: [true, true, true, true] },
+  { name: 'Almuerzo a la carta', note: 'Puedes elegir el plato que más te guste', v: [true, true, true, true] },
+  { name: 'Feria de juegos tradicionales', v: [true, true, true, true] },
+  { name: 'Show Villa Juan', v: [true, true, true, true] },
+  { name: 'Rodeo 360', note: 'Museo Equino', v: [true, true, true, true] },
+  { name: 'Paseo a caballo', v: [false, true, true, true] },
 ];
+// Precios por persona (filas al pie de la tabla).
+const prices = [
+  { name: 'Adulto', key: 'adult' },
+  { name: 'Niño', key: 'child' },
+] as const;
 
 // El arte de la carne al barril — 3 pasos (CMS: cards, section=villaplanes-barril).
 const barrilSteps = await getCards('villaplanes-barril', [
@@ -80,7 +87,7 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
 <Base
   heroHeader
   title="Villa Planes · Pasadías y ecoturismo en Tenjo | Ecogranja Villa Juan"
-  description="Villa Planes: pasadías de ecoturismo en la Sabana de Bogotá. Trote y Galope, Trocha y Galope o Paso Fino, con desayuno de la granja, recorridos, gastronomía al barril y show Villa Juan."
+  description="Villa Planes: pasadías de ecoturismo en la Sabana de Bogotá. Trote, Trocha, Galope o Paso Fino, con desayuno de la granja, recorridos, gastronomía al barril y show Villa Juan."
 >
   <!-- HERO — delicias al barril, imagen full-bleed detrás del header flotante. Las hojas van
        DETRÁS del banner (-z-10, contexto raíz) y asoman por debajo, por detrás de la sección siguiente. -->
@@ -196,7 +203,7 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
 
   <!-- TABLA COMPARATIVA de planes. -->
   <section>
-    <div class="mx-auto max-w-4xl px-4 pb-12">
+    <div class="mx-auto max-w-5xl px-4 pb-12">
       <!-- `relative` NO es decorativo: las celdas llevan <span class="sr-only">, que es
            `position:absolute`. Sin un ancestro posicionado su bloque contenedor es el
            <body>, así que se escapan del scroll horizontal de este div, aterrizan a la
@@ -204,10 +211,10 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
            página. En mobile eso daba 145px de desplazamiento lateral y el header
            —que mide el ancho del viewport— dejaba de acompañar al contenido. -->
       <div class="relative overflow-x-auto">
-        <table class="w-full min-w-[34rem] border-separate border-spacing-1.5 text-center">
+        <table class="w-full min-w-[36rem] border-separate sm:min-w-[42rem] border-spacing-1.5 text-center">
           <thead>
             <tr>
-              <th scope="col" class="w-2/5 rounded-2xl bg-cta-strong px-3 py-3 text-left align-bottom font-display text-2xl leading-none tracking-[2pt] text-white sm:text-3xl">
+              <th scope="col" class="sticky left-0 z-10 w-1/3 rounded-2xl bg-cta-strong px-3 py-3 text-left align-bottom font-display text-2xl leading-none tracking-[2pt] text-white sm:text-3xl">
                 Villa <br /> Planes
               </th>
               {
@@ -218,6 +225,9 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
                     style={`color:${c.color};`}
                   >
                     {c.label}
+                    <span class="mt-1 block font-body text-xs font-bold tracking-normal text-ink/75 sm:text-sm">
+                      {c.hours}
+                    </span>
                   </th>
                 ))
               }
@@ -229,9 +239,10 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
                 <tr>
                   <th
                     scope="row"
-                    class="rounded-2xl bg-cta-strong px-4 py-3 text-left font-body text-base font-bold leading-snug text-white sm:text-lg"
+                    class="sticky left-0 z-10 rounded-2xl bg-cta-strong px-3 py-3 text-left font-body text-sm font-bold leading-snug text-white sm:px-4 sm:text-lg"
                   >
                     {row.name}
+                    {row.note && <span class="block text-xs font-normal text-white/90 sm:text-sm">({row.note})</span>}
                   </th>
                   {
                     row.v.map((ok, i) => (
@@ -257,8 +268,41 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
               ))
             }
           </tbody>
+          <tfoot>
+            <tr>
+              <th scope="colgroup" colspan={columns.length + 1} class="text-on-green pt-4 text-left font-display text-2xl tracking-[2pt] sm:text-3xl">
+                Precios por persona
+              </th>
+            </tr>
+            {
+              prices.map((p) => (
+                <tr>
+                  <th
+                    scope="row"
+                    class="sticky left-0 z-10 rounded-2xl bg-cta-strong px-3 py-3 text-left font-body text-sm font-bold text-white sm:px-4 sm:text-lg"
+                  >
+                    {p.name}
+                  </th>
+                  {
+                    columns.map((c) => (
+                      <td
+                        class="rounded-2xl bg-white/85 px-2 py-3 font-body text-base font-bold ring-1 ring-black/10 sm:text-lg"
+                        style={`color:${c.color};`}
+                      >
+                        {c[p.key]}
+                      </td>
+                    ))
+                  }
+                </tr>
+              ))
+            }
+          </tfoot>
         </table>
       </div>
+
+      <p class="section-title mt-8 text-center tracking-[2pt]">
+        Más que un plan, una experiencia inolvidable.
+      </p>
 
       <!-- Contáctanos -->
       <div class="mt-10 flex justify-center">
