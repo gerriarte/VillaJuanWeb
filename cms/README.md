@@ -54,6 +54,20 @@ Para **agregar** una foto se crea un item; para **quitarla**, se borra o se pasa
 para **reordenar**, se arrastra (campo `sort`). Si una sección queda **vacía**, el sitio vuelve
 a las fotos del repo (la semilla de cada página), así nunca se rompe.
 
+## Videos — `videos`
+
+```bash
+node --env-file=.env cms/videos.mjs   # crea colección, permisos, bookmarks y suma `videos` al Flow de rebuild
+```
+
+Un video por sección: `status` · `section` · `title` · `youtube_url` (cualquier URL de YouTube
+o el ID suelto) · `video_file` (MP4 subido, solo si no hay YouTube) · `poster` (opcional; sin
+portada se usa la miniatura de YouTube). Secciones: `home-video`, `empresas-video`,
+`villaplanes-video`, `museo-video`. Si hay varios publicados en una sección gana el más reciente.
+
+**A diferencia de las galerías, no hay semilla:** sin video publicado la página omite el bloque
+entero (no queda un hueco). YouTube se muestra con fachada: el player carga recién al hacer clic.
+
 ## Producción (futuro)
 
 En el VPS (Coolify) se levanta el mismo `docker-compose`, se apunta `DIRECTUS_URL` a la

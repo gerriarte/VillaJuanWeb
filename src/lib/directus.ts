@@ -66,11 +66,23 @@ export interface DirectusSlide {
   cta_new_tab: boolean | null;
 }
 
+/** Video de una sección (home, empresas…): YouTube o archivo subido, con portada opcional. */
+export interface DirectusVideo {
+  id: number;
+  status: string;
+  section: string;
+  title: string;
+  youtube_url: string | null;
+  video_file: string | null; // id del archivo (mp4/webm)
+  poster: DirectusFile | null;
+}
+
 interface Schema {
   posts: DirectusPost[];
   cards: DirectusCard[];
   gallery: DirectusPhoto[];
   slides: DirectusSlide[];
+  videos: DirectusVideo[];
   // Declarada para que el SDK reconozca `image` como relación y acepte pedir sus
   // campos anidados ({ image: ['id', 'width', 'height'] }).
   directus_files: DirectusFile[];

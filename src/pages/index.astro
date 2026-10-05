@@ -8,7 +8,7 @@ import NotifyDialog from '../components/ui/NotifyDialog.astro';
 import VideoEmbed from '../components/sections/VideoEmbed.astro';
 import SombreroTurntable from '../components/ui/SombreroTurntable.astro';
 import CmsImage from '../components/ui/CmsImage.astro';
-import { getGallery, type Photo } from '../lib/content';
+import { getGallery, getVideo, type Photo } from '../lib/content';
 import { visit, wa, social } from '../lib/site';
 import { planPdfs, menuPdf } from '../lib/pdfs';
 import fuenteCaballos from '../assets/images/home/fuente_caballos.jpg';
@@ -19,7 +19,6 @@ import postBarril from '../assets/images/home/hero_home_restaurante.jpg';
 import horseImg from '../assets/images/home/bienvenida_horse.svg';
 import globoImg from '../assets/images/home/bienvenida_globo.svg';
 import expBanner from '../assets/images/home/ecogranja_experiencia_transformadora.svg';
-import videoPoster from '../assets/images/home/video_comercial_poster.jpg';
 import ramaImg from '../assets/images/home/rama_oferta_tight.webp';
 import celebracionesOferta from '../assets/images/home/celebraciones_oferta.svg';
 import empresasOferta from '../assets/images/home/empresas_oferta.svg';
@@ -138,6 +137,8 @@ const galeriaSeed: Photo[] = [
   { image: { kind: 'local', asset: car03, alt: 'Anfitriones de Villa Juan dando la bienvenida en la entrada del Granja Fest' } },
 ];
 const galeria = await getGallery('home-galeria', galeriaSeed);
+// Video del home: solo si hay uno publicado en el CMS (section home-video).
+const homeVideo = await getVideo('home-video');
 const galPos = {
   center: 'transform:translate(-50%,-50%) scale(1);z-index:30;opacity:1;filter:none;',
   right: 'transform:translate(-6%,-50%) scale(0.82) rotateY(-18deg);z-index:20;opacity:0.78;filter:brightness(0.82);',
@@ -203,14 +204,15 @@ const galInit = galeria.map((_, i) =>
     </div>
   </section>
 
-  <!-- VIDEO — Fachada: el player de YouTube se carga al hacer clic. -->
-  <section class="mx-auto max-w-4xl px-4 pb-16">
-    <VideoEmbed
-      id="rUnbtav3Nlo"
-      title="Turismo cerca a Bogotá · Ecogranja Villa Juan — parque agroturístico para familias"
-      poster={videoPoster}
-    />
-  </section>
+  <!-- VIDEO — editable en el CMS (colección `videos`, section `home-video`). Sin video
+       publicado, el bloque no se muestra. YouTube carga con fachada (player al hacer clic). -->
+  {
+    homeVideo && (
+      <section class="mx-auto max-w-4xl px-4 pb-16">
+        <VideoEmbed video={homeVideo} />
+      </section>
+    )
+  }
 
   <!-- EXPLORA LO QUE OFRECEMOS — ofertas sobre una rama que sangra a la izquierda. -->
   <section class="overflow-hidden pb-16">

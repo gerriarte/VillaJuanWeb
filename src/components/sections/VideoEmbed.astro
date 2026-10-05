@@ -1,31 +1,50 @@
 ---
 /**
- * VideoEmbed — video de YouTube con FACHADA (patrón lite-embed).
+ * VideoEmbed — video de una sección, editable desde el CMS (colección `videos`).
  *
- * Por defecto NO se carga nada de YouTube: solo el poster local (optimizado por
- * astro:assets) y un botón de play. El <iframe> del player se inserta recién al
- * hacer clic, así el home no arrastra el ~1 MB de JS de terceros del player ni
- * pega requests a Google antes de que el usuario los pida (invariantes #4 y #6).
+ * · YouTube → FACHADA (patrón lite-embed): por defecto NO se carga nada de YouTube,
+ *   solo la portada y un botón de play. El <iframe> del player se inserta recién al
+ *   hacer clic, así la página no arrastra el ~1 MB de JS del player ni pega requests
+ *   a Google antes de que el usuario los pida (invariantes #4 y #6).
+ *   Dominio: youtube-nocookie.com (sin cookies de tracking hasta la reproducción).
+ * · Archivo subido → <video> nativo con preload="none" (no baja nada hasta el play).
  *
- * Dominio: youtube-nocookie.com (sin cookies de tracking hasta la reproducción).
+ * Portada: la del CMS; si no hay, la miniatura de YouTube (o el primer frame del archivo).
  */
-import { Image } from 'astro:assets';
+import CmsImage from '../ui/CmsImage.astro';
+import type { Video } from '../../lib/content';
+import { assetUrl } from '../../lib/directus';
 
 interface Props {
-  /** ID del video de YouTube (el `v=` de la URL). */
-  id: string;
-  /** Título real del video: va en el aria-label del play y en el title del iframe. */
-  title: string;
-  /** Poster local (frame del video), servido en WebP responsive. */
-  poster: ImageMetadata;
+  video: Video;
 }
 
-const { id, title, poster } = Astro.props;
+const { video } = Astro.props;
+const { title, youtubeId, fileUrl, poster } = video;
+const posterSrc =
+  poster?.kind === 'directus' ? assetUrl(poster.id, { width: 1280 }) : poster?.asset.src;
+const ytThumb = youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : undefined;
+const frame =
+  'relative aspect-video w-full overflow-hidden rounded-3xl bg-black shadow-2xl ring-4 ring-white/30';
 ---
 
+{
+  !youtubeId && fileUrl ? (
+    <div class={frame}>
+      <video
+        src={fileUrl}
+        poster={posterSrc}
+        controls
+        preload="none"
+        playsinline
+        title={title}
+        class="no-reveal h-full w-full object-cover"
+      />
+    </div>
+  ) : (
 <div
   class="yt-facade relative aspect-video w-full overflow-hidden rounded-3xl bg-black shadow-2xl ring-4 ring-white/30"
-  data-yt={id}
+  data-yt={youtubeId}
   data-yt-title={title}
 >
   <button
@@ -35,14 +54,18 @@ const { id, title, poster } = Astro.props;
   >
     <!-- no-reveal: el poster no entra en el reveal por scroll (se movería dentro
          del marco recortado). El play sí tiene su micro-interacción en hover. -->
-    <Image
-      src={poster}
-      alt=""
-      widths={[640, 960, 1280]}
-      sizes="(min-width: 1024px) 56rem, 100vw"
-      loading="lazy"
-      class="no-reveal h-full w-full object-cover"
-    />
+    {
+      poster ? (
+        <CmsImage
+          image={{ ...poster, alt: '' }}
+          widths={[640, 960, 1280]}
+          sizes="(min-width: 1024px) 56rem, 100vw"
+          class="no-reveal h-full w-full object-cover"
+        />
+      ) : (
+        <img src={ytThumb} alt="" width="480" height="360" loading="lazy" class="no-reveal h-full w-full object-cover" />
+      )
+    }
     <span
       class="pointer-events-none absolute inset-0 bg-black/25 transition group-hover:bg-black/10"
       aria-hidden="true"></span>
@@ -56,6 +79,8 @@ const { id, title, poster } = Astro.props;
     </span>
   </button>
 </div>
+  )
+}
 
 <script>
   // Al primer clic se reemplaza la fachada por el player real (autoplay, porque

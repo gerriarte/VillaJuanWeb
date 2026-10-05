@@ -2,7 +2,7 @@
 // Colección única `cards` en Directus, agrupada por `section`. Cada página pasa su
 // semilla local como fallback, así el sitio compila aunque el CMS no responda.
 import type { ImageMetadata } from 'astro';
-import { directus, readItems } from './directus';
+import { directus, readItems, assetRaw } from './directus';
 
 export type CardImage =
   | { kind: 'directus'; id: string | null; alt: string }
@@ -148,4 +148,56 @@ export async function getSlides(section: string, seed: Slide[]): Promise<Slide[]
     }
   }
   return seed;
+}
+
+/** Video de una sección. Si el CMS no tiene uno publicado, la sección no se muestra. */
+export interface Video {
+  title: string;
+  /** ID de YouTube (se reproduce con fachada: el player carga recién al hacer clic). */
+  youtubeId?: string;
+  /** Archivo subido al CMS (se reproduce con <video> nativo). */
+  fileUrl?: string;
+  /** Portada. Sin portada: miniatura de YouTube, o el primer frame del archivo. */
+  poster: Media | null;
+}
+
+/**
+ * ID de YouTube desde lo que pegue el cliente: el ID suelto o cualquier URL
+ * (watch?v=, youtu.be/, shorts/, embed/, live/). Devuelve undefined si no se reconoce.
+ */
+export function youtubeId(input: string | null | undefined): string | undefined {
+  const v = input?.trim();
+  if (!v) return undefined;
+  if (/^[\w-]{11}$/.test(v)) return v;
+  const m = v.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/);
+  return m?.[1];
+}
+
+/**
+ * Video de una sección (colección `videos`, agrupada por `section`: home-video…).
+ * Sin semilla local a propósito: si no hay video publicado (o el CMS no responde),
+ * devuelve null y la página omite el bloque entero.
+ */
+export async function getVideo(section: string): Promise<Video | null> {
+  if (!directus) return null;
+  try {
+    const rows = await directus.request(
+      readItems('videos', {
+        filter: { status: { _eq: 'published' }, section: { _eq: section } },
+        sort: ['-id'],
+        fields: ['title', 'youtube_url', 'video_file', { poster: ['id', 'width', 'height'] }],
+        limit: 1,
+      }),
+    );
+    const r = rows[0];
+    if (!r) return null;
+    const yt = youtubeId(r.youtube_url);
+    const fileUrl = r.video_file ? assetRaw(r.video_file) : undefined;
+    // Un item sin video válido no se muestra (mejor nada que un reproductor roto).
+    if (!yt && !fileUrl) return null;
+    return { title: r.title, youtubeId: yt, fileUrl, poster: fileMedia(r.poster, '') };
+  } catch (e) {
+    console.warn(`[videos:${section}] Directus no disponible, se omite el video:`, (e as Error).message);
+    return null;
+  }
 }
