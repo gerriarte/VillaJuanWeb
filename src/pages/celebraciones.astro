@@ -5,8 +5,8 @@ import LeafDivider from '../components/layout/LeafDivider.astro';
 import { wa } from '../lib/site';
 import heroImg from '../assets/images/celebraciones/Banner_Celebraciones.jpg';
 import celeHorse from '../assets/images/celebraciones/Celebraciones_horse.png';
-import imgCumpleanos from '../assets/images/celebraciones/Cumpleaños_Villa_Juan.jpg';
-import imgXV from '../assets/images/celebraciones/xvanos_image.png';
+import imgCumpleanos from '../assets/images/celebraciones/cumpleanos_salon.jpg';
+import imgXV from '../assets/images/celebraciones/xv_anos_caballo.jpg';
 import imgBoda from '../assets/images/celebraciones/boda_campestre_image.png';
 import imgReencuentro from '../assets/images/celebraciones/Reencuentros_Familiares.jpg';
 import imgComunion from '../assets/images/celebraciones/Primeras_comuniones.jpg';
@@ -16,10 +16,10 @@ import { assetUrl } from '../lib/directus';
 // Semilla local (fallback). En Directus: colección `cards`, section=celebraciones.
 const seed: Card[] = [
   { title: 'Cumpleaños', note: 'Para grupos de 10 personas en adelante*', imageRight: true,
-    image: { kind: 'local', asset: imgCumpleanos, alt: 'Torta de cumpleaños y brindis al aire libre en Villa Juan' },
+    image: { kind: 'local', asset: imgCumpleanos, alt: 'Salón campestre con mesas de madera y luces colgantes, listo para un cumpleaños en Villa Juan' },
     body: 'Celebra tu cumpleaños en Ecogranja Villa Juan y vive una experiencia única rodeada de naturaleza, diversión y momentos inolvidables. Disfruta de amplios espacios al aire libre, ideales para compartir con familiares y amigos, y aprovecha nuestras promociones especiales: recibe la torta para todo el grupo y la decoración del espacio completamente gratis, o elige el pasadía gratuito para el cumpleañero. Todo en un entorno campestre perfecto para celebrar, disfrutar y crear recuerdos especiales.' },
   { title: 'XV Años y Grados', imageRight: false,
-    image: { kind: 'local', asset: imgXV, alt: 'Celebración de XV años iluminada en la noche campestre' },
+    image: { kind: 'local', asset: imgXV, alt: 'Quinceañera con vestido rosa junto a un caballo en los jardines de Villa Juan' },
     body: 'El lugar perfecto para una celebración vibrante y llena de estilo. Espacios abiertos para fotos increíbles y zonas de fiesta seguras y amplias.' },
   { title: 'Bodas Campestres', imageRight: true,
     image: { kind: 'local', asset: imgBoda, alt: 'Ceremonia de boda campestre al atardecer en Villa Juan' },

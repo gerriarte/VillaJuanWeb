@@ -208,10 +208,10 @@ async function seedCards() {
 const CARDS = [
   // ── Celebraciones ──
   { section: 'celebraciones', title: 'Cumpleaños', note: 'Para grupos de 10 personas en adelante*', imageRight: true,
-    image: 'src/assets/images/celebraciones/Cumpleaños_Villa_Juan.jpg',
+    image: 'src/assets/images/celebraciones/cumpleanos_salon.jpg',
     body: 'Celebra tu cumpleaños en Ecogranja Villa Juan y vive una experiencia única rodeada de naturaleza, diversión y momentos inolvidables. Disfruta de amplios espacios al aire libre, ideales para compartir con familiares y amigos, y aprovecha nuestras promociones especiales: recibe la torta para todo el grupo y la decoración del espacio completamente gratis, o elige el pasadía gratuito para el cumpleañero. Todo en un entorno campestre perfecto para celebrar, disfrutar y crear recuerdos especiales.' },
   { section: 'celebraciones', title: 'XV Años y Grados', imageRight: false,
-    image: 'src/assets/images/celebraciones/xvanos_image.png',
+    image: 'src/assets/images/celebraciones/xv_anos_caballo.jpg',
     body: 'El lugar perfecto para una celebración vibrante y llena de estilo. Espacios abiertos para fotos increíbles y zonas de fiesta seguras y amplias.' },
   { section: 'celebraciones', title: 'Bodas Campestres', imageRight: true,
     image: 'src/assets/images/celebraciones/boda_campestre_image.png',
