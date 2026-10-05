@@ -15,6 +15,8 @@ import barril2 from '../assets/images/villa-planes/Sazonado_Artesanal.jpg';
 import barril3 from '../assets/images/villa-planes/Cocción_al_barril.jpg';
 import barril4 from '../assets/images/villa-planes/Espectaculo_en_vivo.jpg';
 import tallerImg from '../assets/images/villa-planes/taller.webp';
+// Short del canal (9:16) que antes estaba en Empresas: póster = frame del propio short.
+import shortVillaPlanes from '../assets/images/villa-planes/short-villa-planes.jpg';
 // Platos de la carta (mini galería sobre "El Arte de nuestra Carne al Barril").
 // Originales: PNG de 5472×3648 (~35 MB c/u); acá entran ya reducidos a 1600px WebP.
 import comidaChurrasco from '../assets/images/villa-planes/comida/churrasco.webp';
@@ -368,6 +370,7 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
         <MediaGallery
           id="galeria-comida"
           photos={comidaGaleria}
+          shorts={[{ id: 'Y5raiVfRIjs', title: 'Así son los Villa Planes', poster: shortVillaPlanes }]}
           gridClass="grid-cols-2 sm:grid-cols-3"
           sizes="(min-width: 1024px) 22rem, (min-width: 768px) 30vw, 45vw"
         />
