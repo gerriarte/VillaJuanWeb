@@ -58,5 +58,5 @@ _actualizado: 2026-10-05_
 - El slide "Coaching con Caballos" del hero muestra carpas: falta una foto con caballos.
 
 ## Próximo paso (uno solo)
-- Cambiar la clave de `admin@villa-juan.com` (circuló en conversaciones y está en notas) desde el panel
-  de Directus → User Directory → admin → Password, y guardarla solo en el gestor de contraseñas.
+- Cuando CM avise que cargó los PDFs nuevos de los planes, verificar en `https://villa-juan.com/villa-planes`
+  que Galope tenga botón y página (`/villa-planes/galope`) y que los PDFs embebidos sean los nuevos.
