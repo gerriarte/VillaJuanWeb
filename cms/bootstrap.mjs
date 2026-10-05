@@ -287,9 +287,6 @@ const CARDS = [
     body: 'Recorre los paisajes de Tenjo sobre dos ruedas en una ruta diseñada para desconectarte y respirar aire puro. Es la actividad ideal para quienes buscan combinar deporte, aventura y naturaleza, explorando senderos rurales de forma dinámica y divertida en familia o con amigos. Atrévete a pedalear por caminos inolvidables mientras descubres la biodiversidad local y disfrutas del mejor turismo activo cerca de la ciudad.' },
 
   // ── Villa Planes · barril (pasos) ──
-  { section: 'villaplanes-barril', title: 'Selección y Maduración', imageRight: false,
-    image: 'src/assets/images/villa-planes/Seleccion_y_Maduracion.png',
-    body: 'Elegimos cortes de alta calidad con una maduración controlada. Este proceso natural intensifica el sabor y garantiza una textura excepcionalmente tierna antes de tocar el fuego.' },
   { section: 'villaplanes-barril', title: 'Sazonado Artesanal', imageRight: false,
     image: 'src/assets/images/villa-planes/Sazonado_Artesanal.jpg',
     body: 'Aplicamos una mezcla de especias seleccionadas que realzan el perfil cárnico sin opacarlo, preparando la pieza para su transformación en el ahumador.' },

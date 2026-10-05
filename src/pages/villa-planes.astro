@@ -11,7 +11,6 @@ import heroImg from '../assets/images/villa-planes/hero_comida_al_barril.webp';
 import tituloVP from '../assets/images/villa-planes/Conoce_Villa_Planes.webp';
 import verMenu from '../assets/images/villa-planes/vermenu.png';
 import reservaYa from '../assets/images/villa-planes/Reserva.webp';
-import barril1 from '../assets/images/villa-planes/Seleccion_y_Maduracion.png';
 import barril2 from '../assets/images/villa-planes/Sazonado_Artesanal.jpg';
 import barril3 from '../assets/images/villa-planes/Cocción_al_barril.jpg';
 import barril4 from '../assets/images/villa-planes/Espectaculo_en_vivo.jpg';
@@ -55,10 +54,8 @@ const rows: { name: string; v: boolean[] }[] = [
   { name: 'Paseo a caballo o Paseo a cuatrimoto', v: [false, true, true] },
 ];
 
-// El arte de la carne al barril — 4 pasos (CMS: cards, section=villaplanes-barril).
+// El arte de la carne al barril — 3 pasos (CMS: cards, section=villaplanes-barril).
 const barrilSteps = await getCards('villaplanes-barril', [
-  { title: 'Selección y Maduración', imageRight: false, image: { kind: 'local', asset: barril1, alt: 'Selección y Maduración' },
-    body: 'Elegimos cortes de alta calidad con una maduración controlada. Este proceso natural intensifica el sabor y garantiza una textura excepcionalmente tierna antes de tocar el fuego.' },
   { title: 'Sazonado Artesanal', imageRight: false, image: { kind: 'local', asset: barril2, alt: 'Sazonado Artesanal' },
     body: 'Aplicamos una mezcla de especias seleccionadas que realzan el perfil cárnico sin opacarlo, preparando la pieza para su transformación en el ahumador.' },
   { title: 'Cocción al Barril', imageRight: false, image: { kind: 'local', asset: barril3, alt: 'Cocción al Barril' },
@@ -120,8 +117,8 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
         <p>
           ¿Buscas escapar de la rutina y respirar aire puro sin pasar horas en el tráfico? En
           <strong class="text-cta-strong">Eco Granja Villa Juan</strong>, ubicada en Tenjo,
-          Cundinamarca, diseñamos la escapada perfecta para ti. A solo unos minutos del norte de
-          Bogotá, te espera un espacio único rodeado de naturaleza, aventura y tranquilidad.
+          Cundinamarca, diseñamos la escapada perfecta para ti. A solo unos minutos del noroccidente
+          de Bogotá, te espera un espacio único rodeado de naturaleza, aventura y tranquilidad.
         </p>
         <p>
           Nuestros <strong class="text-cta-strong">Villa Planes</strong> están pensados para quienes
@@ -328,7 +325,7 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
           id="galeria-comida"
           photos={comidaGaleria}
           gridClass="grid-cols-2 sm:grid-cols-3"
-          sizes="(min-width: 1024px) 22rem, (min-width: 640px) 30vw, 45vw"
+          sizes="(min-width: 1024px) 22rem, (min-width: 768px) 30vw, 45vw"
         />
       </div>
 
@@ -342,22 +339,22 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
         cada bocado.
       </p>
 
-      <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="mt-10 grid gap-5 md:grid-cols-3">
         {
           barrilSteps.map((s) => (
             <article class="flex flex-col overflow-hidden rounded-3xl bg-surface p-3 text-center shadow-lg [text-shadow:none]">
               {s.image.kind === 'directus' ? (
-                <img src={assetUrl(s.image.id, { width: 560 })} alt={s.image.alt} loading="lazy" class="h-36 w-full rounded-2xl object-cover" />
+                <img src={assetUrl(s.image.id, { width: 720 })} alt={s.image.alt} loading="lazy" class="h-44 w-full rounded-2xl object-cover" />
               ) : (
                 <Image
                   src={s.image.asset}
                   alt={s.image.alt}
-                  widths={[280, 400, 560]}
-                  sizes="(min-width: 1024px) 16rem, (min-width: 640px) 40vw, 90vw"
+                  widths={[280, 400, 560, 720]}
+                  sizes="(min-width: 1024px) 22rem, (min-width: 768px) 30vw, 90vw"
                   format="webp"
                   quality={72}
                   loading="lazy"
-                  class="h-36 w-full rounded-2xl object-cover"
+                  class="h-44 w-full rounded-2xl object-cover"
                 />
               )}
               <h3 class="mt-4 card-title">{s.title}</h3>
