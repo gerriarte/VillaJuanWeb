@@ -173,31 +173,70 @@ export function youtubeId(input: string | null | undefined): string | undefined 
   return m?.[1];
 }
 
+type VideoRow = {
+  title: string;
+  youtube_url: string | null;
+  video_file: string | null;
+  poster: { id: string; width: number | null; height: number | null } | null;
+};
+
+function toVideo(r: VideoRow): Video | null {
+  const yt = youtubeId(r.youtube_url);
+  const fileUrl = r.video_file ? assetRaw(r.video_file) : undefined;
+  // Un item sin video válido no se muestra (mejor nada que un reproductor roto).
+  if (!yt && !fileUrl) return null;
+  return { title: r.title, youtubeId: yt, fileUrl, poster: fileMedia(r.poster, '') };
+}
+
 /**
- * Video de una sección (colección `videos`, agrupada por `section`: home-video…).
- * Sin semilla local a propósito: si no hay video publicado (o el CMS no responde),
- * devuelve null y la página omite el bloque entero.
+ * Videos de una sección (colección `videos`, agrupada por `section`), del más reciente
+ * al más viejo. Si el CMS responde, manda el CMS: sin videos publicados devuelve [] y la
+ * página omite el bloque. `seed` solo se usa si el CMS no está disponible.
  */
-export async function getVideo(section: string): Promise<Video | null> {
-  if (!directus) return null;
+export async function getVideos(section: string, seed: Video[] = []): Promise<Video[]> {
+  if (!directus) return seed;
   try {
     const rows = await directus.request(
       readItems('videos', {
         filter: { status: { _eq: 'published' }, section: { _eq: section } },
         sort: ['-id'],
         fields: ['title', 'youtube_url', 'video_file', { poster: ['id', 'width', 'height'] }],
-        limit: 1,
+        limit: -1,
       }),
     );
-    const r = rows[0];
-    if (!r) return null;
-    const yt = youtubeId(r.youtube_url);
-    const fileUrl = r.video_file ? assetRaw(r.video_file) : undefined;
-    // Un item sin video válido no se muestra (mejor nada que un reproductor roto).
-    if (!yt && !fileUrl) return null;
-    return { title: r.title, youtubeId: yt, fileUrl, poster: fileMedia(r.poster, '') };
+    return rows.map(toVideo).filter((v): v is Video => v !== null);
   } catch (e) {
-    console.warn(`[videos:${section}] Directus no disponible, se omite el video:`, (e as Error).message);
-    return null;
+    console.warn(`[videos:${section}] Directus no disponible, usando semilla local:`, (e as Error).message);
+    return seed;
   }
+}
+
+/** El video más reciente de una sección, o null (la página omite el bloque). */
+export async function getVideo(section: string, seed: Video | null = null): Promise<Video | null> {
+  const list = await getVideos(section, seed ? [seed] : []);
+  return list[0] ?? null;
+}
+
+/**
+ * Banner (foto principal) de una página. Colección `banners`, una por `section`.
+ * Sin banner publicado (o sin CMS) se usa la foto del repo: un hero nunca queda vacío.
+ */
+export async function getBanner(section: string, seed: Media): Promise<Media> {
+  if (directus) {
+    try {
+      const rows = await directus.request(
+        readItems('banners', {
+          filter: { status: { _eq: 'published' }, section: { _eq: section } },
+          sort: ['-id'],
+          fields: ['alt', { image: ['id', 'width', 'height'] }],
+          limit: 1,
+        }),
+      );
+      const media = rows[0] ? fileMedia(rows[0].image, rows[0].alt || seed.alt) : null;
+      if (media) return media;
+    } catch (e) {
+      console.warn(`[banners:${section}] Directus no disponible, usando semilla local:`, (e as Error).message);
+    }
+  }
+  return seed;
 }

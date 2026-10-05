@@ -1,4 +1,5 @@
 ---
+import CmsImage from '../../components/ui/CmsImage.astro';
 import Base from '../../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import LeafDivider from '../../components/layout/LeafDivider.astro';
@@ -7,6 +8,10 @@ import { getPosts, categories } from '../../lib/blog';
 import { assetUrl } from '../../lib/directus';
 
 const posts = await getPosts();
+import { getBanner } from '../../lib/content';
+
+// Banner principal: editable en Directus (banners → blog-hero); sin CMS, el del repo.
+const heroBanner = await getBanner('blog-hero', { kind: 'local', asset: banner, alt: 'Recorriendo la Ecogranja Villa Juan en cuatrimoto' });
 ---
 
 <Base
@@ -17,12 +22,10 @@ const posts = await getPosts();
   <!-- HERO — banner full-bleed (header flota encima). Las hojas van DETRÁS del banner
        (-z-10, contexto raíz) y asoman por debajo, por detrás de la sección siguiente. -->
   <section class="relative">
-    <Image
-      src={banner}
-      alt="Recorriendo la Ecogranja Villa Juan en cuatrimoto"
+    <CmsImage
+      image={heroBanner}
       widths={[768, 1280, 1920]}
       sizes="100vw"
-      format="webp"
       quality={72}
       loading="eager"
       fetchpriority="high"

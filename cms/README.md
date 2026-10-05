@@ -57,16 +57,48 @@ a las fotos del repo (la semilla de cada página), así nunca se rompe.
 ## Videos — `videos`
 
 ```bash
-node --env-file=.env cms/videos.mjs   # crea colección, permisos, bookmarks y suma `videos` al Flow de rebuild
+node --env-file=.env cms/videos.mjs   # crea colección, permisos, bookmarks, siembra y suma `videos` al Flow
 ```
 
-Un video por sección: `status` · `section` · `title` · `youtube_url` (cualquier URL de YouTube
-o el ID suelto) · `video_file` (MP4 subido, solo si no hay YouTube) · `poster` (opcional; sin
-portada se usa la miniatura de YouTube). Secciones: `home-video`, `empresas-video`,
-`villaplanes-video`, `museo-video`. Si hay varios publicados en una sección gana el más reciente.
+`status` · `section` · `title` · `youtube_url` (cualquier URL de YouTube o el ID suelto) ·
+`video_file` (MP4 subido, solo si no hay YouTube) · `poster` (opcional; sin portada se usa la
+miniatura de YouTube). Secciones:
 
-**A diferencia de las galerías, no hay semilla:** sin video publicado la página omite el bloque
-entero (no queda un hueco). YouTube se muestra con fachada: el player carga recién al hacer clic.
+| Sección | Dónde | Sin video publicado |
+|---|---|---|
+| `home-video` | bloque de video del home | no se muestra |
+| `empresas-video` | loop de fondo del banner de Empresas | solo la foto, sin botón |
+| `empresas-coaching-video` | video destacado de la galería de coaching | no se muestra |
+| `villaplanes-short` | shorts verticales junto a los platos (varios) | no se muestran |
+| `museo-video` | Museo del Caballo, en el home | no se muestra |
+
+Si hay varios publicados en una sección de un solo video, gana el más reciente. La semilla
+local del código solo se usa si el CMS **no responde**: si el cliente borra o despublica un
+video, desaparece del sitio. YouTube se muestra con fachada (el player carga al hacer clic).
+
+## Banners, planes y documentos — `cms/editable.mjs`
+
+```bash
+node --env-file=.env cms/editable.mjs  # crea colecciones, permisos, bookmarks, siembra y actualiza el Flow
+```
+
+- **`banners`** — foto principal de cada página (`empresas-hero`, `celebraciones-hero`,
+  `colegios-hero`, `villaplanes-hero`, `blog-hero`) y la foto del Museo (`home-museo`).
+  `status` · `section` · `image` · `alt`. Sin banner publicado, la página usa la foto del repo.
+  Son el LCP de cada página: el sitio hace `preconnect` al CMS y las pide `eager` + `fetchpriority=high`.
+- **`planes`** — columnas de la tabla de Villa Planes: `name` · `slug` (URL `/villa-planes/<slug>`;
+  no cambiarlo una vez publicado) · `hours` · `price_adult` / `price_child` (enteros, en pesos) ·
+  `color` (oscuro: contraste AA) · `description` · `pdf`. Sin PDF, el plan sale en la tabla pero
+  sin botón ni página. Orden = arrastrar (`sort`).
+- **`plan_servicios`** — filas de la tabla: `name` · `note` · `planes` (casillas con los slugs
+  que lo incluyen). Las casillas se arman con los planes del CMS: si se agrega un plan, volver a
+  correr el script para que aparezca como opción.
+- **`documentos`** — PDFs sueltos por `key` (hoy `menu`).
+- **`gallery`** — suma la sección `museo-galeria` (Museo del Caballo; vacía = no se muestra).
+
+Los PDF del CMS se copian al sitio en el build (`src/pages/pdf/[name].ts` → `/pdf/*.pdf`), así el
+visor los embebe desde el mismo origen. El script también deja el Flow de rebuild escuchando
+todas las colecciones de contenido (`create`, `update` y `delete`).
 
 ## Producción (futuro)
 

@@ -1,9 +1,10 @@
 ---
+import CmsImage from '../components/ui/CmsImage.astro';
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import LeafDivider from '../components/layout/LeafDivider.astro';
 import { wa } from '../lib/site';
-import { getCards, getGallery, type Photo } from '../lib/content';
+import { getCards, getGallery, getBanner, getVideos, type Photo } from '../lib/content';
 import MediaGallery from '../components/sections/MediaGallery.astro';
 import { assetUrl } from '../lib/directus';
 // Hero: picada al barril vista desde arriba (original PNG de 4992×3328, 36 MB → 2400px WebP).
@@ -31,32 +32,39 @@ import contactanos from '../assets/images/home/contactanos.png';
 // lo que hacía que el borde superior de la madera se moviera con el ancho del viewport).
 import tronco from '../assets/images/villa-planes/Tronco_fondo_madera.webp';
 import cartel from '../assets/images/villa-planes/Cartel_Villa_Planes.webp';
-// Planes como gráficos de texto (Sunrise, por color). Orden del mockup: Trote, Trocha, Paso Fino.
-// Cada botón lleva a la página del plan, donde el PDF se ve EMBEBIDO con header y footer
-// (no se enlaza el archivo suelto: el visitante vuelve y sigue navegando).
-import { planPdfs, menuPdf } from '../lib/pdfs';
+// Planes, servicios y PDFs: editables en Directus (colecciones `planes` y `plan_servicios`;
+// ver src/lib/planes.ts). Cada botón lleva a la página del plan, donde el PDF se ve EMBEBIDO
+// con header y footer (no se enlaza el archivo suelto: el visitante vuelve y sigue navegando).
+import { menuPdf, planGradient } from '../lib/pdfs';
+import { getPlanes, getServicios, formatPrice } from '../lib/planes';
 
-// Tabla comparativa. Marcas coloreadas por columna (verde / naranja / azul / dorado).
-// Colores OSCURECIDOS para contraste AA sobre celda clara (invariante #2): estos mismos
-// colores tiñen el título de columna y los íconos ✓/✗.
-const columns = [
-  { label: 'Trote', hours: '11:00 a.m. – 6:00 p.m.', adult: '$ 100.000', child: '$ 90.000', color: '#00811e' },
-  { label: 'Trocha', hours: '11:00 a.m. – 6:00 p.m.', adult: '$ 120.000', child: '$ 110.000', color: '#c0360d' },
-  { label: 'Galope', hours: '9:30 a.m. – 6:00 p.m.', adult: '$ 130.000', child: '$ 120.000', color: '#1d5fa8' },
-  { label: 'Paso Fino', hours: '9:30 a.m. – 6:00 p.m.', adult: '$ 150.000', child: '$ 140.000', color: '#9a6a0e' },
-];
-const rows: { name: string; note?: string; v: boolean[] }[] = [
-  { name: 'Desayuno de la granja', v: [false, false, false, true] },
-  { name: 'Refrigerio incluido', v: [false, false, true, true] },
-  { name: 'Espacio exclusivo', v: [true, true, true, true] },
-  { name: 'Recorrido granja', note: '1 hora con guía', v: [true, true, true, true] },
-  { name: 'Taller de ordeño', v: [true, true, true, true] },
-  { name: 'Almuerzo a la carta', note: 'Puedes elegir el plato que más te guste', v: [true, true, true, true] },
-  { name: 'Feria de juegos tradicionales', v: [true, true, true, true] },
-  { name: 'Show Villa Juan', v: [true, true, true, true] },
-  { name: 'Rodeo 360', note: 'Museo Equino', v: [true, true, true, true] },
-  { name: 'Paseo a caballo', v: [false, true, true, true] },
-];
+const planes = await getPlanes();
+const planesConPdf = planes.filter((p) => p.href);
+
+// Tabla comparativa. Marcas coloreadas por columna (el color de cada plan).
+// Colores OSCUROS para contraste AA sobre celda clara (invariante #2): estos mismos
+// colores tiñen el título de columna, los íconos ✓/✗ y los precios.
+const columns = planes.map((p) => ({
+  label: p.name,
+  hours: p.hours,
+  adult: formatPrice(p.priceAdult),
+  child: formatPrice(p.priceChild),
+  color: p.color,
+}));
+const rows = (await getServicios()).map((sv) => ({
+  name: sv.name,
+  note: sv.note,
+  v: planes.map((p) => sv.planes.includes(p.slug)),
+}));
+
+// Short del canal (9:16): editable en Directus (videos → villaplanes-short).
+const shorts = (
+  await getVideos('villaplanes-short', [
+    { title: 'Así son los Villa Planes', youtubeId: 'Y5raiVfRIjs', poster: { kind: 'local', asset: shortVillaPlanes, alt: '' } },
+  ])
+)
+  .filter((v) => v.youtubeId)
+  .map((v) => ({ id: v.youtubeId!, title: v.title, poster: v.poster }));
 // Precios por persona (filas al pie de la tabla).
 const prices = [
   { name: 'Adulto', key: 'adult' },
@@ -84,6 +92,9 @@ const comidaSeed: Photo[] = [
   { image: { kind: 'local', asset: comidaFiambre, alt: 'Fiambre campesino servido sobre hoja de plátano' } },
 ];
 const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
+
+// Banner principal: editable en Directus (banners → villaplanes-hero); sin CMS, el del repo.
+const heroBanner = await getBanner('villaplanes-hero', { kind: 'local', asset: heroImg, alt: 'Manos compartiendo una picada de empanadas, patacones, chorizo y salsas en la mesa de madera de la Ecogranja Villa Juan' });
 ---
 
 <Base
@@ -94,12 +105,10 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
   <!-- HERO — delicias al barril, imagen full-bleed detrás del header flotante. Las hojas van
        DETRÁS del banner (-z-10, contexto raíz) y asoman por debajo, por detrás de la sección siguiente. -->
   <section class="relative">
-    <Image
-      src={heroImg}
-      alt="Manos compartiendo una picada de empanadas, patacones, chorizo y salsas en la mesa de madera de la Ecogranja Villa Juan"
+    <CmsImage
+      image={heroBanner}
       widths={[768, 1280, 1920, 2400]}
       sizes="100vw"
-      format="webp"
       quality={82}
       loading="eager"
       fetchpriority="high"
@@ -155,24 +164,15 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
           </p>
           <ul class="mx-auto mt-5 flex max-w-xs flex-col gap-3 md:mx-0 md:ml-auto">
             {
-              planPdfs.map((p) => (
+              planesConPdf.map((p) => (
                 <li>
                   <a
                     href={p.href}
-                    aria-label={`Ver el Villa Plan ${p.title} (PDF)`}
-                    style={`background-image:${p.grad};`}
-                    class="flex w-full items-center justify-center rounded-full px-6 py-3 shadow-lg ring-1 ring-black/10 transition hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    aria-label={`Ver el Villa Plan ${p.name} (PDF)`}
+                    style={`background-image:${planGradient(p.color)};`}
+                    class="flex w-full items-center justify-center rounded-full px-6 py-3 font-display text-3xl text-white shadow-lg ring-1 ring-black/10 transition [text-shadow:0_1px_3px_rgba(0,0,0,0.45)] hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:text-4xl"
                   >
-                    <Image
-                      src={p.img}
-                      alt={p.title}
-                      widths={[160, 240, 320]}
-                      sizes="10rem"
-                      format="webp"
-                      quality={85}
-                      loading="lazy"
-                      class="h-14 w-auto [filter:drop-shadow(0_2px_5px_rgba(0,0,0,0.45))] sm:h-16"
-                    />
+                    {p.name}
                   </a>
                 </li>
               ))
@@ -370,7 +370,7 @@ const comidaGaleria = await getGallery('villaplanes-comida', comidaSeed);
         <MediaGallery
           id="galeria-comida"
           photos={comidaGaleria}
-          shorts={[{ id: 'Y5raiVfRIjs', title: 'Así son los Villa Planes', poster: shortVillaPlanes }]}
+          shorts={shorts}
           gridClass="grid-cols-2 sm:grid-cols-3"
           sizes="(min-width: 1024px) 22rem, (min-width: 768px) 30vw, 45vw"
         />

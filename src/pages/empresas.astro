@@ -7,7 +7,7 @@ import AlphaImage from '../components/ui/AlphaImage.astro';
 import LeafDivider from '../components/layout/LeafDivider.astro';
 import MediaGallery from '../components/sections/MediaGallery.astro';
 import HeroVideo from '../components/sections/HeroVideo.astro';
-import { getCards, getGallery, type Photo } from '../lib/content';
+import { getCards, getGallery, getVideo, getBanner, type Photo } from '../lib/content';
 import { assetUrl } from '../lib/directus';
 import { wa } from '../lib/site';
 import heroImg from '../assets/images/empresas/hero.webp';
@@ -139,11 +139,18 @@ const galeria = await getGallery('empresas-coaching', galeriaSeed);
 
 // El video ES de este taller: "Coaching con Caballos para Empresas" del canal de la
 // Ecogranja. El póster es una foto del propio taller (no un frame del video).
-const videoCoaching = {
-  id: '_elpP9hMND8',
+// Editable en Directus (videos → empresas-coaching-video). La semilla solo se usa si el
+// CMS no responde; si el cliente lo borra del CMS, el video desaparece.
+// Hero: foto (banners → empresas-hero) y video opcional (videos → empresas-video).
+// El video anterior se retiró a pedido del cliente: sin video publicado, solo la foto.
+const heroBanner = await getBanner('empresas-hero', { kind: 'local', asset: heroImg, alt: 'Vista aérea de un evento corporativo bajo carpa en la Ecogranja Villa Juan' });
+const heroVideo = await getVideo('empresas-video');
+
+const videoCoaching = await getVideo('empresas-coaching-video', {
   title: 'Coaching con Caballos para Empresas · Liderazgo y Trabajo en Equipo',
-  poster: galVideoPoster,
-};
+  youtubeId: '_elpP9hMND8',
+  poster: { kind: 'local', asset: galVideoPoster, alt: '' },
+});
 
 // href apunta al slug real de cada post en el blog (posts en Directus).
 const cronicas = [
@@ -162,12 +169,7 @@ const cronicas = [
        fallback). Las hojas van DETRÁS del banner (-z-10, contexto raíz) y asoman
        por debajo, por detrás de la sección siguiente. -->
   <section class="relative">
-    <HeroVideo
-      id="MvDTCsv4uak"
-      title="Eco Granja Villa Juan · Eventos"
-      poster={heroImg}
-      alt="Vista aérea de un evento corporativo bajo carpa en la Ecogranja Villa Juan"
-    />
+    <HeroVideo poster={heroBanner} video={heroVideo} />
     <LeafDivider class="absolute inset-x-0 bottom-0 -z-10 translate-y-[50%]" />
   </section>
 
@@ -391,7 +393,7 @@ const cronicas = [
         <MediaGallery
           id="galeria-coaching"
           photos={galeria}
-          video={videoCoaching}
+          video={videoCoaching ?? undefined}
         />
       </div>
     </div>

@@ -28,6 +28,15 @@ const {
 } = Astro.props;
 
 const siteUrl = Astro.site?.href ?? 'https://villa-juan.com/';
+// Origen del CMS: los heroes/banners pueden servirse desde ahí (son el LCP). El preconnect
+// adelanta DNS + TLS para que la imagen no espere la conexión.
+const cmsOrigin = (() => {
+  try {
+    return import.meta.env.DIRECTUS_URL ? new URL(import.meta.env.DIRECTUS_URL as string).origin : undefined;
+  } catch {
+    return undefined;
+  }
+})();
 const canonical = new URL(Astro.url.pathname, siteUrl).href;
 const ogImage = new URL(image, siteUrl).href;
 
@@ -69,6 +78,7 @@ const localBusiness = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {cmsOrigin && <link rel="preconnect" href={cmsOrigin} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
     <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />

@@ -1,13 +1,15 @@
 // Videos editables desde el CMS. Crea la colección `videos` (un video por sección:
 // YouTube o archivo subido, con portada opcional), habilita lectura pública, agrega
 // marcadores en el panel y suma `videos` al Flow de rebuild del sitio.
-// Idempotente: se puede correr varias veces sin duplicar nada. NO siembra videos:
-// sin video publicado, la página omite el bloque.
+// Idempotente: se puede correr varias veces sin duplicar nada. Siembra SOLO los videos
+// que hoy existen en el sitio (coaching de Empresas y el short de Villa Planes), y solo si
+// su sección está vacía. Sin video publicado, la página omite el bloque.
 //
 //   node --env-file=.env cms/videos.mjs
 //
 // Variables: DIRECTUS_URL, DIRECTUS_ADMIN_EMAIL, DIRECTUS_ADMIN_PASSWORD
 // (o DIRECTUS_ADMIN_TOKEN).
+import { readFile } from 'node:fs/promises';
 
 const URL = process.env.DIRECTUS_URL || 'http://localhost:8055';
 const EMAIL = process.env.DIRECTUS_ADMIN_EMAIL;
@@ -42,9 +44,18 @@ async function login() {
 // ── Secciones (deben coincidir con las que pide el sitio vía getVideo() en src/lib/content.ts) ──
 const SECTIONS = [
   { text: 'Home · Video', value: 'home-video' },
-  { text: 'Empresas · Video', value: 'empresas-video' },
-  { text: 'Villa Planes · Video', value: 'villaplanes-video' },
+  { text: 'Empresas · Video del banner principal', value: 'empresas-video' },
+  { text: 'Empresas · Video de coaching (galería)', value: 'empresas-coaching-video' },
+  { text: 'Villa Planes · Shorts (verticales)', value: 'villaplanes-short' },
   { text: 'Museo del Caballo · Video', value: 'museo-video' },
+];
+
+// Videos que hoy están en el sitio: se cargan al CMS para que el cliente los vea y edite.
+const SEED = [
+  { section: 'empresas-coaching-video', title: 'Coaching con Caballos para Empresas · Liderazgo y Trabajo en Equipo',
+    youtube_url: 'https://www.youtube.com/watch?v=_elpP9hMND8', poster: 'src/assets/images/empresas/coaching/video-poster.jpg' },
+  { section: 'villaplanes-short', title: 'Así son los Villa Planes',
+    youtube_url: 'https://www.youtube.com/shorts/Y5raiVfRIjs', poster: 'src/assets/images/villa-planes/short-villa-planes.jpg' },
 ];
 
 const FIELDS = [
@@ -111,7 +122,15 @@ async function publicRead() {
 }
 
 async function ensureBookmarks() {
-  const existing = (await api('/presets?fields[]=bookmark&limit=-1').catch(() => [])) || [];
+  const existing = (await api('/presets?fields[]=id&fields[]=bookmark&fields[]=collection&limit=-1').catch(() => [])) || [];
+  // Marcadores de videos de secciones que ya no existen (renombradas o retiradas).
+  const valid = new Set(SECTIONS.map((s) => s.text));
+  for (const p of existing) {
+    if (p.collection === 'videos' && p.bookmark && !valid.has(p.bookmark)) {
+      console.log(`· bookmark obsoleto: ${p.bookmark}`);
+      await api(`/presets/${p.id}`, { method: 'DELETE' });
+    }
+  }
   const have = new Set(existing.map((p) => p.bookmark).filter(Boolean));
   for (const s of SECTIONS) {
     if (have.has(s.text)) continue;
@@ -122,6 +141,29 @@ async function ensureBookmarks() {
       layout: 'tabular',
       layout_query: { tabular: { fields: ['status', 'title', 'youtube_url'], sort: ['-id'] } },
     } });
+  }
+}
+
+const MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
+async function uploadImage(relPath, title) {
+  const buf = await readFile(relPath);
+  const name = relPath.split(/[/\\]/).pop();
+  const form = new FormData();
+  form.append('title', title);
+  form.append('file', new Blob([buf], { type: MIME[name.split('.').pop().toLowerCase()] || 'application/octet-stream' }), name);
+  const res = await fetch(`${URL}/files`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: form });
+  if (!res.ok) throw new Error(`upload ${relPath} → ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  return (await res.json()).data.id;
+}
+
+async function seed() {
+  for (const v of SEED) {
+    const have = (await api(`/items/videos?filter[section][_eq]=${v.section}&limit=1&fields=id`)) || [];
+    if (have.length) continue;
+    console.log(`· semilla: ${v.title}`);
+    const poster = await uploadImage(v.poster, v.title);
+    await api('/items/videos', { method: 'POST', body: {
+      status: 'published', section: v.section, title: v.title, youtube_url: v.youtube_url, poster } });
   }
 }
 
@@ -145,5 +187,6 @@ await login();
 await ensureCollection();
 await publicRead();
 await ensureBookmarks();
+await seed();
 await ensureFlowTrigger();
 console.log('✓ videos listo');

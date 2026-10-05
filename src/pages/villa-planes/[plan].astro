@@ -4,14 +4,16 @@
  * Los botones de Villa Planes y de la home apuntan acá, NO al archivo suelto.
  */
 import Base from '../../layouts/Base.astro';
-import { Image } from 'astro:assets';
 import PdfViewer from '../../components/sections/PdfViewer.astro';
-import { planPdfs } from '../../lib/pdfs';
+import { getPlanes } from '../../lib/planes';
+import { planGradient } from '../../lib/pdfs';
 
-export function getStaticPaths() {
-  return planPdfs.map((plan) => ({
+// Una página por plan CON PDF (planes y PDFs editables en Directus: colección `planes`).
+export async function getStaticPaths() {
+  const conPdf = (await getPlanes()).filter((p) => p.pdf && p.href);
+  return conPdf.map((plan) => ({
     params: { plan: plan.slug },
-    props: { plan, others: planPdfs.filter((p) => p.slug !== plan.slug) },
+    props: { plan, others: conPdf.filter((p) => p.slug !== plan.slug) },
   }));
 }
 
@@ -19,13 +21,13 @@ const { plan, others } = Astro.props;
 ---
 
 <Base
-  title={`Villa Plan ${plan.title} · Pasadías en Tenjo | Ecogranja Villa Juan`}
+  title={`Villa Plan ${plan.name} · Pasadías en Tenjo | Ecogranja Villa Juan`}
   description={plan.description}
 >
   <PdfViewer
-    title={`Villa Plan ${plan.title}`}
-    file={plan.file}
-    filename={plan.filename}
+    title={`Villa Plan ${plan.name}`}
+    file={plan.pdf!.url}
+    filename={plan.pdf!.filename}
     description={plan.description}
     backHref="/villa-planes"
     backLabel="Villa Planes"
@@ -41,20 +43,11 @@ const { plan, others } = Astro.props;
             <li class="sm:flex-1">
               <a
                 href={o.href}
-                aria-label={`Ver el Villa Plan ${o.title}`}
-                style={`background-image:${o.grad};`}
-                class="flex h-full w-full items-center justify-center rounded-full px-6 py-3 shadow-lg ring-1 ring-black/10 transition hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                aria-label={`Ver el Villa Plan ${o.name}`}
+                style={`background-image:${planGradient(o.color)};`}
+                class="flex h-full w-full items-center justify-center rounded-full px-6 py-3 font-display text-3xl text-white shadow-lg ring-1 ring-black/10 transition [text-shadow:0_1px_3px_rgba(0,0,0,0.45)] hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
-                <Image
-                  src={o.img}
-                  alt={o.title}
-                  widths={[160, 240, 320]}
-                  sizes="10rem"
-                  format="webp"
-                  quality={85}
-                  loading="lazy"
-                  class="h-14 w-auto [filter:drop-shadow(0_2px_5px_rgba(0,0,0,0.45))]"
-                />
+                {o.name}
               </a>
             </li>
           ))

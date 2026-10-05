@@ -9,34 +9,33 @@
  *      mudo y sin controles, que se funde encima de la foto. Si falla, queda la foto.
  *   3. Móvil, `prefers-reduced-motion: reduce` o Save-Data → se queda la foto.
  *      No es "sin video": el botón lo abre con sonido en cualquier viewport.
+ *
+ * Foto y video son editables en Directus (banners / videos). Sin video: solo la foto,
+ * sin botón. Video de YouTube → iframe; archivo subido → <video> nativo.
  */
-import { Image } from 'astro:assets';
+import CmsImage from '../ui/CmsImage.astro';
+import type { Media, Video } from '../../lib/content';
 
 interface Props {
-  /** ID del video de YouTube (el `v=` de la URL). */
-  id: string;
-  /** Título real del video (title del iframe). */
-  title: string;
-  /** Foto de fondo: primer pintado, LCP y fallback. */
-  poster: ImageMetadata;
-  /** Alt de la foto. */
-  alt: string;
+  /** Foto de fondo: primer pintado, LCP y fallback (con su alt). */
+  poster: Media;
+  /** Video opcional. */
+  video?: Video | null;
 }
 
-const { id, title, poster, alt } = Astro.props;
+const { poster, video } = Astro.props;
 ---
 
 <div
   class="hero-video relative h-[80dvh] w-full overflow-hidden sm:h-dvh"
-  data-yt={id}
-  data-yt-title={title}
+  data-yt={video?.youtubeId}
+  data-file={video && !video.youtubeId ? video.fileUrl : undefined}
+  data-yt-title={video?.title}
 >
-  <Image
-    src={poster}
-    alt={alt}
+  <CmsImage
+    image={poster}
     widths={[768, 1280, 1440, 1920]}
     sizes="100vw"
-    format="webp"
     quality={72}
     loading="eager"
     fetchpriority="high"
@@ -47,6 +46,7 @@ const { id, title, poster, alt } = Astro.props;
        truco de "object-cover" para un iframe 16:9 (siempre cubre, nunca deja franjas). -->
   <div class="video-slot pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700"></div>
 
+  {video && (
   <button
     type="button"
     class="hero-video-cta absolute bottom-16 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-cta-strong px-6 py-3 font-display text-lg text-white shadow-lg ring-1 ring-white/30 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:bottom-24 sm:text-xl"
@@ -56,19 +56,40 @@ const { id, title, poster, alt } = Astro.props;
     </svg>
     <span class="cta-label">Ver el video</span>
   </button>
+  )}
 </div>
 
 <script>
   type NavWithData = Navigator & { connection?: { saveData?: boolean } };
 
-  for (const box of document.querySelectorAll<HTMLElement>('.hero-video[data-yt]')) {
+  for (const box of document.querySelectorAll<HTMLElement>('.hero-video[data-yt], .hero-video[data-file]')) {
     const slot = box.querySelector<HTMLElement>('.video-slot');
     const btn = box.querySelector<HTMLButtonElement>('.hero-video-cta');
     const label = box.querySelector<HTMLElement>('.cta-label');
     const id = box.dataset.yt;
-    if (!slot || !id) continue;
+    const file = box.dataset.file;
+    if (!slot || (!id && !file)) continue;
 
-    const player = (params: string, decorative: boolean): HTMLIFrameElement => {
+    // Archivo subido al CMS: <video> nativo (loop mudo de fondo o con controles).
+    const nativo = (decorative: boolean): HTMLVideoElement => {
+      const v = document.createElement('video');
+      v.src = file!;
+      v.playsInline = true;
+      v.autoplay = true;
+      v.className = 'absolute inset-0 h-full w-full object-cover';
+      if (decorative) {
+        v.muted = true;
+        v.loop = true;
+        v.setAttribute('aria-hidden', 'true');
+        v.tabIndex = -1;
+      } else {
+        v.controls = true;
+      }
+      return v;
+    };
+
+    const player = (params: string, decorative: boolean): HTMLElement => {
+      if (!id) return nativo(decorative);
       const iframe = document.createElement('iframe');
       iframe.src = `https://www.youtube-nocookie.com/embed/${id}?${params}`;
       iframe.title = box.dataset.ytTitle ?? 'Video';
@@ -103,7 +124,8 @@ const { id, title, poster, alt } = Astro.props;
         );
         // El fundido espera a que el player arranque de verdad: si no, se ve un
         // frame negro de YouTube antes del primer cuadro del video.
-        iframe.addEventListener('load', () => setTimeout(show, 900), { once: true });
+        if (id) iframe.addEventListener('load', () => setTimeout(show, 900), { once: true });
+        else iframe.addEventListener('playing', show, { once: true });
         slot.replaceChildren(iframe);
         if (label) label.textContent = 'Ver con sonido';
       };

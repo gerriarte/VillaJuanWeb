@@ -77,12 +77,58 @@ export interface DirectusVideo {
   poster: DirectusFile | null;
 }
 
+/** Banner (foto principal) de una página: hero de Celebraciones, Colegios… */
+export interface DirectusBanner {
+  id: number;
+  status: string;
+  section: string;
+  alt: string;
+  image: DirectusFile | null;
+}
+
+/** Villa Plan: columna de la tabla comparativa + su PDF. */
+export interface DirectusPlan {
+  id: number;
+  status: string;
+  sort: number | null;
+  slug: string;
+  name: string;
+  hours: string | null;
+  price_adult: number | null;
+  price_child: number | null;
+  color: string | null;
+  description: string | null;
+  pdf: string | null; // id del archivo
+}
+
+/** Fila de la tabla de Villa Planes: un servicio y en qué planes está incluido. */
+export interface DirectusPlanServicio {
+  id: number;
+  status: string;
+  sort: number | null;
+  name: string;
+  note: string | null;
+  planes: string[] | null; // slugs de los planes que lo incluyen
+}
+
+/** Documento suelto del sitio (hoy: el PDF del menú). */
+export interface DirectusDocumento {
+  id: number;
+  key: string;
+  title: string | null;
+  file: string | null; // id del archivo
+}
+
 interface Schema {
   posts: DirectusPost[];
   cards: DirectusCard[];
   gallery: DirectusPhoto[];
   slides: DirectusSlide[];
   videos: DirectusVideo[];
+  banners: DirectusBanner[];
+  planes: DirectusPlan[];
+  plan_servicios: DirectusPlanServicio[];
+  documentos: DirectusDocumento[];
   // Declarada para que el SDK reconozca `image` como relación y acepte pedir sus
   // campos anidados ({ image: ['id', 'width', 'height'] }).
   directus_files: DirectusFile[];

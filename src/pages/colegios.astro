@@ -1,4 +1,5 @@
 ---
+import CmsImage from '../components/ui/CmsImage.astro';
 import Base from '../layouts/Base.astro';
 import ServiceCard from '../components/sections/ServiceCard.astro';
 import { Image } from 'astro:assets';
@@ -8,7 +9,7 @@ import bannerColegios from '../assets/images/colegios/Banner_Colegios.jpg';
 import badgeColegios from '../assets/images/colegios/Colegios.webp';
 import { img } from '../lib/images';
 import MediaGallery from '../components/sections/MediaGallery.astro';
-import { getCards, getGallery, type Card, type Photo } from '../lib/content';
+import { getCards, getGallery, type Card, type Photo, getBanner } from '../lib/content';
 import { assetUrl } from '../lib/directus';
 
 // Semilla local (fallback). En Directus: colección `cards`, section=colegios-talleres.
@@ -39,6 +40,9 @@ const galeriaSeed: Photo[] = [
   { image: { kind: 'local', asset: img('colegios-paseo-jeep-willys')!, alt: 'Dos estudiantes con sombrero en la parte trasera del jeep Willys de Villa Juan' } },
 ];
 const galeria = await getGallery('colegios-galeria', galeriaSeed);
+
+// Banner principal: editable en Directus (banners → colegios-hero); sin CMS, el del repo.
+const heroBanner = await getBanner('colegios-hero', { kind: 'local', asset: bannerColegios, alt: 'Estudiantes conociendo de cerca una llama en la Ecogranja Villa Juan' });
 ---
 
 <Base
@@ -49,12 +53,10 @@ const galeria = await getGallery('colegios-galeria', galeriaSeed);
   <!-- HERO — banner full-bleed (header flota encima con degradé). Las hojas van DETRÁS del
        banner (-z-10, contexto raíz) y asoman por debajo, por detrás de la sección siguiente. -->
   <section class="relative">
-    <Image
-      src={bannerColegios}
-      alt="Estudiantes conociendo de cerca una llama en la Ecogranja Villa Juan"
+    <CmsImage
+      image={heroBanner}
       widths={[768, 1280, 1920]}
       sizes="100vw"
-      format="webp"
       quality={72}
       loading="eager"
       fetchpriority="high"

@@ -1,4 +1,5 @@
 ---
+import CmsImage from '../components/ui/CmsImage.astro';
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import LeafDivider from '../components/layout/LeafDivider.astro';
@@ -10,7 +11,7 @@ import imgXV from '../assets/images/celebraciones/xv_anos_caballo.jpg';
 import imgBoda from '../assets/images/celebraciones/boda_campestre_caballo.jpg';
 import imgReencuentro from '../assets/images/celebraciones/Reencuentros_Familiares.jpg';
 import imgComunion from '../assets/images/celebraciones/Primeras_comuniones.jpg';
-import { getCards, type Card } from '../lib/content';
+import { getCards, type Card, getBanner } from '../lib/content';
 import { assetUrl } from '../lib/directus';
 
 // Semilla local (fallback). En Directus: colección `cards`, section=celebraciones.
@@ -32,6 +33,9 @@ const seed: Card[] = [
     body: 'Ambientes tranquilos y acogedores para compartir la fe y la alegría en familia, con menús que encantan a todos.' },
 ];
 const celebraciones = await getCards('celebraciones', seed);
+
+// Banner principal: editable en Directus (banners → celebraciones-hero); sin CMS, el del repo.
+const heroBanner = await getBanner('celebraciones-hero', { kind: 'local', asset: heroImg, alt: 'Vista aérea de un evento campestre en la Ecogranja Villa Juan: carpa blanca, zonas con banderines de colores y praderas verdes' });
 ---
 
 <Base
@@ -42,12 +46,10 @@ const celebraciones = await getCards('celebraciones', seed);
   <!-- HERO — salón decorado, imagen full-bleed detrás del header flotante. Las hojas van
        DETRÁS del banner (-z-10, contexto raíz) y asoman por debajo, por detrás de la sección siguiente. -->
   <section class="relative">
-    <Image
-      src={heroImg}
-      alt="Vista aérea de un evento campestre en la Ecogranja Villa Juan: carpa blanca, zonas con banderines de colores y praderas verdes"
+    <CmsImage
+      image={heroBanner}
       widths={[768, 1280, 1920]}
       sizes="100vw"
-      format="webp"
       quality={72}
       loading="eager"
       fetchpriority="high"

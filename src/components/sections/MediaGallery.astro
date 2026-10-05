@@ -11,19 +11,21 @@
  * · Todas las imágenes son `lazy` y llevan `.no-reveal` porque el reveal global de
  *   Base.astro anima `transform`/`opacity` y competiría con el hover del grid.
  */
-import { Image, getImage } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import CmsImage from '../ui/CmsImage.astro';
-import type { Photo } from '../../lib/content';
+import VideoEmbed from './VideoEmbed.astro';
+import type { Media, Photo, Video } from '../../lib/content';
 import { assetUrl } from '../../lib/directus';
 
 interface Props {
   photos: Photo[];
-  video?: { id: string; title: string; poster: ImageMetadata };
+  /** Video destacado (del CMS: YouTube con fachada o archivo). */
+  video?: Video;
   /**
    * Shorts de YouTube (9:16). Misma fachada que el video, en fila propia DEBAJO de las
    * fotos: son material complementario y no deben desplazar a la galería.
    */
-  shorts?: { id: string; title: string; poster: ImageMetadata }[];
+  shorts?: { id: string; title: string; poster: Media | null }[];
   /** Encabezado de la fila de shorts. Úsalo cuando no sean del mismo tema que las fotos. */
   shortsTitle?: string;
   /** Prefijo de ids: permite más de una galería en la misma página. */
@@ -68,48 +70,13 @@ const full = await Promise.all(
 <div data-gallery id={id}>
   {
     video && (
-      <div
-        class="relative mx-auto aspect-video max-w-4xl overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20"
-        data-video-id={video.id}
-        data-video-title={video.title}
-      >
-        <a
-          href={`https://www.youtube.com/watch?v=${video.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="group absolute inset-0 block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-          aria-label={`Ver en YouTube: ${video.title}`}
-        >
-          <Image
-            src={video.poster}
-            alt=""
-            widths={[640, 960, 1280]}
-            sizes="(min-width: 1024px) 56rem, 92vw"
-            format="webp"
-            quality={78}
-            loading="lazy"
-            class="no-reveal h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-          />
-          {/* Velo + botón de play: el póster es una foto del taller, no un frame del video. */}
-          <span class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></span>
-          <span
-            aria-hidden="true"
-            class="absolute top-1/2 left-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-cta-strong/95 shadow-xl ring-4 ring-white/70 transition group-hover:scale-110 sm:h-24 sm:w-24"
-          >
-            <svg viewBox="0 0 24 24" class="ml-1 h-9 w-9 fill-white sm:h-11 sm:w-11">
-              <path d="M8 5v14l11-7z"></path>
-            </svg>
-          </span>
-          <span
-            class="absolute inset-x-0 bottom-0 p-4 text-center font-display text-xl leading-tight text-white [text-shadow:0_2px_4px_rgba(0,0,0,0.6)] sm:p-6 sm:text-2xl"
-          >
-            {video.title}
-          </span>
-        </a>
+      <div class="mx-auto max-w-4xl">
+        <VideoEmbed video={video} />
       </div>
     )
   }
 
+  {photos.length > 0 && (
   <ul class:list={['mt-8 grid gap-3 sm:gap-4', gridClass]}>
     {
       photos.map((p, i) => (
@@ -133,6 +100,7 @@ const full = await Promise.all(
       ))
     }
   </ul>
+  )}
 
   {
     shorts.length > 0 && (
@@ -160,16 +128,23 @@ const full = await Promise.all(
                 class="group absolute inset-0 block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                 aria-label={`Ver en YouTube: ${s.title}`}
               >
-                <Image
-                  src={s.poster}
-                  alt=""
-                  widths={[320, 480, 720]}
-                  sizes="(min-width: 640px) 20rem, 45vw"
-                  format="webp"
-                  quality={78}
-                  loading="lazy"
-                  class="no-reveal h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-                />
+                {s.poster ? (
+                  <CmsImage
+                    image={{ ...s.poster, alt: '' }}
+                    widths={[320, 480, 720]}
+                    sizes="(min-width: 640px) 20rem, 45vw"
+                    quality={78}
+                    loading="lazy"
+                    class="no-reveal h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                  />
+                ) : (
+                  <img
+                    src={`https://i.ytimg.com/vi/${s.id}/oardefault.jpg`}
+                    alt=""
+                    loading="lazy"
+                    class="no-reveal h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                  />
+                )}
                 <span class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                 <span
                   aria-hidden="true"

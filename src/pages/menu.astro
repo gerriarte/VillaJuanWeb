@@ -6,6 +6,10 @@
 import Base from '../layouts/Base.astro';
 import PdfViewer from '../components/sections/PdfViewer.astro';
 import { menuPdf } from '../lib/pdfs';
+import { getMenuPdf } from '../lib/planes';
+
+// El archivo es editable en Directus (documentos → menu); sin CMS, el del repo.
+const file = await getMenuPdf();
 ---
 
 <Base
@@ -14,8 +18,8 @@ import { menuPdf } from '../lib/pdfs';
 >
   <PdfViewer
     title={menuPdf.title}
-    file={menuPdf.file}
-    filename={menuPdf.filename}
+    file={file.url}
+    filename={file.filename}
     description={menuPdf.description}
     backHref="/villa-planes"
     backLabel="Villa Planes"
