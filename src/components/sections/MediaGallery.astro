@@ -140,7 +140,13 @@ const full = await Promise.all(
         {shortsTitle && (
           <p class="mt-10 text-center font-display text-3xl text-on-green">{shortsTitle}</p>
         )}
-        <ul class="mx-auto mt-6 grid max-w-2xl grid-cols-2 gap-3 sm:gap-4">
+        {/* Un solo short: centrado y angosto (en 2 columnas quedaría pegado a la izquierda). */}
+        <ul
+          class:list={[
+            'mx-auto mt-6 grid gap-3 sm:gap-4',
+            shorts.length === 1 ? 'max-w-[15rem] grid-cols-1 sm:max-w-xs' : 'max-w-2xl grid-cols-2',
+          ]}
+        >
           {shorts.map((s) => (
             <li
               class="relative aspect-[9/16] overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20"
