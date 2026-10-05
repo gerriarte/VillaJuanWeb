@@ -214,7 +214,7 @@ const CARDS = [
     image: 'src/assets/images/celebraciones/xv_anos_caballo.jpg',
     body: 'El lugar perfecto para una celebración vibrante y llena de estilo. Espacios abiertos para fotos increíbles y zonas de fiesta seguras y amplias.' },
   { section: 'celebraciones', title: 'Bodas Campestres', imageRight: true,
-    image: 'src/assets/images/celebraciones/boda_campestre_image.png',
+    image: 'src/assets/images/celebraciones/boda_campestre_caballo.jpg',
     body: "Un 'Sí, acepto' rodeado de atardeceres mágicos y el encanto del campo. Ofrecemos escenarios instagrameables y una logística impecable para el día más importante de tu vida." },
   { section: 'celebraciones', title: 'Reencuentros Familiares', imageRight: false,
     image: 'src/assets/images/celebraciones/Reencuentros_Familiares.jpg',
