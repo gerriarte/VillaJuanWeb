@@ -61,3 +61,6 @@ design/3d/frames/
 design/3d/verify/
 design/3d/out/
 design/3d/node_modules/
+
+# Material del cliente (fotos y entregables originales) — no va al repo público
+content_*/
