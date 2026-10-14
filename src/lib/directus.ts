@@ -94,8 +94,6 @@ export interface DirectusPlan {
   slug: string;
   name: string;
   hours: string | null;
-  price_adult: number | null;
-  price_child: number | null;
   color: string | null;
   description: string | null;
   pdf: string | null; // id del archivo

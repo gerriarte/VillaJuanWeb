@@ -87,9 +87,10 @@ node --env-file=.env cms/editable.mjs  # crea colecciones, permisos, bookmarks, 
   `status` · `section` · `image` · `alt`. Sin banner publicado, la página usa la foto del repo.
   Son el LCP de cada página: el sitio hace `preconnect` al CMS y las pide `eager` + `fetchpriority=high`.
 - **`planes`** — columnas de la tabla de Villa Planes: `name` · `slug` (URL `/villa-planes/<slug>`;
-  no cambiarlo una vez publicado) · `hours` · `price_adult` / `price_child` (enteros, en pesos) ·
-  `color` (oscuro: contraste AA) · `description` · `pdf`. Sin PDF, el plan sale en la tabla pero
-  sin botón ni página. Orden = arrastrar (`sort`).
+  no cambiarlo una vez publicado) · `hours` · `color` (oscuro: contraste AA) · `description` · `pdf`.
+  Sin PDF, el plan sale en la tabla pero sin botón ni página. Orden = arrastrar (`sort`).
+  Los precios NO se publican (pedido del cliente, VJW-27): en prod quedan `price_adult` /
+  `price_child` ocultos en el panel y el sitio no los lee.
 - **`plan_servicios`** — filas de la tabla: `name` · `note` · `planes` (casillas con los slugs
   que lo incluyen). Las casillas se arman con los planes del CMS: si se agrega un plan, volver a
   correr el script para que aparezca como opción.

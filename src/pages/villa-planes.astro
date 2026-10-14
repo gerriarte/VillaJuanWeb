@@ -36,19 +36,17 @@ import cartel from '../assets/images/villa-planes/Cartel_Villa_Planes.webp';
 // ver src/lib/planes.ts). Cada botón lleva a la página del plan, donde el PDF se ve EMBEBIDO
 // con header y footer (no se enlaza el archivo suelto: el visitante vuelve y sigue navegando).
 import { menuPdf, planGradient } from '../lib/pdfs';
-import { getPlanes, getServicios, formatPrice } from '../lib/planes';
+import { getPlanes, getServicios } from '../lib/planes';
 
 const planes = await getPlanes();
 const planesConPdf = planes.filter((p) => p.href);
 
 // Tabla comparativa. Marcas coloreadas por columna (el color de cada plan).
 // Colores OSCUROS para contraste AA sobre celda clara (invariante #2): estos mismos
-// colores tiñen el título de columna, los íconos ✓/✗ y los precios.
+// colores tiñen el título de columna y los íconos ✓/✗.
 const columns = planes.map((p) => ({
   label: p.name,
   hours: p.hours,
-  adult: formatPrice(p.priceAdult),
-  child: formatPrice(p.priceChild),
   color: p.color,
 }));
 const rows = (await getServicios()).map((sv) => ({
@@ -65,12 +63,6 @@ const shorts = (
 )
   .filter((v) => v.youtubeId)
   .map((v) => ({ id: v.youtubeId!, title: v.title, poster: v.poster }));
-// Precios por persona (filas al pie de la tabla).
-const prices = [
-  { name: 'Adulto', key: 'adult' },
-  { name: 'Niño', key: 'child' },
-] as const;
-
 // El arte de la carne al barril — 3 pasos (CMS: cards, section=villaplanes-barril).
 const barrilSteps = await getCards('villaplanes-barril', [
   { title: 'Sazonado Artesanal', imageRight: false, image: { kind: 'local', asset: barril2, alt: 'Sazonado Artesanal' },
@@ -270,35 +262,6 @@ const heroBanner = await getBanner('villaplanes-hero', { kind: 'local', asset: h
               ))
             }
           </tbody>
-          <tfoot>
-            <tr>
-              <th scope="colgroup" colspan={columns.length + 1} class="text-on-green pt-4 text-left font-display text-2xl tracking-[2pt] sm:text-3xl">
-                Precios por persona
-              </th>
-            </tr>
-            {
-              prices.map((p) => (
-                <tr>
-                  <th
-                    scope="row"
-                    class="sticky left-0 z-10 rounded-2xl bg-cta-strong px-3 py-3 text-left font-body text-sm font-bold text-white sm:px-4 sm:text-lg"
-                  >
-                    {p.name}
-                  </th>
-                  {
-                    columns.map((c) => (
-                      <td
-                        class="rounded-2xl bg-white/85 px-2 py-3 font-body text-base font-bold ring-1 ring-black/10 sm:text-lg"
-                        style={`color:${c.color};`}
-                      >
-                        {c[p.key]}
-                      </td>
-                    ))
-                  }
-                </tr>
-              ))
-            }
-          </tfoot>
         </table>
       </div>
 

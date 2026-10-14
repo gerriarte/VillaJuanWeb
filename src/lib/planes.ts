@@ -1,6 +1,6 @@
 // Villa Planes y documentos PDF — editables en Directus, con semilla local.
 //
-// · `planes`         → columnas de la tabla (nombre, horario, precios, color) + PDF del plan.
+// · `planes`         → columnas de la tabla (nombre, horario, color) + PDF del plan.
 // · `plan_servicios` → filas de la tabla: servicio + en qué planes está incluido.
 // · `documentos`     → PDFs sueltos del sitio (hoy: `menu`).
 //
@@ -26,8 +26,6 @@ export interface Plan {
   slug: string;
   name: string;
   hours: string;
-  priceAdult: number | null;
-  priceChild: number | null;
   /** Color del plan (título de columna, ✓/✗ y botón). Oscuro: contraste AA sobre claro. */
   color: string;
   description: string;
@@ -59,15 +57,15 @@ function finishPlan(p: Omit<Plan, 'href' | 'waText'>): Plan {
 // Los PDF locales son los de la versión anterior de los planes (Trote y Galope / Trocha
 // y Galope / Paso Fino); Galope no tiene PDF todavía.
 const planesSeed: Plan[] = [
-  { slug: 'trote', name: 'Trote', hours: '11:00 a.m. – 6:00 p.m.', priceAdult: 100000, priceChild: 90000, color: '#00811e',
+  { slug: 'trote', name: 'Trote', hours: '11:00 a.m. – 6:00 p.m.', color: '#00811e',
     description: 'Espacio exclusivo, recorrido por la granja, taller de ordeño, almuerzo a la carta, feria de juegos tradicionales, Show Villa Juan y Rodeo 360.',
     pdf: { url: pdfTroteLocal, filename: pdfFilename('Trote') } },
-  { slug: 'trocha', name: 'Trocha', hours: '11:00 a.m. – 6:00 p.m.', priceAdult: 120000, priceChild: 110000, color: '#c0360d',
+  { slug: 'trocha', name: 'Trocha', hours: '11:00 a.m. – 6:00 p.m.', color: '#c0360d',
     description: 'Todo lo del plan Trote, más el paseo a caballo.',
     pdf: { url: pdfTrochaLocal, filename: pdfFilename('Trocha') } },
-  { slug: 'galope', name: 'Galope', hours: '9:30 a.m. – 6:00 p.m.', priceAdult: 130000, priceChild: 120000, color: '#1d5fa8',
+  { slug: 'galope', name: 'Galope', hours: '9:30 a.m. – 6:00 p.m.', color: '#1d5fa8',
     description: 'Llegas desde temprano: refrigerio incluido, paseo a caballo y todo lo del plan Trocha.' },
-  { slug: 'paso-fino', name: 'Paso Fino', hours: '9:30 a.m. – 6:00 p.m.', priceAdult: 150000, priceChild: 140000, color: '#9a6a0e',
+  { slug: 'paso-fino', name: 'Paso Fino', hours: '9:30 a.m. – 6:00 p.m.', color: '#9a6a0e',
     description: 'La experiencia completa: arranca con el desayuno de la granja e incluye todo lo demás.',
     pdf: { url: pdfPasoFinoLocal, filename: pdfFilename('Paso Fino') } },
 ].map(finishPlan);
@@ -98,7 +96,7 @@ export function getPlanes(): Promise<Plan[]> {
           readItems('planes', {
             filter: { status: { _eq: 'published' } },
             sort: ['sort'],
-            fields: ['slug', 'name', 'hours', 'price_adult', 'price_child', 'color', 'description', 'pdf'],
+            fields: ['slug', 'name', 'hours', 'color', 'description', 'pdf'],
             limit: -1,
           }),
         );
@@ -108,8 +106,6 @@ export function getPlanes(): Promise<Plan[]> {
               slug: r.slug,
               name: r.name,
               hours: r.hours ?? '',
-              priceAdult: r.price_adult,
-              priceChild: r.price_child,
               color: r.color || '#00811e',
               description: r.description ?? '',
               pdf: r.pdf
@@ -165,9 +161,4 @@ export function getMenuPdf(): Promise<PdfRef> {
     return menuSeed;
   })();
   return menuCache;
-}
-
-/** "$ 100.000" (formato colombiano). */
-export function formatPrice(n: number | null): string {
-  return n == null ? '—' : `$ ${new Intl.NumberFormat('es-CO').format(n)}`;
 }

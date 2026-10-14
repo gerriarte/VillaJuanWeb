@@ -2,8 +2,7 @@
 //
 //   · `banners`        → foto principal de cada página (Celebraciones, Colegios, Villa
 //                        Planes, Blog, Empresas) y la foto del Museo del Caballo.
-//   · `planes`         → columnas de la tabla de Villa Planes (nombre, horario, precios,
-//                        color) + el PDF de cada plan.
+//   · `planes`         → columnas de la tabla de Villa Planes (nombre, horario, color) + el PDF de cada plan.
 //   · `plan_servicios` → filas de esa tabla (qué incluye cada plan).
 //   · `documentos`     → PDFs sueltos (hoy: el menú).
 //   · `gallery`        → suma la sección `museo-galeria`.
@@ -136,15 +135,15 @@ async function banners() {
 
 // ── planes + plan_servicios ──────────────────────────────────────────────────
 const PLANES = [
-  { slug: 'trote', name: 'Trote', hours: '11:00 a.m. – 6:00 p.m.', price_adult: 100000, price_child: 90000, color: '#00811e',
+  { slug: 'trote', name: 'Trote', hours: '11:00 a.m. – 6:00 p.m.', color: '#00811e',
     description: 'Espacio exclusivo, recorrido por la granja, taller de ordeño, almuerzo a la carta, feria de juegos tradicionales, Show Villa Juan y Rodeo 360.',
     pdf: 'src/assets/images/villa-planes/Villa_Plan_Trote_y_Galope.pdf' },
-  { slug: 'trocha', name: 'Trocha', hours: '11:00 a.m. – 6:00 p.m.', price_adult: 120000, price_child: 110000, color: '#c0360d',
+  { slug: 'trocha', name: 'Trocha', hours: '11:00 a.m. – 6:00 p.m.', color: '#c0360d',
     description: 'Todo lo del plan Trote, más el paseo a caballo.',
     pdf: 'src/assets/images/villa-planes/Villa_Plan_Trocha_y_Galope.pdf' },
-  { slug: 'galope', name: 'Galope', hours: '9:30 a.m. – 6:00 p.m.', price_adult: 130000, price_child: 120000, color: '#1d5fa8',
+  { slug: 'galope', name: 'Galope', hours: '9:30 a.m. – 6:00 p.m.', color: '#1d5fa8',
     description: 'Llegas desde temprano: refrigerio incluido, paseo a caballo y todo lo del plan Trocha.' },
-  { slug: 'paso-fino', name: 'Paso Fino', hours: '9:30 a.m. – 6:00 p.m.', price_adult: 150000, price_child: 140000, color: '#9a6a0e',
+  { slug: 'paso-fino', name: 'Paso Fino', hours: '9:30 a.m. – 6:00 p.m.', color: '#9a6a0e',
     description: 'La experiencia completa: arranca con el desayuno de la granja e incluye todo lo demás.',
     pdf: 'src/assets/images/villa-planes/Villa_Plan_Paso_Fino.pdf' },
 ];
@@ -164,7 +163,7 @@ const SERVICIOS = [
 
 async function planes() {
   await ensureCollection('planes',
-    { icon: 'payments', sort_field: 'sort', note: 'Villa Planes: columnas de la tabla comparativa (precios y horarios) y el PDF de cada plan. Arrastrá para cambiar el orden.' },
+    { icon: 'payments', sort_field: 'sort', note: 'Villa Planes: columnas de la tabla comparativa (nombre y horario) y el PDF de cada plan. Arrastrá para cambiar el orden.' },
     [
       statusField, sortField,
       { field: 'name', type: 'string', meta: { interface: 'input', width: 'half', required: true, note: 'Nombre del plan. Ej: "Paso Fino"' } },
@@ -174,8 +173,6 @@ async function planes() {
       { field: 'hours', type: 'string', meta: { interface: 'input', width: 'half', note: 'Horario. Ej: "9:30 a.m. – 6:00 p.m."' } },
       { field: 'color', type: 'string', meta: { interface: 'select-color', width: 'half',
         note: 'Color del plan en la tabla y en su botón. Usar tonos OSCUROS (el texto va sobre fondo claro).' } },
-      { field: 'price_adult', type: 'integer', meta: { interface: 'input', width: 'half', note: 'Precio adulto en pesos, sin puntos. Ej: 150000' } },
-      { field: 'price_child', type: 'integer', meta: { interface: 'input', width: 'half', note: 'Precio niño en pesos, sin puntos. Ej: 140000' } },
       { field: 'description', type: 'text', meta: { interface: 'input-multiline', width: 'full', note: 'Resumen del plan (aparece en su página y en Google).' } },
       { field: 'pdf', type: 'uuid', meta: { interface: 'file', special: ['file'], width: 'full',
         note: 'PDF del plan. Sin PDF, el plan aparece en la tabla pero no tiene botón ni página propia.' } },
@@ -273,8 +270,8 @@ async function bookmarks() {
     { bookmark: 'Museo del Caballo · Galería', collection: 'gallery', icon: 'museum',
       filter: { section: { _eq: 'museo-galeria' } }, layout: 'cards', layout_query: { cards: { sort: ['sort'] } },
       layout_options: { cards: { icon: 'image', title: '{{alt}}', subtitle: '{{status}}', size: 4, imageFit: 'crop', src: 'image' } } },
-    { bookmark: 'Villa Planes · Precios y horarios', collection: 'planes', icon: 'payments', layout: 'tabular',
-      layout_query: { tabular: { fields: ['status', 'name', 'hours', 'price_adult', 'price_child', 'pdf'], sort: ['sort'] } } },
+    { bookmark: 'Villa Planes · Planes y horarios', collection: 'planes', icon: 'payments', layout: 'tabular',
+      layout_query: { tabular: { fields: ['status', 'name', 'hours', 'pdf'], sort: ['sort'] } } },
     { bookmark: 'Villa Planes · Qué incluye cada plan', collection: 'plan_servicios', icon: 'checklist', layout: 'tabular',
       layout_query: { tabular: { fields: ['status', 'name', 'note', 'planes'], sort: ['sort'] } } },
     { bookmark: 'Menú (PDF)', collection: 'documentos', icon: 'picture_as_pdf', layout: 'tabular',

@@ -1,5 +1,5 @@
 // Ordena el panel para el cliente: carpetas en el menú, nombres en español, íconos y
-// etiquetas de campos legibles ("Precio adulto" en vez de "price_adult"). No toca datos
+// etiquetas de campos legibles ("Horario" en vez de "hours"). No toca datos
 // ni el esquema de las tablas: solo metadatos de presentación. Idempotente.
 //
 //   node --env-file=.env cms/navegacion.mjs
@@ -48,7 +48,7 @@ const FOLDERS = [
   { collection: 'carpeta_secciones', name: 'Contenido por página', icon: 'web', sort: 2,
     note: 'Banners, tarjetas, galerías y videos de todas las páginas. Dentro de cada uno, los marcadores separan por página.' },
   { collection: 'carpeta_villa_planes', name: 'Villa Planes y menú', icon: 'payments', sort: 3,
-    note: 'Precios, horarios, servicios, PDFs de los planes y menú' },
+    note: 'Horarios, servicios, PDFs de los planes y menú' },
   { collection: 'carpeta_blog', name: 'Blog', icon: 'article', sort: 4, note: 'Artículos del blog' },
 ];
 
@@ -65,7 +65,7 @@ const COLLECTIONS = [
   { collection: 'videos', group: 'carpeta_secciones', sort: 4, icon: 'smart_display',
     name: ['Videos', 'Video', 'Videos'] },
   { collection: 'planes', group: 'carpeta_villa_planes', sort: 1, icon: 'payments',
-    name: ['Planes: precios, horarios y PDF', 'Plan', 'Planes'] },
+    name: ['Planes: horarios y PDF', 'Plan', 'Planes'] },
   { collection: 'plan_servicios', group: 'carpeta_villa_planes', sort: 2, icon: 'checklist',
     name: ['Qué incluye cada plan', 'Servicio', 'Servicios'] },
   { collection: 'documentos', group: 'carpeta_villa_planes', sort: 3, icon: 'picture_as_pdf',
@@ -85,7 +85,7 @@ const FIELDS = {
   slides: { title_image: 'Título como imagen (opcional)', cta_label: 'Texto del botón',
     cta_href: 'Enlace del botón', cta_new_tab: 'Abrir en pestaña nueva' },
   videos: { youtube_url: 'Enlace de YouTube', video_file: 'Archivo de video (MP4)' },
-  planes: { hours: 'Horario', color: 'Color del plan', price_adult: 'Precio adulto', price_child: 'Precio niño' },
+  planes: { hours: 'Horario', color: 'Color del plan' },
   plan_servicios: { name: 'Servicio', note: 'Aclaración', planes: 'Incluido en' },
   documentos: { key: 'Documento' },
   posts: { date: 'Fecha', categories: 'Categorías', excerpt: 'Resumen', cover: 'Portada', body: 'Contenido' },
