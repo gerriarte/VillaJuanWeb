@@ -29,6 +29,9 @@ services:
       CORS_ORIGIN: ${SITE_ORIGIN}
       ASSETS_TRANSFORM_MAX_CONCURRENT: '4'
       ASSETS_CACHE_TTL: '30d'
+      # Tope de subida desde el panel (pasó: un PDF de plan de 55 MB). Bloquea también
+      # videos MP4 y fotos de celular sin comprimir: se suben a YouTube / exportadas.
+      FILES_MAX_UPLOAD_SIZE: '3mb'
     networks:
       - coolify
 

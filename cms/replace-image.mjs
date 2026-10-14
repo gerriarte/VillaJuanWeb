@@ -1,5 +1,6 @@
 // Reemplaza el contenido de un archivo ya existente en Directus, conservando su id
-// (y por tanto las relaciones de las cards/galerías que lo apuntan).
+// (y por tanto las relaciones de las cards/galerías que lo apuntan). Sirve también para
+// PDFs; esos se copian al sitio en el build, así que necesitan un deploy para verse.
 //   node --env-file=.env cms/replace-image.mjs <fileId> <rutaLocal> [título]
 // Con DIRECTUS_URL apuntando al CMS destino (local o https://admin.villa-juan.com).
 // Auth: DIRECTUS_ADMIN_TOKEN (token estático) si está; si no, email/password del .env.
@@ -10,7 +11,7 @@ const EMAIL = process.env.DIRECTUS_ADMIN_EMAIL;
 const PASSWORD = process.env.DIRECTUS_ADMIN_PASSWORD;
 const STATIC_TOKEN = process.env.DIRECTUS_ADMIN_TOKEN;
 
-const MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', avif: 'image/avif' };
+const MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', avif: 'image/avif', pdf: 'application/pdf' };
 
 async function login() {
   if (STATIC_TOKEN) return STATIC_TOKEN;
